@@ -4,22 +4,22 @@ import java.sql.Timestamp;
 
 public class Computer {
 
-	private int id;
+	private Long id;
 	private String name;
 	private Timestamp introduced;
 	private Timestamp discontinued;
-	private int id_company;
+	private Long id_company;
 	
 	/**
 	 * @return the id
 	 */
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	/**
@@ -61,13 +61,13 @@ public class Computer {
 	/**
 	 * @return the id_company
 	 */
-	public int getId_company() {
+	public Long getId_company() {
 		return id_company;
 	}
 	/**
 	 * @param id_company the id_company to set
 	 */
-	public void setId_company(int id_company) {
+	public void setId_company(Long id_company) {
 		this.id_company = id_company;
 	}
 	
