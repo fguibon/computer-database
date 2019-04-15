@@ -1,10 +1,12 @@
 package app;
 
+
+import view.CDBView;
+
 public class ComputerDatabaseApp {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		CDBView view = new CDBView();
 	}
 
 }
