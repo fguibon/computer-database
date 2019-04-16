@@ -10,6 +10,15 @@ public class Computer {
 	private Timestamp discontinued;
 	private Long id_company;
 	
+	public Computer(Long id, String name, Timestamp introduced, 
+			Timestamp discontinued, Long id_company) {
+		this.id=id;
+		this.name=name;
+		this.introduced=introduced;
+		this.discontinued=discontinued;
+		this.id_company=id_company;
+	}
+	
 	/**
 	 * @return the id
 	 */
