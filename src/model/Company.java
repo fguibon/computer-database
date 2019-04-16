@@ -1,6 +1,8 @@
 package model;
 
-public class Company {
+import util.DataTransferObject;
+
+public class Company implements DataTransferObject {
 
 	private Long id;
 	private String name;

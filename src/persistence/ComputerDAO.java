@@ -12,7 +12,7 @@ import model.Computer;
 
 public class ComputerDAO {
 
-	public Connection connect = DBConnection.getInstance();
+	public Connection connect = DatabaseConnectionManager.getInstance();
 
 	public List<Computer> getAllComputers(){
 		List<Computer> computers = new ArrayList<Computer>();
@@ -89,7 +89,26 @@ public class ComputerDAO {
 	}
 
 	public void updateComputer(Computer computer) {
-
+		PreparedStatement ps = null;
+		String query = "UPDATE computer-database.computer"
+				+ "(id,name,introduced,discontinued,id_company) SET VALUES(?,?,?,?,?)";
+		try {
+			ResultSet rs = null;
+			ps = connect.prepareStatement(query);
+			
+			ps.setLong(1, computer.getId());
+			ps.setString(2, computer.getName());
+			ps.setTimestamp(3, computer.getIntroduced());
+			ps.setTimestamp(4, computer.getDiscontinued());
+			ps.setLong(5, computer.getId_company());
+			
+			rs = ps.executeQuery();
+			
+			rs.close();
+			ps.close();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void deleteComputer(Long id) {

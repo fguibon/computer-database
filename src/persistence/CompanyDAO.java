@@ -11,7 +11,7 @@ import model.Company;
 
 public class CompanyDAO {
 	
-	public Connection connect = DBConnection.getInstance();
+	public Connection connect = DatabaseConnectionManager.getConnection();
 
 	public List<Company> getAllCompanies(){
 		List<Company> companies = new ArrayList<Company>();
