@@ -84,5 +84,13 @@ public class Computer implements DataTransferObject {
 	public void setId_company(Long id_company) {
 		this.id_company = id_company;
 	}
+
+	@Override
+	public String toString() {
+		return "Computer [id=" + id + ", name=" + name + ", introduced=" + introduced + ", discontinued=" + discontinued
+				+ ", id_company=" + id_company + "]";
+	}
+	
+	
 	
 }

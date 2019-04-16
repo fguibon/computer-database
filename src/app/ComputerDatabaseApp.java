@@ -24,9 +24,13 @@ public class ComputerDatabaseApp {
 		try {
 			Connection conn = dbManager.getConnexion();
 			CompanyDAO companyDAO = new CompanyDAO(conn);
-			Company cpa1 = companyDAO.findById(new Long(33));
-			System.out.println(cpa1.getId());
-			System.out.println(cpa1.getName());
+			
+			Company company1 = new Company();
+			company1.setName("Yoplait");
+			
+			companyDAO.create(company1);
+			
+			
 			
 		} catch (SQLException e ) {
 			e.printStackTrace();

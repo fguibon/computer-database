@@ -27,6 +27,9 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	private static final String UPDATE= 
 			"UPDATE computer SET name= ?, introduced = ?, discontinued = ?, id_company = ?"
 					+ "WHERE id= ? ;";
+	
+	private static final String DELETE=
+			"DELETE FROM computer WHERE id= ? ;";
 
 	public ComputerDAO(Connection connection) {
 		super(connection);
@@ -34,7 +37,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 
 
 	@Override
-	public Computer create(Computer dto) {
+	public boolean create(Computer dto) {
 		try {
 			PreparedStatement ps = this.connection.prepareStatement(INSERT);
 			ps.setString(1, dto.getName());

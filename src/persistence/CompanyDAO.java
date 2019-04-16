@@ -14,8 +14,8 @@ import util.DataAccessObject;
 
 public class CompanyDAO extends DataAccessObject<Company>{
 
-	private static final String INSERT ="INSERT INTO company (name) "
-			+ "VALUES(?)";
+	private static final String INSERT =
+			"INSERT INTO company (name) VALUES(?)";
 
 	private static final String SELECT_ONE = 
 			"SELECT id,name FROM company WHERE id=?;";
@@ -27,7 +27,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 			"UPDATE company SET name= ? WHERE id= ? ;";
 	
 	private static final String DELETE=
-			"DELETE FROM company WHERE id=?;";
+			"DELETE FROM company WHERE id= ? ;";
 
 	public CompanyDAO(Connection connection) {
 		super(connection);
@@ -35,15 +35,17 @@ public class CompanyDAO extends DataAccessObject<Company>{
 
 
 	@Override
-	public Company create(Company dto) {
+	public boolean create(Company dto) {
 		try (PreparedStatement ps = this.connection.prepareStatement(INSERT);){
 			ps.setString(1, dto.getName());
 			ps.execute();
-			return null;
+			//TODO verify if updated
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
+		return true;
 	}
 
 	@Override
@@ -101,8 +103,13 @@ public class CompanyDAO extends DataAccessObject<Company>{
 
 	@Override
 	public void delete(Long id) {
-		// TODO Auto-generated method stub
-
+		try (PreparedStatement ps = this.connection.prepareStatement(DELETE);){
+			ps.setLong(1, id);
+			ps.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
 	}
 
 
