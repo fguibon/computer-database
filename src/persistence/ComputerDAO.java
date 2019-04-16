@@ -8,110 +8,111 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Company;
 import model.Computer;
+import util.DataAccessObject;
 
-public class ComputerDAO {
+public class ComputerDAO extends DataAccessObject<Computer>{
 
-	public Connection connect = DatabaseConnectionManager.getInstance();
+	private static final String INSERT =
+			"INSERT INTO computer (name,introduced,discontinued,id_company)"
+					+ " VALUES(?, ?, ?, ?)";
 
-	public List<Computer> getAllComputers(){
-		List<Computer> computers = new ArrayList<Computer>();
-		
+	private static final String SELECT_ONE = 
+			"SELECT id,name,introduced,discontinued,id_company FROM computer WHERE id=?;";
+
+	private static final String SELECT_ALL = 
+			"SELECT * FROM computer;";
+
+	private static final String UPDATE= 
+			"UPDATE computer SET name= ?, introduced = ?, discontinued = ?, id_company = ?"
+					+ "WHERE id= ? ;";
+
+	public ComputerDAO(Connection connection) {
+		super(connection);
+	}
+
+
+	@Override
+	public Computer create(Computer dto) {
 		try {
-			ResultSet result = this.connect.createStatement()
-					.executeQuery("SELECT id,name from computer-database-db.company;");
-			while (result.next()) {
-				Long id = result.getLong("id");
-				String name = result.getString("name");
-				Timestamp introduced = result.getTimestamp("introduced");
-				Timestamp discontinued = result.getTimestamp("discontinued");
-				Long id_company = result.getLong("id_company");
-				Computer computer = new Computer(id, name,introduced, discontinued, id_company);
+			PreparedStatement ps = this.connection.prepareStatement(INSERT);
+			ps.setString(1, dto.getName());
+			ps.setTimestamp(2, dto.getIntroduced());
+			ps.setTimestamp(3,dto.getDiscontinued());
+			ps.setLong(4, dto.getId_company());
+			ps.execute();
+			return null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public List<Computer> findAll() {
+		List<Computer> computers = new ArrayList<Computer>();
+
+		try {
+			ResultSet rs = this.connection.createStatement()
+					.executeQuery(SELECT_ALL);
+			while (rs.next()) {
+				Computer computer = new Computer();
+				computer.setId(rs.getLong("id"));
+				computer.setName(rs.getString("name"));
+				computer.setIntroduced(rs.getTimestamp("introduced"));
+				computer.setDiscontinued(rs.getTimestamp("discontinued"));
+				computer.setId_company(rs.getLong("id_company"));
 				computers.add(computer);
 			}
-			result.close();
+			rs.close();
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}
 		return computers;
 	}
 
-	public Computer getComputer(Long id) {
-		
-		Computer computer = new Computer(id, null, null, null, null);
-		PreparedStatement ps = null;
-		String query = "SELECT * from computer-database-db.company WHERE id=?;";
-		try {
-			ResultSet result = null;
-			ps = connect.prepareStatement(query);
+
+	@Override
+	public Computer findById(Long id) {
+		Computer computer = new Computer();
+		try (PreparedStatement ps = this.connection.prepareStatement(SELECT_ONE);){
 			ps.setLong(1, id);
-			result= ps.executeQuery();
-			while (result.next()) {
-				String name = result.getString("name");
-				Timestamp introduced = result.getTimestamp("introduced");
-				Timestamp discontinued = result.getTimestamp("discontinued");
-				Long id_company = result.getLong("id_company");
-				computer.setName(name);
-				computer.setIntroduced(introduced);
-				computer.setDiscontinued(discontinued);
-				computer.setId_company(id_company);
-			}
-			result.close();
-			ps.close();
-		} catch(SQLException e) {
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				computer.setId(rs.getLong("id"));
+				computer.setName(rs.getString("name"));
+				computer.setIntroduced(rs.getTimestamp("introduced"));
+				computer.setDiscontinued(rs.getTimestamp("discontinued"));
+				computer.setId_company(rs.getLong("id_company"));
+			}	
+		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-		return computer;	
+		return computer;
 	}
 
-	public void createComputer(Computer computer) {
-		PreparedStatement ps = null;
-		String query = "INSERT INTO computer-database.computer"
-				+ "(id,name,introduced,discontinued,id_company) VALUES(?,?,?,?,?)";
-		try {
-			ResultSet rs = null;
-			ps = connect.prepareStatement(query);
-			
-			ps.setLong(1, computer.getId());
-			ps.setString(2, computer.getName());
-			ps.setTimestamp(3, computer.getIntroduced());
-			ps.setTimestamp(4, computer.getDiscontinued());
-			ps.setLong(5, computer.getId_company());
-			
-			rs = ps.executeQuery();
-			
-			rs.close();
-			ps.close();
-		} catch(SQLException e) {
+	@Override
+	public Computer update(Computer dto) {
+		Computer computer = null;
+		try(PreparedStatement ps = this.connection.prepareStatement(UPDATE);) {
+			ps.setString(1, dto.getName());
+			ps.setTimestamp(2, dto.getIntroduced());
+			ps.setTimestamp(3,dto.getDiscontinued());
+			ps.setLong(4, dto.getId_company());
+			ps.setLong(5, dto.getId());
+			ps.execute();
+			return computer;
+		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		
-	}
-
-	public void updateComputer(Computer computer) {
-		PreparedStatement ps = null;
-		String query = "UPDATE computer-database.computer"
-				+ "(id,name,introduced,discontinued,id_company) SET VALUES(?,?,?,?,?)";
-		try {
-			ResultSet rs = null;
-			ps = connect.prepareStatement(query);
-			
-			ps.setLong(1, computer.getId());
-			ps.setString(2, computer.getName());
-			ps.setTimestamp(3, computer.getIntroduced());
-			ps.setTimestamp(4, computer.getDiscontinued());
-			ps.setLong(5, computer.getId_company());
-			
-			rs = ps.executeQuery();
-			
-			rs.close();
-			ps.close();
-		} catch(SQLException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 
-	public void deleteComputer(Long id) {
+	@Override
+	public void delete(Long id) {
+		// TODO Auto-generated method stub
 
 	}
 }

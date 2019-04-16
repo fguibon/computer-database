@@ -7,11 +7,14 @@ public class Company implements DataTransferObject {
 	private Long id;
 	private String name;
 	
+	public Company() {}
+	
 	public Company(Long id, String name) {
 		this.id=id;
 		this.name=name;
 	}
 	
+
 	/**
 	 * @return the id
 	 */

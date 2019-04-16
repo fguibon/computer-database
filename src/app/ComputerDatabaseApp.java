@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import controller.CDBController;
+import model.Company;
+import persistence.CompanyDAO;
+import persistence.ComputerDAO;
 import persistence.DatabaseConnectionManager;
 import view.CDBView;
 
@@ -20,11 +23,11 @@ public class ComputerDatabaseApp {
 				"qwerty1234");
 		try {
 			Connection conn = dbManager.getConnexion();
-			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM company;");
-			while(rs.next()) {
-				System.out.println(rs.getInt(1));
-			}
+			CompanyDAO companyDAO = new CompanyDAO(conn);
+			Company cpa1 = companyDAO.findById(new Long(33));
+			System.out.println(cpa1.getId());
+			System.out.println(cpa1.getName());
+			
 		} catch (SQLException e ) {
 			e.printStackTrace();
 		}

@@ -2,13 +2,17 @@ package model;
 
 import java.sql.Timestamp;
 
-public class Computer {
+import util.DataTransferObject;
+
+public class Computer implements DataTransferObject {
 
 	private Long id;
 	private String name;
 	private Timestamp introduced;
 	private Timestamp discontinued;
 	private Long id_company;
+	
+	public Computer() {	}
 	
 	public Computer(Long id, String name, Timestamp introduced, 
 			Timestamp discontinued, Long id_company) {
@@ -19,6 +23,7 @@ public class Computer {
 		this.id_company=id_company;
 	}
 	
+
 	/**
 	 * @return the id
 	 */
