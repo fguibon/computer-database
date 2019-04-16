@@ -17,7 +17,6 @@ public class ComputerDAO {
 	public List<Computer> getAllComputers(){
 		List<Computer> computers = new ArrayList<Computer>();
 		
-
 		try {
 			ResultSet result = this.connect.createStatement()
 					.executeQuery("SELECT id,name from computer-database-db.company;");
@@ -34,7 +33,6 @@ public class ComputerDAO {
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}
-
 		return computers;
 	}
 
