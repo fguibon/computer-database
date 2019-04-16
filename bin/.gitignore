@@ -1,7 +1,3 @@
-/controller/
-/mapper/
-/model/
-/persistence/
-/service/
 /view/
+/controller/
 /app/
