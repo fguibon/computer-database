@@ -8,6 +8,7 @@ public class CDBController {
 	
 	public CDBController(CDBView view){
 		this.view=view;
+		start();
 	}
 	
 	/**

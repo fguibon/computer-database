@@ -24,7 +24,7 @@ public class CDBView {
 		try {
 			number = Integer.parseInt(ans);
 		} catch(NumberFormatException fn) {
-			
+			System.out.println(fn.toString());
 		}
 		return number;
 	}
