@@ -1,8 +1,8 @@
 package main.com.excilys.view;
 
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -63,6 +63,10 @@ public class CDBView {
 		}
 	}
 	
+	public void displayComputer(Computer computer) {
+		System.out.println(computer);
+	}
+	
 	
 	/**
 	 * Asks for the computer information
@@ -70,19 +74,21 @@ public class CDBView {
 	 */
 	public Computer queryComputerToCreate() {
 		Computer computer = new Computer();
-		Scanner sc = new Scanner(in);
 		
-		String name = this.queryName();
-		if(name!=null && !name.isEmpty()) {
-			computer.setName(name);
-		} else {
-			System.out.println("Invalid name");
-		}
+		computer.setName(this.queryName());
+		computer.setIntroduced(this.queryDate());
+		computer.setDiscontinued(this.queryDate());
+		computer.setCompanyId(this.queryId());
 		
-		String date = this.queryDate();
-		
-		sc.close();
 		return computer;
+	}
+	
+	/**
+	 * Asks for an id
+	 * @return the id
+	 */
+	public Long queryComputerToShow() {
+		return this.queryId();
 	}
 	
 	/**
@@ -91,34 +97,22 @@ public class CDBView {
 	 */
 	public Computer queryComputerToUpdate() {
 		Computer computer = new Computer();
-		Scanner sc = new Scanner(in);
 		
-		Long id = this.queryId();
-		computer.setId(id);
+		computer.setId(this.queryId());
+		computer.setName(this.queryName());
+		computer.setIntroduced(this.queryDate());
+		computer.setDiscontinued(this.queryDate());
+		computer.setCompanyId(this.queryId());
 
-		String name=this.queryName();
-		if(name!=null && !name.isEmpty()) {
-			computer.setName(name);
-		}
-		
-		
-		sc.close();
 		return computer;
 	}
 	
 	/**
-	 * Asks for computer information
-	 * @return a Computer object
+	 * Asks for an id
+	 * @return the id
 	 */
-	public Computer queryComputerToDelete() {
-		Computer computer = new Computer();
-		Scanner sc = new Scanner(in);
-		
-		String name=this.queryName();
-		
-		
-		sc.close();
-		return computer;
+	public Long queryComputerToDelete() {
+		return this.queryId();
 	}
 	
 	
@@ -128,16 +122,21 @@ public class CDBView {
 	 * @return a Long
 	 */
 	public Long queryId() {
-		System.out.println("Enter the id: ");
 		Scanner sc = new Scanner(in);
+		System.out.println("Enter the id: ");
 		String ans = sc.nextLine();
 		Long id = null;
-		try {
-			id = Long.parseLong(ans);
-		} catch(NumberFormatException fn) {
+		if(ans!=null && !ans.isEmpty()) {
+			try {
+				id = Long.parseLong(ans);
+			} catch(NumberFormatException fn) {
+				this.notifyInvalidId();
+				System.out.println(fn.toString());
+			}
+		} else {
 			this.notifyInvalidId();
-			System.out.println(fn.toString());
-		}
+		}	
+		
 		sc.close();
 		return id;
 	}
@@ -166,14 +165,19 @@ public class CDBView {
 	 * Asks for the date
 	 * @return a String
 	 */
-	public Timestamp queryDate() {
+	public LocalDate queryDate() {
+		LocalDate date=null;
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		
 		Scanner sc = new Scanner(in);
-		Timestamp date=null;
-		System.out.println("Enter the date: ");
-		String ans = sc.nextLine();
-		try {
-			
-		}
+		System.out.println("Enter the year: ");
+		String year = sc.nextLine();
+		System.out.println("Enter the month: ");
+		String month = sc.nextLine();
+		System.out.println("Enter the day: ");
+		String day = sc.nextLine();
+		
+		date = LocalDate.parse(year+"-"+month+"-"+day,format);
 		
 		sc.close();
 		return date;

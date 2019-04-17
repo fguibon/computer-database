@@ -1,6 +1,5 @@
 package main.com.excilys.controller;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,10 +75,9 @@ public class CDBController {
 	 * option 3
 	 */
 	public void showComputerDetail() {
-		Long id = this.view.queryId();
-		this.cptService.findById(id);
-	
-	
+		Long id = this.view.queryComputerToShow();
+		Computer computer = this.cptService.findById(id);
+		this.view.displayComputer(computer);
 	}
 	
 	/**
@@ -104,7 +102,7 @@ public class CDBController {
 	 * option 6
 	 */
 	public void deleteComputer() {
-		Long id = this.view.queryId();
+		Long id = this.view.queryComputerToDelete();
 		this.cptService.delete(id);
 		
 	}

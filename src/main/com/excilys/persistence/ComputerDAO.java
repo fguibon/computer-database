@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,8 +77,17 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 				Computer computer = new Computer();
 				computer.setId(rs.getLong("id"));
 				computer.setName(rs.getString("name"));
-				computer.setIntroduced(rs.getTimestamp("introduced"));
-				computer.setDiscontinued(rs.getTimestamp("discontinued"));
+				Timestamp date = rs.getTimestamp("introduced");
+				LocalDate ldate =null;
+				if(date!=null) {
+					ldate  = date.toLocalDateTime().toLocalDate();
+				}
+				computer.setIntroduced(ldate);
+				date = rs.getTimestamp("discontinued");
+				if(date!=null) {
+					ldate  = date.toLocalDateTime().toLocalDate();
+				}
+				computer.setDiscontinued(ldate);
 				computer.setCompanyId(rs.getLong("company_id"));
 				computers.add(computer);
 			}
@@ -102,8 +112,19 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			while(rs.next()) {
 				computer.setId(rs.getLong("id"));
 				computer.setName(rs.getString("name"));
-				computer.setIntroduced(rs.getTimestamp("introduced"));
-				computer.setDiscontinued(rs.getTimestamp("discontinued"));
+				Timestamp date = rs.getTimestamp("introduced");
+				LocalDate ldate =null;
+				if(date!=null) {
+					ldate  = date.toLocalDateTime().toLocalDate();
+				}
+				computer.setIntroduced(ldate);
+				
+				date = rs.getTimestamp("discontinued");
+				if(date!=null) {
+					ldate  = date.toLocalDateTime().toLocalDate();
+				}
+				computer.setDiscontinued(ldate);
+				
 				computer.setCompanyId(rs.getLong("company_id"));
 			}	
 		} catch (SQLException e) {
@@ -123,8 +144,8 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 		Computer computer = null;
 		try(PreparedStatement ps = this.connection.prepareStatement(UPDATE);) {
 			ps.setString(1, dto.getName());
-			ps.setTimestamp(2, dto.getIntroduced());
-			ps.setTimestamp(3,dto.getDiscontinued());
+			ps.setTimestamp(2, Timestamp.valueOf(dto.getIntroduced().atStartOfDay()));
+			ps.setTimestamp(3,Timestamp.valueOf(dto.getDiscontinued().atStartOfDay()));
 			ps.setLong(4, dto.getCompanyId());
 			ps.setLong(5, dto.getId());
 			ps.execute();

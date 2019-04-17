@@ -3,10 +3,7 @@ package main.com.excilys.app;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-
 import main.com.excilys.controller.CDBController;
-import main.com.excilys.model.Computer;
 import main.com.excilys.persistence.CompanyDAO;
 import main.com.excilys.persistence.ComputerDAO;
 import main.com.excilys.persistence.DatabaseConnectionManager;
