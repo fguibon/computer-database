@@ -4,28 +4,26 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Company;
 import model.Computer;
 import util.DataAccessObject;
 
 public class ComputerDAO extends DataAccessObject<Computer>{
 
 	private static final String INSERT =
-			"INSERT INTO computer (name,introduced,discontinued,id_company)"
+			"INSERT INTO computer (name,introduced,discontinued,company_id)"
 					+ " VALUES(?, ?, ?, ?)";
 
 	private static final String SELECT_ONE = 
-			"SELECT id,name,introduced,discontinued,id_company FROM computer WHERE id=?;";
+			"SELECT id,name,introduced,discontinued,company_id FROM computer WHERE id=?;";
 
 	private static final String SELECT_ALL = 
 			"SELECT * FROM computer;";
 
 	private static final String UPDATE= 
-			"UPDATE computer SET name= ?, introduced = ?, discontinued = ?, id_company = ?"
+			"UPDATE computer SET name= ?, introduced = ?, discontinued = ?, company_id = ?"
 					+ "WHERE id= ? ;";
 	
 	private static final String DELETE=
@@ -43,9 +41,10 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			ps.setString(1, dto.getName());
 			ps.setTimestamp(2, dto.getIntroduced());
 			ps.setTimestamp(3,dto.getDiscontinued());
-			ps.setLong(4, dto.getId_company());
+			ps.setLong(4, dto.getCompanyId());
 			ps.execute();
-			return null;
+			// TODO Verify if updated
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -65,7 +64,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 				computer.setName(rs.getString("name"));
 				computer.setIntroduced(rs.getTimestamp("introduced"));
 				computer.setDiscontinued(rs.getTimestamp("discontinued"));
-				computer.setId_company(rs.getLong("id_company"));
+				computer.setCompanyId(rs.getLong("company_id"));
 				computers.add(computer);
 			}
 			rs.close();
@@ -87,7 +86,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 				computer.setName(rs.getString("name"));
 				computer.setIntroduced(rs.getTimestamp("introduced"));
 				computer.setDiscontinued(rs.getTimestamp("discontinued"));
-				computer.setId_company(rs.getLong("id_company"));
+				computer.setCompanyId(rs.getLong("company_id"));
 			}	
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -103,7 +102,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			ps.setString(1, dto.getName());
 			ps.setTimestamp(2, dto.getIntroduced());
 			ps.setTimestamp(3,dto.getDiscontinued());
-			ps.setLong(4, dto.getId_company());
+			ps.setLong(4, dto.getCompanyId());
 			ps.setLong(5, dto.getId());
 			ps.execute();
 			return computer;
@@ -113,9 +112,17 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 		}
 	}
 
+	/**
+	 * Delete a computer from the database
+	 */
 	@Override
 	public void delete(Long id) {
-		// TODO Auto-generated method stub
-
+		try (PreparedStatement ps = this.connection.prepareStatement(DELETE);){
+			ps.setLong(1, id);
+			ps.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
 	}
 }

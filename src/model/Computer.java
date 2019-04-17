@@ -10,17 +10,17 @@ public class Computer implements DataTransferObject {
 	private String name;
 	private Timestamp introduced;
 	private Timestamp discontinued;
-	private Long id_company;
+	private Long company_id;
 	
 	public Computer() {	}
 	
 	public Computer(Long id, String name, Timestamp introduced, 
-			Timestamp discontinued, Long id_company) {
+			Timestamp discontinued, Long company_id) {
 		this.id=id;
 		this.name=name;
 		this.introduced=introduced;
 		this.discontinued=discontinued;
-		this.id_company=id_company;
+		this.company_id=company_id;
 	}
 	
 
@@ -73,22 +73,22 @@ public class Computer implements DataTransferObject {
 		this.discontinued = discontinued;
 	}
 	/**
-	 * @return the id_company
+	 * @return the company_id
 	 */
-	public Long getId_company() {
-		return id_company;
+	public Long getCompanyId() {
+		return company_id;
 	}
 	/**
-	 * @param id_company the id_company to set
+	 * @param company_id the company_id to set
 	 */
-	public void setId_company(Long id_company) {
-		this.id_company = id_company;
+	public void setCompanyId(Long company_id) {
+		this.company_id = company_id;
 	}
 
 	@Override
 	public String toString() {
 		return "Computer [id=" + id + ", name=" + name + ", introduced=" + introduced + ", discontinued=" + discontinued
-				+ ", id_company=" + id_company + "]";
+				+ ", id_company=" + company_id + "]";
 	}
 	
 	

@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import jdk.internal.org.objectweb.asm.tree.TryCatchBlockNode;
 import model.Company;
 import util.DataAccessObject;
 
@@ -39,13 +38,13 @@ public class CompanyDAO extends DataAccessObject<Company>{
 		try (PreparedStatement ps = this.connection.prepareStatement(INSERT);){
 			ps.setString(1, dto.getName());
 			ps.execute();
-			//TODO verify if updated
+			// TODO Verify if updated
+			return true;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
-		return true;
 	}
 
 	@Override
