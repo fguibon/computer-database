@@ -31,7 +31,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 
 	private static final String UPDATE= 
 			"UPDATE computer SET name= ?, introduced = ?, discontinued = ?, company_id = ?"
-					+ "WHERE id= ? ;";
+					+ " WHERE id= ? ;";
 	
 	private static final String DELETE=
 			"DELETE FROM computer WHERE id= ? ;";
@@ -150,7 +150,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			ps.setTimestamp(3,Timestamp.valueOf(dto.getDiscontinued().atStartOfDay()));
 			ps.setLong(4, dto.getCompanyId());
 			ps.setLong(5, dto.getId());
-			ps.execute();
+			ps.executeUpdate();
 			return computer;
 		} catch (Exception e) {
 			e.printStackTrace();

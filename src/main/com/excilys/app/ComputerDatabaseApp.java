@@ -14,11 +14,7 @@ import main.com.excilys.view.CDBView;
 public class ComputerDatabaseApp {
 
 	public static void main(String[] args) {
-		DatabaseConnectionManager dbManager = new DatabaseConnectionManager(
-				"127.0.0.1:3306", 
-				"computer-database-db", 
-				"admincdb", 
-				"qwerty1234");
+		DatabaseConnectionManager dbManager = new DatabaseConnectionManager();
 		Connection conn = null;
 		try {
 			conn = dbManager.getConnexion();

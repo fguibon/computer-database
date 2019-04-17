@@ -14,14 +14,16 @@ public class DatabaseConnectionManager {
 
 	private final String url;
 	private final Properties properties;
+	private final String host ="127.0.0.1:3306";
+	private final String databaseName ="computer-database-db";
+	private final String username = "admincdb";
+	private final String password = "qwerty1234";
 	
-	
-	public DatabaseConnectionManager (String host, String databaseName, 
-			String username, String pswd) {
+	public DatabaseConnectionManager () {
 		this.url ="jdbc:mysql://"+host+"/"+databaseName+"?serverTimezone=UTC";
 		this.properties = new Properties();
 		this.properties.setProperty("user", username);
-		this.properties.setProperty("password", pswd);
+		this.properties.setProperty("password", password);
 	}
 	
 	
