@@ -125,6 +125,7 @@ public class CDBView {
 		Scanner sc = new Scanner(in);
 		System.out.println("Enter the id: ");
 		String ans = sc.nextLine();
+		sc.close();
 		Long id = null;
 		if(ans!=null && !ans.isEmpty()) {
 			try {
@@ -136,8 +137,6 @@ public class CDBView {
 		} else {
 			this.notifyInvalidId();
 		}	
-		
-		sc.close();
 		return id;
 	}
 	
@@ -150,14 +149,14 @@ public class CDBView {
 		
 		System.out.println("Enter the name: ");
 		String ans = sc.nextLine();
+		sc.close();
 		String name="";
 		if(ans!=null && !ans.isEmpty()) {
 			name = ans;
 		} else {
 			this.notifyInvalidName();
 		}
-		
-		sc.close();
+
 		return name;
 	}
 	
@@ -176,10 +175,10 @@ public class CDBView {
 		String month = sc.nextLine();
 		System.out.println("Enter the day: ");
 		String day = sc.nextLine();
+		sc.close();
 		
 		date = LocalDate.parse(year+"-"+month+"-"+day,format);
 		
-		sc.close();
 		return date;
 	}
 	
