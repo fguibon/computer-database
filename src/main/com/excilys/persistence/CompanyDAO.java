@@ -1,4 +1,4 @@
-package persistence;
+package main.com.excilys.persistence;
 
 
 import java.sql.Connection;
@@ -11,6 +11,11 @@ import java.util.List;
 import model.Company;
 import util.DataAccessObject;
 
+/**
+ * CompanyDAO class : makes requests to the company table
+ * @author excilys
+ *
+ */
 public class CompanyDAO extends DataAccessObject<Company>{
 
 	private static final String INSERT =
@@ -33,6 +38,10 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	}
 
 
+	/**
+	 * Creates a company
+	 * @return a boolean value to know if it is created
+	 */
 	@Override
 	public boolean create(Company dto) {
 		try (PreparedStatement ps = this.connection.prepareStatement(INSERT);){
@@ -47,6 +56,10 @@ public class CompanyDAO extends DataAccessObject<Company>{
 		}
 	}
 
+	/**
+	 * Finds and return all companies in the table
+	 * @return a List of companies
+	 */
 	@Override
 	public List<Company> findAll() {
 		List<Company> companies = new ArrayList<Company>();
@@ -67,7 +80,10 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	}
 
 
-
+	/**
+	 * Find a Company by its id
+	 * @return a Company object
+	 */
 	@Override
 	public Company findById(Long id) {
 		Company company = new Company();
@@ -85,6 +101,10 @@ public class CompanyDAO extends DataAccessObject<Company>{
 		return company;
 	}
 
+	/**
+	 * Updates a Company information
+	 * @return a Company object
+	 */
 	@Override
 	public Company update(Company dto) {
 		Company company = null;
@@ -100,6 +120,10 @@ public class CompanyDAO extends DataAccessObject<Company>{
 		return company;
 	}
 
+	/**
+	 * Deletes a company record
+	 * 
+	 */
 	@Override
 	public void delete(Long id) {
 		try (PreparedStatement ps = this.connection.prepareStatement(DELETE);){

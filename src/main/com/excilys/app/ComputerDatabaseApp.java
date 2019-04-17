@@ -1,4 +1,4 @@
-package app;
+package main.com.excilys.app;
 
 
 import java.sql.Connection;
@@ -7,13 +7,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
-import controller.CDBController;
-import model.Company;
-import model.Computer;
-import persistence.CompanyDAO;
-import persistence.ComputerDAO;
-import persistence.DatabaseConnectionManager;
-import view.CDBView;
+import main.com.excilys.controller.CDBController;
+import main.com.excilys.model.Company;
+import main.com.excilys.model.Computer;
+import main.com.excilys.persistence.CompanyDAO;
+import main.com.excilys.persistence.ComputerDAO;
+import main.com.excilys.persistence.DatabaseConnectionManager;
+import main.com.excilys.view.CDBView;
 
 public class ComputerDatabaseApp {
 

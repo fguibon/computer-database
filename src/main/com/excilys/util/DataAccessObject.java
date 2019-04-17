@@ -1,4 +1,4 @@
-package util;
+package main.com.excilys.util;
 
 import java.sql.Connection;
 import java.util.List;

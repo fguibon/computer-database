@@ -1,4 +1,4 @@
-package view;
+package main.com.excilys.view;
 
 import java.util.Scanner;
 
@@ -20,6 +20,7 @@ public class CDBView {
 				+ "5: Update a computer,"
 				+ "6: Delete a computer)");
 		String ans = sc.nextLine();
+		sc.close();
 		int number =0;
 		try {
 			number = Integer.parseInt(ans);

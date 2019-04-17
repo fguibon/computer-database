@@ -1,4 +1,4 @@
-package persistence;
+package main.com.excilys.persistence;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,6 +10,11 @@ import java.util.List;
 import model.Computer;
 import util.DataAccessObject;
 
+/**
+ * ComputerDAO class : makes requests to the computer table
+ * @author excilys
+ *
+ */
 public class ComputerDAO extends DataAccessObject<Computer>{
 
 	private static final String INSERT =
@@ -34,6 +39,10 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	}
 
 
+	/**
+	 * Creates a computer
+	 * @return a boolean value to know if it is created
+	 */
 	@Override
 	public boolean create(Computer dto) {
 		try {
@@ -51,6 +60,10 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 		}
 	}
 
+	/**
+	 * Finds and return all computers in the table
+	 * @return a List of computers
+	 */
 	@Override
 	public List<Computer> findAll() {
 		List<Computer> computers = new ArrayList<Computer>();
@@ -75,6 +88,10 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	}
 
 
+	/**
+	 * Find a Computer by its id
+	 * @return a Computer object
+	 */
 	@Override
 	public Computer findById(Long id) {
 		Computer computer = new Computer();
@@ -95,6 +112,11 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 		return computer;
 	}
 
+	
+	/**
+	 * Updates a Computer information
+	 * @return a Computer object
+	 */
 	@Override
 	public Computer update(Computer dto) {
 		Computer computer = null;

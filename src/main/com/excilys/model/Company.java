@@ -1,6 +1,6 @@
-package model;
+package main.com.excilys.model;
 
-import util.DataTransferObject;
+import main.com.excilys.util.DataTransferObject;
 
 public class Company implements DataTransferObject {
 

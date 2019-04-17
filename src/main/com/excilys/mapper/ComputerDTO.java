@@ -1,4 +1,4 @@
-package mapper;
+package main.com.excilys.mapper;
 
 public class ComputerDTO {
 

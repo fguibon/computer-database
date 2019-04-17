@@ -1,6 +1,6 @@
-package controller;
+package main.com.excilys.controller;
 
-import view.CDBView;
+import main.com.excilys.view.CDBView;
 
 public class CDBController {
 
