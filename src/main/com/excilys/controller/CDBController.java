@@ -1,13 +1,25 @@
 package main.com.excilys.controller;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import main.com.excilys.model.Company;
+import main.com.excilys.model.Computer;
+import main.com.excilys.service.CompanyService;
+import main.com.excilys.service.ComputerService;
 import main.com.excilys.view.CDBView;
 
 public class CDBController {
 
 	CDBView view;
+	CompanyService cpnService;
+	ComputerService cptService;
 	
-	public CDBController(CDBView view){
+	public CDBController(CDBView view, CompanyService cpnService, ComputerService cptService){
 		this.view=view;
+		this.cpnService=cpnService;
+		this.cptService=cptService;
 		start();
 	}
 	
@@ -46,28 +58,36 @@ public class CDBController {
 	 * option 1
 	 */
 	public void listComputers() {
-		// TODO Auto-generated method stub
+		List<Computer> computers = new ArrayList<Computer>();
+		computers = this.cptService.getComputers();
+		this.view.displayComputers(computers);
 	}
 	
 	/**
 	 * option 2
 	 */
 	public void listCompanies() {
-		// TODO Auto-generated method stub
+		List<Company> companies = new ArrayList<Company>();
+		companies = this.cpnService.getCompanies();
+		this.view.displayCompanies(companies);
 	}
 	
 	/** 
 	 * option 3
 	 */
 	public void showComputerDetail() {
-		// TODO Auto-generated method stub
+		Long id = this.view.queryId();
+		this.cptService.findById(id);
+	
+	
 	}
 	
 	/**
 	 * option 4
 	 */
 	public void createComputer() {
-		// TODO Auto-generated method stub
+		Computer computer = this.view.queryComputerToCreate();
+		this.cptService.createComputer(computer);
 	}
 	
 
@@ -75,7 +95,8 @@ public class CDBController {
 	 * option 5
 	 */
 	public void updateComputer() {
-		// TODO Auto-generated method stub
+		Computer computer = this.view.queryComputerToUpdate();
+		this.cptService.update(computer);
 		
 	}
 	
@@ -83,7 +104,8 @@ public class CDBController {
 	 * option 6
 	 */
 	public void deleteComputer() {
-		// TODO Auto-generated method stub
+		Long id = this.view.queryId();
+		this.cptService.delete(id);
 		
 	}
 	
@@ -91,7 +113,7 @@ public class CDBController {
 	 * Number equal to 0 or higher than 6
 	 */
 	public void invalidNumber() {
-		view.notifyInvalid();
+		this.view.notifyInvalidNumber();
 		start();
 		
 	}

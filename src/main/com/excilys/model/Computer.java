@@ -1,21 +1,22 @@
 package main.com.excilys.model;
 
-import java.sql.Timestamp;
 
-import util.DataTransferObject;
+import java.time.LocalDate;
+
+import main.com.excilys.util.DataTransferObject;
 
 public class Computer implements DataTransferObject {
 
 	private Long id;
 	private String name;
-	private Timestamp introduced;
-	private Timestamp discontinued;
+	private LocalDate introduced;
+	private LocalDate discontinued;
 	private Long company_id;
 	
 	public Computer() {	}
 	
-	public Computer(Long id, String name, Timestamp introduced, 
-			Timestamp discontinued, Long company_id) {
+	public Computer(Long id, String name, LocalDate introduced, 
+			LocalDate discontinued, Long company_id) {
 		this.id=id;
 		this.name=name;
 		this.introduced=introduced;
@@ -51,25 +52,25 @@ public class Computer implements DataTransferObject {
 	/**
 	 * @return the introduced
 	 */
-	public Timestamp getIntroduced() {
+	public LocalDate getIntroduced() {
 		return introduced;
 	}
 	/**
 	 * @param introduced the introduced to set
 	 */
-	public void setIntroduced(Timestamp introduced) {
+	public void setIntroduced(LocalDate introduced) {
 		this.introduced = introduced;
 	}
 	/**
 	 * @return the discontinued
 	 */
-	public Timestamp getDiscontinued() {
+	public LocalDate getDiscontinued() {
 		return discontinued;
 	}
 	/**
 	 * @param discontinued the discontinued to set
 	 */
-	public void setDiscontinued(Timestamp discontinued) {
+	public void setDiscontinued(LocalDate discontinued) {
 		this.discontinued = discontinued;
 	}
 	/**

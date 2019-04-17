@@ -8,8 +8,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Company;
-import util.DataAccessObject;
+import main.com.excilys.model.Company;
+import main.com.excilys.util.DataAccessObject;
 
 /**
  * CompanyDAO class : makes requests to the company table

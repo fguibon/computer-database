@@ -4,11 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Computer;
-import util.DataAccessObject;
+import main.com.excilys.model.Computer;
+import main.com.excilys.util.DataAccessObject;
 
 /**
  * ComputerDAO class : makes requests to the computer table
@@ -48,8 +49,8 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 		try {
 			PreparedStatement ps = this.connection.prepareStatement(INSERT);
 			ps.setString(1, dto.getName());
-			ps.setTimestamp(2, dto.getIntroduced());
-			ps.setTimestamp(3,dto.getDiscontinued());
+			ps.setTimestamp(2,Timestamp.valueOf(dto.getIntroduced().atStartOfDay()));
+			ps.setTimestamp(3,Timestamp.valueOf(dto.getDiscontinued().atStartOfDay()));
 			ps.setLong(4, dto.getCompanyId());
 			ps.execute();
 			// TODO Verify if updated
