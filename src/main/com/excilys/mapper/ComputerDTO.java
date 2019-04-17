@@ -4,9 +4,10 @@ public class ComputerDTO {
 
 	private String id;
 	private String name;
-	private String introduced;
-	private String discontinued;
-	private String id_company;
+	private String introducedDate;
+	private String discontinuedDate;
+	private String companyId;
+	
 	/**
 	 * @return the id
 	 */
@@ -35,36 +36,36 @@ public class ComputerDTO {
 	 * @return the introduced
 	 */
 	public String getIntroduced() {
-		return introduced;
+		return introducedDate;
 	}
 	/**
 	 * @param introduced the introduced to set
 	 */
 	public void setIntroduced(String introduced) {
-		this.introduced = introduced;
+		this.introducedDate = introduced;
 	}
 	/**
 	 * @return the discontinued
 	 */
 	public String getDiscontinued() {
-		return discontinued;
+		return discontinuedDate;
 	}
 	/**
 	 * @param discontinued the discontinued to set
 	 */
 	public void setDiscontinued(String discontinued) {
-		this.discontinued = discontinued;
+		this.discontinuedDate = discontinued;
 	}
 	/**
-	 * @return the id_company
+	 * @return the company_id
 	 */
-	public String getId_company() {
-		return id_company;
+	public String getcompany_id() {
+		return companyId;
 	}
 	/**
-	 * @param id_company the id_company to set
+	 * @param company_id the company_id to set
 	 */
-	public void setId_company(String id_company) {
-		this.id_company = id_company;
+	public void setCompanyId(String company_id) {
+		this.companyId = company_id;
 	}
 }

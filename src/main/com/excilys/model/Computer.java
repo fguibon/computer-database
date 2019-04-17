@@ -9,18 +9,18 @@ public class Computer implements DataTransferObject {
 
 	private Long id;
 	private String name;
-	private LocalDate introduced;
-	private LocalDate discontinued;
+	private LocalDate introducedDate;
+	private LocalDate discontinueddate;
 	private Long company_id;
 	
 	public Computer() {	}
 	
-	public Computer(Long id, String name, LocalDate introduced, 
-			LocalDate discontinued, Long company_id) {
+	public Computer(Long id, String name, LocalDate introducedDate, 
+			LocalDate discontinuedDate, Long company_id) {
 		this.id=id;
 		this.name=name;
-		this.introduced=introduced;
-		this.discontinued=discontinued;
+		this.introducedDate=introducedDate;
+		this.discontinueddate=discontinuedDate;
 		this.company_id=company_id;
 	}
 	
@@ -53,25 +53,25 @@ public class Computer implements DataTransferObject {
 	 * @return the introduced
 	 */
 	public LocalDate getIntroduced() {
-		return introduced;
+		return introducedDate;
 	}
 	/**
-	 * @param introduced the introduced to set
+	 * @param introducedDate the introduced to set
 	 */
-	public void setIntroduced(LocalDate introduced) {
-		this.introduced = introduced;
+	public void setIntroduced(LocalDate introducedDate) {
+		this.introducedDate = introducedDate;
 	}
 	/**
 	 * @return the discontinued
 	 */
 	public LocalDate getDiscontinued() {
-		return discontinued;
+		return discontinueddate;
 	}
 	/**
-	 * @param discontinued the discontinued to set
+	 * @param discontinuedDate the discontinued to set
 	 */
-	public void setDiscontinued(LocalDate discontinued) {
-		this.discontinued = discontinued;
+	public void setDiscontinued(LocalDate discontinuedDate) {
+		this.discontinueddate = discontinuedDate;
 	}
 	/**
 	 * @return the company_id
@@ -88,7 +88,7 @@ public class Computer implements DataTransferObject {
 
 	@Override
 	public String toString() {
-		return "Computer [id=" + id + ", name=" + name + ", introduced=" + introduced + ", discontinued=" + discontinued
+		return "Computer [id=" + id + ", name=" + name + ", introduced=" + introducedDate + ", discontinued=" + discontinueddate
 				+ ", id_company=" + company_id + "]";
 	}
 	

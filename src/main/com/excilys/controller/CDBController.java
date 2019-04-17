@@ -19,39 +19,44 @@ public class CDBController {
 		this.view=view;
 		this.cpnService=cpnService;
 		this.cptService=cptService;
-		start();
 	}
 	
 	/**
 	 * Function calling the display of the starting menu
 	 */
 	public void start() {
-		int choice =view.menu();
-		switch(choice) {
-			case 1:
-				listComputers();
-				break;
-			case 2:
-				listCompanies();
-				break;
-			case 3:
-				showComputerDetail();
-				break;
-			case 4:
-				createComputer();
-				break;
-			case 5:
-				updateComputer();
-				break;
-			case 6:
-				deleteComputer();
-				break;
-			default:
-				invalidNumber();
+		boolean ok = true;
+		while(ok) {
+			int choice =view.menu();
+			switch(choice) {
+				case 0:
+					view.bye();
+					ok=false;
+					break;
+				case 1:
+					listComputers();
+					break;
+				case 2:
+					listCompanies();
+					break;
+				case 3:
+					showComputerDetail();
+					break;
+				case 4:
+					createComputer();
+					break;
+				case 5:
+					updateComputer();
+					break;
+				case 6:
+					deleteComputer();
+					break;
+				default:
+					invalidNumber();
+			}
 		}
 	}
 	
-
 
 	/**
 	 * option 1
@@ -75,7 +80,7 @@ public class CDBController {
 	 * option 3
 	 */
 	public void showComputerDetail() {
-		Long id = this.view.queryComputerToShow();
+		Long id = this.view.queryId();
 		Computer computer = this.cptService.findById(id);
 		this.view.displayComputer(computer);
 	}
@@ -111,9 +116,7 @@ public class CDBController {
 	 * Number equal to 0 or higher than 6
 	 */
 	public void invalidNumber() {
-		this.view.notifyInvalidNumber();
-		start();
-		
+		this.view.notifyInvalidNumber();	
 	}
 
 }

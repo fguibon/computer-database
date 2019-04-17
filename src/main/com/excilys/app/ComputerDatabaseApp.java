@@ -27,10 +27,14 @@ public class ComputerDatabaseApp {
 		}
 		CompanyDAO companyDAO = new CompanyDAO(conn);
 		ComputerDAO computerDAO = new ComputerDAO(conn);
+		
 		CDBView view = new CDBView(System.in);
 		CompanyService cpnService = new CompanyService(companyDAO);
 		ComputerService cptService = new ComputerService(computerDAO);
+		
 		CDBController controller = new CDBController(view, cpnService, cptService);
+		
+		controller.start();
 		
 	}
 

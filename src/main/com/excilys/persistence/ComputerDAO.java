@@ -77,15 +77,17 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 				Computer computer = new Computer();
 				computer.setId(rs.getLong("id"));
 				computer.setName(rs.getString("name"));
-				Timestamp date = rs.getTimestamp("introduced");
+				
+				Timestamp tstamp = rs.getTimestamp("introduced");
 				LocalDate ldate =null;
-				if(date!=null) {
-					ldate  = date.toLocalDateTime().toLocalDate();
+				if(tstamp!=null) {
+					ldate  = tstamp.toLocalDateTime().toLocalDate();
 				}
 				computer.setIntroduced(ldate);
-				date = rs.getTimestamp("discontinued");
-				if(date!=null) {
-					ldate  = date.toLocalDateTime().toLocalDate();
+				
+				tstamp = rs.getTimestamp("discontinued");
+				if(tstamp!=null) {
+					ldate  = tstamp.toLocalDateTime().toLocalDate();
 				}
 				computer.setDiscontinued(ldate);
 				computer.setCompanyId(rs.getLong("company_id"));

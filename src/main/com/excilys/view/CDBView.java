@@ -1,11 +1,12 @@
 package main.com.excilys.view;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Scanner;
-
 import main.com.excilys.model.Company;
 import main.com.excilys.model.Computer;
 
@@ -13,6 +14,7 @@ public class CDBView {
 	
 
 	InputStream in;
+	
 	
 	public CDBView (InputStream in) {
 		this.in = in;
@@ -22,23 +24,26 @@ public class CDBView {
 	 * Displays the menu and ask a number
 	 * @return an int
 	 * */
-	public int menu() {
-		Scanner sc = new Scanner(in);
+	public int menu()  {
 		System.out.println(
 				"Enter a number ("
+				+ "0: Quit, "
 				+ "1: list computers, "
 				+ "2: List companies," 
 				+ "3: Show computer detail,"
 				+ "4: Create a computer,"
 				+ "5: Update a computer,"
 				+ "6: Delete a computer)");
-		String ans = sc.nextLine();
-		sc.close();
+		;
 		int number =0;
 		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			String ans = br.readLine();
 			number = Integer.parseInt(ans);
 		} catch(NumberFormatException fn) {
 			System.out.println(fn.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return number;
 	}
@@ -83,13 +88,6 @@ public class CDBView {
 		return computer;
 	}
 	
-	/**
-	 * Asks for an id
-	 * @return the id
-	 */
-	public Long queryComputerToShow() {
-		return this.queryId();
-	}
 	
 	/**
 	 * Asks for the computer information
@@ -122,20 +120,19 @@ public class CDBView {
 	 * @return a Long
 	 */
 	public Long queryId() {
-		Scanner sc = new Scanner(in);
-		System.out.println("Enter the id: ");
-		String ans = sc.nextLine();
-		sc.close();
+			
 		Long id = null;
-		if(ans!=null && !ans.isEmpty()) {
-			try {
-				id = Long.parseLong(ans);
-			} catch(NumberFormatException fn) {
-				this.notifyInvalidId();
-				System.out.println(fn.toString());
-			}
-		} else {
+		System.out.println("Enter the id: ");
+		String ans ="";
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			ans= br.readLine();
+			id = Long.parseLong(ans);
+		} catch(NumberFormatException fn) {
 			this.notifyInvalidId();
+			System.out.println(fn.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}	
 		return id;
 	}
@@ -145,18 +142,15 @@ public class CDBView {
 	 * @return a String
 	 */
 	public String queryName() {
-		Scanner sc = new Scanner(in);
 		
-		System.out.println("Enter the name: ");
-		String ans = sc.nextLine();
-		sc.close();
 		String name="";
-		if(ans!=null && !ans.isEmpty()) {
-			name = ans;
-		} else {
-			this.notifyInvalidName();
+		System.out.println("Enter the name: ");
+		try {	
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			name = br.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-
 		return name;
 	}
 	
@@ -168,15 +162,20 @@ public class CDBView {
 		LocalDate date=null;
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		
-		Scanner sc = new Scanner(in);
-		System.out.println("Enter the year: ");
-		String year = sc.nextLine();
-		System.out.println("Enter the month: ");
-		String month = sc.nextLine();
-		System.out.println("Enter the day: ");
-		String day = sc.nextLine();
-		sc.close();
+		String year ="",month="",day="";
 		
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			System.out.println("Enter the year: ");
+			year = br.readLine();
+			System.out.println("Enter the month : ");
+			month = br.readLine();
+			System.out.println("Enter the day: ");
+			day = br.readLine();
+		} catch (IOException e) {
+			this.notifyInvalidDate();
+			e.printStackTrace();
+		}
 		date = LocalDate.parse(year+"-"+month+"-"+day,format);
 		
 		return date;
@@ -197,6 +196,10 @@ public class CDBView {
 	
 	public void notifyInvalidDate() {
 		System.out.println("Invalid date try another!");
+	}
+	
+	public void bye() {
+		System.out.println("Bye!");
 	}
 	
 }
