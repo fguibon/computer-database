@@ -83,7 +83,7 @@ public class CDBView {
 		computer.setName(this.queryName());
 		computer.setIntroduced(this.queryDate());
 		computer.setDiscontinued(this.queryDate());
-		computer.setCompanyId(this.queryId());
+		computer.getCompany().setId(this.queryId());
 		
 		return computer;
 	}
@@ -100,7 +100,7 @@ public class CDBView {
 		computer.setName(this.queryName());
 		computer.setIntroduced(this.queryDate());
 		computer.setDiscontinued(this.queryDate());
-		computer.setCompanyId(this.queryId());
+		computer.getCompany().setId(this.queryId());
 
 		return computer;
 	}

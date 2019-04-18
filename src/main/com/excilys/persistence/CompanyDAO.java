@@ -33,8 +33,14 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	private static final String DELETE=
 			"DELETE FROM company WHERE id= ? ;";
 
-	public CompanyDAO(Connection connection) {
-		super(connection);
+	private static CompanyDAO instance = new CompanyDAO();
+	
+	private CompanyDAO() {
+		super();
+	}
+	
+	public static CompanyDAO getInstance() {
+		return instance;
 	}
 
 
@@ -44,7 +50,8 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public boolean create(Company dto) {
-		try (PreparedStatement ps = this.connection.prepareStatement(INSERT);){
+		Connection conn = JDBCManager.getInstance();
+		try (PreparedStatement ps = conn.prepareStatement(INSERT);){
 			ps.setString(1, dto.getName());
 			ps.execute();
 			// TODO Verify if updated
@@ -62,9 +69,10 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public List<Company> findAll() {
+		Connection conn = JDBCManager.getInstance();
 		List<Company> companies = new ArrayList<Company>();
 		try {
-			ResultSet rs = this.connection.createStatement()
+			ResultSet rs = conn.createStatement()
 					.executeQuery(SELECT_ALL);
 			while (rs.next()) {
 				Long id = rs.getLong("id");
@@ -86,8 +94,9 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public Company findById(Long id) {
+		Connection conn = JDBCManager.getInstance();
 		Company company = new Company();
-		try (PreparedStatement ps = this.connection.prepareStatement(SELECT_ONE);){
+		try (PreparedStatement ps = conn.prepareStatement(SELECT_ONE);){
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
@@ -97,6 +106,12 @@ public class CompanyDAO extends DataAccessObject<Company>{
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
+		}  finally {
+			if (conn!=null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {}
+			}
 		}
 		return company;
 	}
@@ -107,8 +122,9 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public Company update(Company dto) {
+		Connection conn = JDBCManager.getInstance();
 		Company company = null;
-		try(PreparedStatement ps = this.connection.prepareStatement(UPDATE);) {
+		try(PreparedStatement ps = conn.prepareStatement(UPDATE);) {
 			ps.setString(1, dto.getName());
 			ps.setLong(2, dto.getId());
 			ps.execute();
@@ -116,6 +132,12 @@ public class CompanyDAO extends DataAccessObject<Company>{
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
+		} finally {
+			if (conn!=null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {}
+			}
 		}
 		return company;
 	}
@@ -126,12 +148,19 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public void delete(Long id) {
-		try (PreparedStatement ps = this.connection.prepareStatement(DELETE);){
+		Connection conn = JDBCManager.getInstance();
+		try (PreparedStatement ps = conn.prepareStatement(DELETE);){
 			ps.setLong(1, id);
 			ps.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
+		} finally {
+			if (conn!=null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {}
+			}
 		}
 	}
 

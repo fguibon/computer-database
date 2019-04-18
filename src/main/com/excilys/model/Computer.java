@@ -11,17 +11,17 @@ public class Computer implements DataTransferObject {
 	private String name;
 	private LocalDate introducedDate;
 	private LocalDate discontinueddate;
-	private Long company_id;
+	private Company company;
 	
 	public Computer() {	}
 	
 	public Computer(Long id, String name, LocalDate introducedDate, 
-			LocalDate discontinuedDate, Long company_id) {
+			LocalDate discontinuedDate, Company company) {
 		this.id=id;
 		this.name=name;
 		this.introducedDate=introducedDate;
 		this.discontinueddate=discontinuedDate;
-		this.company_id=company_id;
+		this.company=company;
 	}
 	
 
@@ -76,20 +76,20 @@ public class Computer implements DataTransferObject {
 	/**
 	 * @return the company_id
 	 */
-	public Long getCompanyId() {
-		return company_id;
+	public Company getCompany() {
+		return company;
 	}
 	/**
 	 * @param company_id the company_id to set
 	 */
-	public void setCompanyId(Long company_id) {
-		this.company_id = company_id;
+	public void setCompany(Company company) {
+		this.company = company;
 	}
 
 	@Override
 	public String toString() {
 		return "Computer [id=" + id + ", name=" + name + ", introduced=" + introducedDate + ", discontinued=" + discontinueddate
-				+ ", id_company=" + company_id + "]";
+				+ ", " + company + "]";
 	}
 	
 	

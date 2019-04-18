@@ -7,10 +7,9 @@ import main.com.excilys.persistence.ComputerDAO;
 
 public class ComputerService {
 
-	private ComputerDAO computerDAO;
+	private ComputerDAO computerDAO = ComputerDAO.getInstance();
 	
-	public ComputerService(ComputerDAO computerDAO) {
-		this.computerDAO = computerDAO;
+	public ComputerService() {
 	}
 	
 	public boolean createComputer(Computer computer) {

@@ -52,7 +52,7 @@ public class CDBController {
 					deleteComputer();
 					break;
 				default:
-					invalidNumber();
+					view.notifyInvalidNumber();
 			}
 		}
 	}
@@ -82,7 +82,12 @@ public class CDBController {
 	public void showComputerDetail() {
 		Long id = this.view.queryId();
 		Computer computer = this.cptService.findById(id);
-		this.view.displayComputer(computer);
+		if(computer!=null) {
+			this.view.displayComputer(computer);
+		} else {
+			this.view.notifyInvalidId();
+		}
+		
 	}
 	
 	/**
@@ -99,8 +104,7 @@ public class CDBController {
 	 */
 	public void updateComputer() {
 		Computer computer = this.view.queryComputerToUpdate();
-		this.cptService.update(computer);
-		
+		this.cptService.update(computer);	
 	}
 	
 	/**
@@ -108,15 +112,8 @@ public class CDBController {
 	 */
 	public void deleteComputer() {
 		Long id = this.view.queryComputerToDelete();
-		this.cptService.delete(id);
-		
+		this.cptService.delete(id);	
 	}
-	
-	/**
-	 * Number equal to 0 or higher than 6
-	 */
-	public void invalidNumber() {
-		this.view.notifyInvalidNumber();	
-	}
+
 
 }

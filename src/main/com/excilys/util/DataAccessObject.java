@@ -1,14 +1,11 @@
 package main.com.excilys.util;
 
-import java.sql.Connection;
 import java.util.List;
 
 public abstract class DataAccessObject<T extends DataTransferObject> {
-	protected final Connection connection;
 	
-	public DataAccessObject(Connection connection) {
+	public DataAccessObject() {
 		super();
-		this.connection = connection;
 	}
 	
 	public abstract boolean create(T dto);

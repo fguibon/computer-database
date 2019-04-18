@@ -7,10 +7,9 @@ import main.com.excilys.persistence.CompanyDAO;
 
 public class CompanyService {
 
-	private CompanyDAO companyDAO;
+	private CompanyDAO companyDAO = CompanyDAO.getInstance();
 	
-	public CompanyService(CompanyDAO companyDAO) {
-		this.companyDAO = companyDAO;
+	public CompanyService() {
 	}
 	
 	public List<Company> getCompanies() {
