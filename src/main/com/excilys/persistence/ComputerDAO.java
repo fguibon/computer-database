@@ -21,6 +21,8 @@ import main.com.excilys.util.DataAccessObject;
  */
 public class ComputerDAO extends DataAccessObject<Computer>{
 
+	private static ComputerDAO instance = new ComputerDAO();
+	
 	private static final String INSERT =
 			"INSERT INTO computer (name,introduced,discontinued,company_id)"
 					+ " VALUES(?, ?, ?, ?)";
@@ -37,8 +39,11 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	
 	private static final String DELETE=
 			"DELETE FROM computer WHERE id= ? ;";
+	
+	private static final String SELECT_ALL_PAGED =
+			"SELECT id,name,introduced,discontinued,company_id FROM computer "
+			+ "LIMIT ? OFFSET ? ;";
 
-	private static ComputerDAO instance = new ComputerDAO();
 	
 	private ComputerDAO() {
 		
@@ -104,7 +109,51 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 					Company cp =CompanyDAO.getInstance().findById(company_id);
 					computer.setCompany(cp);
 				}
+				computers.add(computer);
+			}
+			rs.close();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return computers;
+	}
+	
+	/**
+	 * Finds all computers and limits the results
+	 * @param limit
+	 * @param currentPage
+	 * @return
+	 */
+	public List<Computer> findAllPaged(int limit, int currentPage) {
+		List<Computer> computers = new ArrayList<Computer>();
+		int offset = ((currentPage-1) * limit);
+		Connection conn = JDBCManager.getInstance();
+		try (PreparedStatement ps = conn.prepareStatement(SELECT_ALL_PAGED);){
+			ps.setInt(1,limit);
+			ps.setInt(2, offset);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Computer computer = new Computer();
+				computer.setId(rs.getLong("id"));
+				computer.setName(rs.getString("name"));
 				
+				Date date =rs.getDate("introduced");
+				LocalDate ldate = null;
+				if(date!=null) {
+					ldate  = date.toLocalDate();
+				}
+				computer.setIntroduced(ldate);
+				
+				date = rs.getDate("discontinued");
+				if(date!=null) {
+					ldate  = date.toLocalDate();
+				}
+				computer.setDiscontinued(ldate);
+				Long company_id =rs.getLong("company_id");
+				if(company_id!=null) {
+					Company cp =CompanyDAO.getInstance().findById(company_id);
+					computer.setCompany(cp);
+				}
 				computers.add(computer);
 			}
 			rs.close();
@@ -182,7 +231,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	}
 
 	/**
-	 * Delete a computer from the database
+	 * Deletes a computer from the database
 	 */
 	@Override
 	public void delete(Long id) {
@@ -195,4 +244,5 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			throw new RuntimeException(e);
 		}
 	}
+
 }

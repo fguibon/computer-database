@@ -18,6 +18,8 @@ import main.com.excilys.util.DataAccessObject;
  */
 public class CompanyDAO extends DataAccessObject<Company>{
 
+	private static CompanyDAO instance = new CompanyDAO();
+	
 	private static final String INSERT =
 			"INSERT INTO company (name) VALUES(?)";
 
@@ -32,8 +34,12 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	
 	private static final String DELETE=
 			"DELETE FROM company WHERE id= ? ;";
+	
+	
+	private static final String SELECT_ALL_PAGED =
+			"SELECT id,name FROM company "
+			+ " LIMIT ? OFFSET ? ;";
 
-	private static CompanyDAO instance = new CompanyDAO();
 	
 	private CompanyDAO() {
 		super();
@@ -64,7 +70,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	}
 
 	/**
-	 * Finds and return all companies in the table
+	 * Finds and returns all companies in the table
 	 * @return a List of companies
 	 */
 	@Override
@@ -84,6 +90,34 @@ public class CompanyDAO extends DataAccessObject<Company>{
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
+		return companies;
+	}
+	
+	/**
+	 * Finds companies and limits the results
+	 * @param limit
+	 * @param currentPage
+	 * @return
+	 */
+	public List<Company> findAllPaged(int limit, int currentPage){
+		List<Company> companies = new ArrayList<Company>();
+		Connection conn = JDBCManager.getInstance();
+		try (PreparedStatement ps = conn.prepareStatement(SELECT_ALL_PAGED);){
+			int offset = ((currentPage-1) * limit);
+			ps.setInt(1,limit);
+			ps.setInt(2, offset);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Company company = new Company();
+				company.setId(rs.getLong("id"));
+				company.setName(rs.getString("name"));
+				companies.add(company);
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+		
 		return companies;
 	}
 
@@ -163,6 +197,6 @@ public class CompanyDAO extends DataAccessObject<Company>{
 			}
 		}
 	}
-
+	
 
 }

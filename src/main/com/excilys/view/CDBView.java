@@ -10,6 +10,7 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import main.com.excilys.model.Company;
 import main.com.excilys.model.Computer;
+import main.com.excilys.model.Page;
 
 public class CDBView {
 	
@@ -25,14 +26,15 @@ public class CDBView {
 	 * */
 	public int menu()  {
 		System.out.println(
-				"Enter a number ("
-				+ "0: Quit, "
-				+ "1: List computers, "
-				+ "2: List companies," 
-				+ "3: Show computer detail,\r\n"
-				+ "4: Create a computer,"
-				+ "5: Update a computer,"
-				+ "6: Delete a computer)");
+				"-----MENU-----\r\n"
+				+ "Enter a number \r\n"
+				+ "0: Quit \r\n"
+				+ "1: List computers \r\n"
+				+ "2: List companies \r\n" 
+				+ "3: Show computer detail \r\n"
+				+ "4: Create a computer \r\n"
+				+ "5: Update a computer \r\n"
+				+ "6: Delete a computer ");
 		;
 		int number =0;
 		try {
@@ -42,7 +44,7 @@ public class CDBView {
 		} catch(NumberFormatException fn) {
 			this.notifyInvalidId();
 		} catch (IOException e) {
-			System.out.println("IO error"+e.getMessage());
+			System.out.println("IO error : "+e.getMessage());
 		}
 		return number;
 	}
@@ -51,19 +53,22 @@ public class CDBView {
 	 * List all companies
 	 * @param companies
 	 */
-	public void displayCompanies(List<Company> companies) {
+	public void displayCompanies(List<Company> companies, Page page) {
+		System.out.println("Page number : "+page.getCurrentPage());
 		for(Company c:companies) {
-			System.out.println(c);
+			if(c!=null) System.out.println(c);
 		}
 	}
 	
 	/**
 	 * List all computers
 	 * @param computers
+	 * @param page 
 	 */
-	public void displayComputers(List<Computer> computers) {
+	public void displayComputers(List<Computer> computers, Page page) {
+		System.out.println("Page number : "+page.getCurrentPage());
 		for(Computer c:computers) {
-			System.out.println(c);
+			if(c!=null) System.out.println(c);
 		}
 	}
 	
@@ -72,52 +77,7 @@ public class CDBView {
 	 * @param computers
 	 */
 	public void displayComputer(Computer computer) {
-		System.out.println(computer);
-	}
-	
-	
-	/**
-	 * Asks for the computer information
-	 * @return a Computer object
-	 */
-	public Computer queryComputerToCreate() {
-		Computer computer = null;
-		String name =this.queryName();
-		if(name!=null && !name.isEmpty()) {
-			computer = new Computer();
-			computer.setName(name);
-			computer.setIntroduced(this.queryDate());
-			computer.setDiscontinued(this.queryDate());
-			computer.getCompany().setId(this.queryId());
-		} else {
-			this.notifyInvalidName();
-		}
-		return computer;
-	}
-	
-	
-	/**
-	 * Asks for the computer information
-	 * @return a Computer object
-	 */
-	public Computer queryComputerToUpdate() {
-		Computer computer = new Computer();
-		
-		computer.setId(this.queryId());
-		computer.setName(this.queryName());
-		computer.setIntroduced(this.queryDate());
-		computer.setDiscontinued(this.queryDate());
-		computer.getCompany().setId(this.queryId());
-
-		return computer;
-	}
-	
-	/**
-	 * Asks for an id
-	 * @return the id
-	 */
-	public Long queryComputerToDelete() {
-		return this.queryId();
+		if(computer!=null) System.out.println(computer);
 	}
 	
 	

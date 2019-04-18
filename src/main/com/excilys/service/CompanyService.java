@@ -15,5 +15,10 @@ public class CompanyService {
 	public List<Company> getCompanies() {
 		return companyDAO.findAll();
 	}
+	
+
+	public List<Company> getCompanies(int limit, int currentPage) {
+		return companyDAO.findAllPaged(limit,currentPage);
+	}
 	 
 }

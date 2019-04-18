@@ -3,16 +3,21 @@ package main.com.excilys.service;
 import java.util.List;
 
 import main.com.excilys.model.Computer;
+import main.com.excilys.model.ComputerValidator;
+import main.com.excilys.model.Validator;
 import main.com.excilys.persistence.ComputerDAO;
 
 public class ComputerService {
 
 	private ComputerDAO computerDAO = ComputerDAO.getInstance();
+	ComputerValidator computerValidator;
 	
-	public ComputerService() {
+	public ComputerService(Validator<Computer> validator) {
+		validator = new ComputerValidator();
 	}
 	
 	public boolean createComputer(Computer computer) {
+		computerValidator.validate(computer);
 		return computerDAO.create(computer);
 	}
 	
@@ -20,11 +25,16 @@ public class ComputerService {
 		return computerDAO.findAll();
 	}
 	
+	public List<Computer> getComputers(int limit, int currentPage){
+		return computerDAO.findAllPaged(limit, currentPage);
+	}
+	
 	public Computer findById(Long id) {
 		return computerDAO.findById(id);
 	}
 	
 	public void update(Computer computer) {
+		//computerValidator.validate(computer);
 		computerDAO.update(computer);
 	}
 	
