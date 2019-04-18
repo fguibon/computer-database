@@ -80,22 +80,21 @@ public class CDBController {
 	 * option 3
 	 */
 	public void showComputerDetail() {
+		Computer computer = null;
 		Long id = this.view.queryId();
-		Computer computer = this.cptService.findById(id);
+		if(id!=null) computer = this.cptService.findById(id);
 		if(computer!=null) {
 			this.view.displayComputer(computer);
-		} else {
-			this.view.notifyInvalidId();
 		}
-		
 	}
 	
 	/**
 	 * option 4
 	 */
 	public void createComputer() {
-		Computer computer = this.view.queryComputerToCreate();
-		this.cptService.createComputer(computer);
+		Computer computer =null;
+		computer = this.view.queryComputerToCreate();
+		if(computer!=null) this.cptService.createComputer(computer);
 	}
 	
 

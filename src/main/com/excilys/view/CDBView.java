@@ -6,15 +6,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import main.com.excilys.model.Company;
 import main.com.excilys.model.Computer;
 
 public class CDBView {
 	
-
 	InputStream in;
-	
 	
 	public CDBView (InputStream in) {
 		this.in = in;
@@ -28,9 +27,9 @@ public class CDBView {
 		System.out.println(
 				"Enter a number ("
 				+ "0: Quit, "
-				+ "1: list computers, "
+				+ "1: List computers, "
 				+ "2: List companies," 
-				+ "3: Show computer detail,"
+				+ "3: Show computer detail,\r\n"
 				+ "4: Create a computer,"
 				+ "5: Update a computer,"
 				+ "6: Delete a computer)");
@@ -41,9 +40,9 @@ public class CDBView {
 			String ans = br.readLine();
 			number = Integer.parseInt(ans);
 		} catch(NumberFormatException fn) {
-			System.out.println(fn.toString());
+			this.notifyInvalidId();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("IO error"+e.getMessage());
 		}
 		return number;
 	}
@@ -68,6 +67,10 @@ public class CDBView {
 		}
 	}
 	
+	/**
+	 * Show the information of one computer
+	 * @param computers
+	 */
 	public void displayComputer(Computer computer) {
 		System.out.println(computer);
 	}
@@ -78,13 +81,17 @@ public class CDBView {
 	 * @return a Computer object
 	 */
 	public Computer queryComputerToCreate() {
-		Computer computer = new Computer();
-		
-		computer.setName(this.queryName());
-		computer.setIntroduced(this.queryDate());
-		computer.setDiscontinued(this.queryDate());
-		computer.getCompany().setId(this.queryId());
-		
+		Computer computer = null;
+		String name =this.queryName();
+		if(name!=null && !name.isEmpty()) {
+			computer = new Computer();
+			computer.setName(name);
+			computer.setIntroduced(this.queryDate());
+			computer.setDiscontinued(this.queryDate());
+			computer.getCompany().setId(this.queryId());
+		} else {
+			this.notifyInvalidName();
+		}
 		return computer;
 	}
 	
@@ -130,9 +137,8 @@ public class CDBView {
 			id = Long.parseLong(ans);
 		} catch(NumberFormatException fn) {
 			this.notifyInvalidId();
-			System.out.println(fn.toString());
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("IO error"+e.getMessage());
 		}	
 		return id;
 	}
@@ -149,7 +155,7 @@ public class CDBView {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			name = br.readLine();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("IO error"+e.getMessage());
 		}
 		return name;
 	}
@@ -173,10 +179,13 @@ public class CDBView {
 			System.out.println("Enter the day: ");
 			day = br.readLine();
 		} catch (IOException e) {
-			this.notifyInvalidDate();
-			e.printStackTrace();
+			System.out.println("IO error"+e.getMessage());
 		}
-		date = LocalDate.parse(year+"-"+month+"-"+day,format);
+		try {
+			date = LocalDate.parse(year+"-"+month+"-"+day,format);
+		} catch(DateTimeParseException e) {
+			System.out.println("Invalid date : "+e.getMessage());
+		}
 		
 		return date;
 	}

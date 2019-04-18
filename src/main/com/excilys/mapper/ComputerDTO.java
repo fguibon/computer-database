@@ -6,7 +6,7 @@ public class ComputerDTO {
 	private String name;
 	private String introducedDate;
 	private String discontinuedDate;
-	private String companyId;
+	private CompanyDTO companyDTO;
 	
 	/**
 	 * @return the id
@@ -57,15 +57,15 @@ public class ComputerDTO {
 		this.discontinuedDate = discontinued;
 	}
 	/**
-	 * @return the company_id
+	 * @return the companyDTO
 	 */
-	public String getcompany_id() {
-		return companyId;
+	public CompanyDTO getCompanyDTO() {
+		return companyDTO;
 	}
 	/**
-	 * @param company_id the company_id to set
+	 * @param companyDTO the companyDTO to set
 	 */
-	public void setCompanyId(String company_id) {
-		this.companyId = company_id;
+	public void setCompanyDTO(CompanyDTO companyDTO) {
+		this.companyDTO = companyDTO;
 	}
 }
