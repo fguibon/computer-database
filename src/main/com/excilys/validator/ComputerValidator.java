@@ -1,4 +1,6 @@
-package main.com.excilys.model;
+package main.com.excilys.validator;
+
+import main.com.excilys.model.Computer;
 
 public class ComputerValidator implements Validator<Computer> {
 

@@ -1,4 +1,4 @@
-package main.com.excilys.model;
+package main.com.excilys.validator;
 
 public interface Validator<T> {
 
