@@ -3,9 +3,7 @@ package main.com.excilys.model;
 
 import java.time.LocalDate;
 
-import main.com.excilys.util.DataTransferObject;
-
-public class Computer implements DataTransferObject {
+public class Computer {
 
 	private Long id;
 	private String name;

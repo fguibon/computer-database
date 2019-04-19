@@ -1,8 +1,8 @@
-package main.com.excilys.util;
+package main.com.excilys.persistence;
 
 import java.util.List;
 
-public abstract class DataAccessObject<T extends DataTransferObject> {
+public abstract class DataAccessObject<T> {
 	
 	public DataAccessObject() {
 		super();

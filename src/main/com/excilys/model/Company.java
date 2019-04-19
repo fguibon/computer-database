@@ -1,8 +1,6 @@
 package main.com.excilys.model;
 
-import main.com.excilys.util.DataTransferObject;
-
-public class Company implements DataTransferObject {
+public class Company  {
 
 	private Long id;
 	private String name;
