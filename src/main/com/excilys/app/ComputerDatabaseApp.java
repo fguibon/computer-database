@@ -2,9 +2,9 @@ package main.com.excilys.app;
 
 
 import main.com.excilys.controller.CDBController;
-import main.com.excilys.model.ComputerValidator;
 import main.com.excilys.service.CompanyService;
 import main.com.excilys.service.ComputerService;
+import main.com.excilys.validator.ComputerValidator;
 import main.com.excilys.view.CDBView;
 
 public class ComputerDatabaseApp {

@@ -12,7 +12,6 @@ import java.util.List;
 
 import main.com.excilys.model.Company;
 import main.com.excilys.model.Computer;
-import main.com.excilys.util.DataAccessObject;
 
 /**
  * ComputerDAO class : makes requests to the computer table

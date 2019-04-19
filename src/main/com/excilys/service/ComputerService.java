@@ -3,9 +3,9 @@ package main.com.excilys.service;
 import java.util.List;
 
 import main.com.excilys.model.Computer;
-import main.com.excilys.model.ComputerValidator;
-import main.com.excilys.model.Validator;
 import main.com.excilys.persistence.ComputerDAO;
+import main.com.excilys.validator.ComputerValidator;
+import main.com.excilys.validator.Validator;
 
 public class ComputerService {
 
