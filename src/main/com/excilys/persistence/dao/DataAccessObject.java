@@ -1,4 +1,4 @@
-package main.com.excilys.persistence;
+package main.com.excilys.persistence.dao;
 
 import java.util.List;
 

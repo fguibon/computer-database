@@ -1,4 +1,4 @@
-package main.com.excilys.persistence;
+package main.com.excilys.persistence.jdbc;
 
 import java.io.FileInputStream;
 import java.io.IOException;

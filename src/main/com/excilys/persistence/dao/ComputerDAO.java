@@ -1,4 +1,4 @@
-package main.com.excilys.persistence;
+package main.com.excilys.persistence.dao;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -12,6 +12,7 @@ import java.util.List;
 
 import main.com.excilys.model.Company;
 import main.com.excilys.model.Computer;
+import main.com.excilys.persistence.jdbc.JDBCManager;
 
 /**
  * ComputerDAO class : makes requests to the computer table
@@ -44,8 +45,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			+ "LIMIT ? OFFSET ? ;";
 
 	
-	private ComputerDAO() {
-		
+	private ComputerDAO() {	
 	}
 	
 	public static ComputerDAO getInstance() {

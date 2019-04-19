@@ -1,4 +1,4 @@
-package main.com.excilys.persistence;
+package main.com.excilys.persistence.dao;
 
 
 import java.sql.Connection;
@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import main.com.excilys.model.Company;
+import main.com.excilys.persistence.jdbc.JDBCManager;
 
 /**
  * CompanyDAO class : makes requests to the company table

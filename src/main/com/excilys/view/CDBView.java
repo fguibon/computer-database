@@ -8,6 +8,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+
+import main.com.excilys.binding.dto.CompanyDTO;
+import main.com.excilys.binding.dto.ComputerDTO;
 import main.com.excilys.model.Company;
 import main.com.excilys.model.Computer;
 import main.com.excilys.model.Page;
@@ -53,9 +56,9 @@ public class CDBView {
 	 * List all companies
 	 * @param companies
 	 */
-	public void displayCompanies(List<Company> companies, Page page) {
+	public void displayCompanies(List<CompanyDTO> companies, Page page) {
 		System.out.println("Page number : "+page.getCurrentPage());
-		for(Company c:companies) {
+		for(CompanyDTO c:companies) {
 			if(c!=null) System.out.println(c);
 		}
 	}
@@ -65,9 +68,9 @@ public class CDBView {
 	 * @param computers
 	 * @param page 
 	 */
-	public void displayComputers(List<Computer> computers, Page page) {
+	public void displayComputers(List<ComputerDTO> computers, Page page) {
 		System.out.println("Page number : "+page.getCurrentPage());
-		for(Computer c:computers) {
+		for(ComputerDTO c:computers) {
 			if(c!=null) System.out.println(c);
 		}
 	}
@@ -76,7 +79,7 @@ public class CDBView {
 	 * Show the information of one computer
 	 * @param computers
 	 */
-	public void displayComputer(Computer computer) {
+	public void displayComputer(ComputerDTO computer) {
 		if(computer!=null) System.out.println(computer);
 	}
 	

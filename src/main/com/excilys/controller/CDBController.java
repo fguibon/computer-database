@@ -2,6 +2,8 @@ package main.com.excilys.controller;
 
 import java.util.List;
 
+import main.com.excilys.binding.dto.CompanyDTO;
+import main.com.excilys.binding.dto.ComputerDTO;
 import main.com.excilys.model.Company;
 import main.com.excilys.model.Computer;
 import main.com.excilys.model.Page;
@@ -11,23 +13,28 @@ import main.com.excilys.view.CDBView;
 
 public class CDBController {
 
-	CDBView view;
-	CompanyService cpnService;
-	ComputerService cptService;
-	Page page;
-	
-	private int currentPage;
-
-	
 	private final int LIMIT=10;
 	private final int CURRENT_PAGE=1;
 	
-	public CDBController(CDBView view, CompanyService cpnService, ComputerService cptService){
-		this.view=view;
-		this.cpnService=cpnService;
-		this.cptService=cptService;
+	private int currentPage;
+	
+	private static CDBController instance = new CDBController(
+			CompanyService.getInstance(),ComputerService.getInstance());
+	private Page page;
+	private CDBView view;
+	private CompanyService companyService;
+	private ComputerService computerService;
+	
+	
+	private CDBController(CompanyService companyService, ComputerService computerService){
 		page = new Page(LIMIT,CURRENT_PAGE);
+		view = new CDBView(System.in);
 	}
+	
+	public static CDBController getInstance() {
+		return instance;
+	}
+	
 	
 	/**
 	 * Function calling the display of the starting menu
@@ -72,9 +79,9 @@ public class CDBController {
 	public void listComputers() {
 		currentPage =1;
 		boolean ok=true;
-		List<Computer> computers = null;
+		List<ComputerDTO> computers = null;
 		while(ok) {
-			computers = this.cptService.getComputers(LIMIT,currentPage);
+			computers = this.computerService.getComputers(LIMIT,currentPage);
 			if(computers.isEmpty())	ok=false;
 			page.setCurrentPage(currentPage++);
 			this.view.displayComputers(computers,page);
@@ -88,9 +95,9 @@ public class CDBController {
 	public void listCompanies() {
 		currentPage =1;
 		boolean ok=true;
-		List<Company> companies = null;
+		List<CompanyDTO> companies = null;
 		while(ok) {
-			companies = this.cpnService.getCompanies(LIMIT, currentPage);
+			companies = this.companyService.getCompanies(LIMIT, currentPage);
 			if(companies.isEmpty()) ok=false;
 			page.setCurrentPage(currentPage++);
 			this.view.displayCompanies(companies,page);
@@ -101,9 +108,9 @@ public class CDBController {
 	 * option 3
 	 */
 	public void showComputerDetail() {
-		Computer computer = null;
+		ComputerDTO computer = null;
 		Long id = this.view.queryId();
-		if(id!=null) computer = this.cptService.findById(id);
+		if(id!=null) computer = this.computerService.findById(id);
 		if(computer!=null)	this.view.displayComputer(computer);
 	}
 	
@@ -111,9 +118,9 @@ public class CDBController {
 	 * option 4
 	 */
 	public void createComputer() {
-		Computer computer =null;
+		ComputerDTO computer =null;
 		computer = this.queryComputerToCreate();
-		if(computer!=null) this.cptService.createComputer(computer);
+		if(computer!=null) this.computerService.createComputer(computer);
 	}
 	
 
@@ -123,7 +130,7 @@ public class CDBController {
 	public void updateComputer() {
 		Computer computer = null;
 		computer = this.queryComputerToUpdate();
-		if(computer!=null) this.cptService.update(computer);	
+		if(computer!=null) this.computerService.update(computer);	
 	}
 	
 	/**
@@ -132,7 +139,7 @@ public class CDBController {
 	public void deleteComputer() {
 		Long id = null;
 		id = this.queryComputerToDelete();
-		if(id!=null) this.cptService.delete(id);	
+		if(id!=null) this.computerService.delete(id);	
 	}
 	
 	
@@ -140,11 +147,11 @@ public class CDBController {
 	 * Asks for the computer information
 	 * @return a Computer object
 	 */
-	public Computer queryComputerToCreate() {
-		Computer computer = null;
+	public ComputerDTO queryComputerToCreate() {
+		ComputerDTO computer = null;
 		String name =view.queryName();
 		if(name!=null && !name.isEmpty()) {
-			computer = new Computer();
+			computer = new ComputerDTO();
 			computer.setName(name);
 			computer.setIntroduced(view.queryDate());
 			computer.setDiscontinued(view.queryDate());
@@ -160,8 +167,8 @@ public class CDBController {
 	 * Asks for the computer information
 	 * @return a Computer object
 	 */
-	public Computer queryComputerToUpdate() {
-		Computer computer = new Computer();
+	public ComputerDTO queryComputerToUpdate() {
+		ComputerDTO computer = new ComputerDTO();
 		
 		computer.setId(view.queryId());
 		computer.setName(view.queryName());
