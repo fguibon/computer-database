@@ -59,16 +59,15 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	 */
 	@Override
 	public boolean create(Computer dto) {
-		Connection conn = JDBCManager.getInstance();
-		try(PreparedStatement ps = conn.prepareStatement(INSERT);) {
-			
+		boolean created = false;
+		try(Connection conn = JDBCManager.getInstance();
+				PreparedStatement ps = conn.prepareStatement(INSERT);) {
 			ps.setString(1, dto.getName());
 			ps.setTimestamp(2,Timestamp.valueOf(dto.getIntroduced().atStartOfDay()));
 			ps.setTimestamp(3,Timestamp.valueOf(dto.getDiscontinued().atStartOfDay()));
 			ps.setLong(4, dto.getCompany().getId());
-			ps.execute();
-			// TODO Verify if updated
-			return true;
+			if(ps.executeUpdate()!=0) created = true;
+			return created;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -82,10 +81,10 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	@Override
 	public List<Computer> findAll() {
 		List<Computer> computers = new ArrayList<Computer>();
-		Connection conn = JDBCManager.getInstance();
-		try {
-			ResultSet rs = conn.createStatement()
-					.executeQuery(SELECT_ALL);
+		
+		try(Connection conn = JDBCManager.getInstance();
+				ResultSet rs = conn.createStatement()
+					.executeQuery(SELECT_ALL);) {
 			while (rs.next()) {
 				Computer computer = new Computer();
 				computer.setId(rs.getLong("id"));
@@ -110,7 +109,6 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 				}
 				computers.add(computer);
 			}
-			rs.close();
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -126,8 +124,9 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	public List<Computer> findAllPaged(int limit, int currentPage) {
 		List<Computer> computers = new ArrayList<Computer>();
 		int offset = ((currentPage-1) * limit);
-		Connection conn = JDBCManager.getInstance();
-		try (PreparedStatement ps = conn.prepareStatement(SELECT_ALL_PAGED);){
+		
+		try (Connection conn = JDBCManager.getInstance();
+				PreparedStatement ps = conn.prepareStatement(SELECT_ALL_PAGED);){
 			ps.setInt(1,limit);
 			ps.setInt(2, offset);
 			ResultSet rs = ps.executeQuery();
@@ -170,8 +169,9 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	@Override
 	public Computer findById(Long id) {
 		Computer computer = null;
-		Connection conn = JDBCManager.getInstance();
-		try (PreparedStatement ps = conn.prepareStatement(SELECT_ONE);){
+		
+		try (Connection conn = JDBCManager.getInstance();
+				PreparedStatement ps = conn.prepareStatement(SELECT_ONE);){
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
@@ -214,17 +214,16 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	
 	@Override
 	public boolean update(Computer dto) {
-		boolean ok=false;
-		Connection conn = JDBCManager.getInstance();
-		try(PreparedStatement ps = conn.prepareStatement(UPDATE);) {
+		boolean updated=false;
+		try(Connection conn = JDBCManager.getInstance();
+				PreparedStatement ps = conn.prepareStatement(UPDATE);) {
 			ps.setString(1, dto.getName());
 			ps.setTimestamp(2, Timestamp.valueOf(dto.getIntroduced().atStartOfDay()));
 			ps.setTimestamp(3,Timestamp.valueOf(dto.getDiscontinued().atStartOfDay()));
 			ps.setLong(4, dto.getCompany().getId());
 			ps.setLong(5, dto.getId());
-			ps.executeUpdate();
-			ok=true;
-			return ok;
+			if(ps.executeUpdate()!=0)updated =true;
+			return updated;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -236,8 +235,9 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	 */
 	@Override
 	public void delete(Long id) {
-		Connection conn = JDBCManager.getInstance();
-		try (PreparedStatement ps = conn.prepareStatement(DELETE);){
+		
+		try (Connection conn = JDBCManager.getInstance();
+				PreparedStatement ps = conn.prepareStatement(DELETE);){
 			ps.setLong(1, id);
 			ps.execute();
 		} catch (SQLException e) {
