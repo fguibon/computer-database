@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exception.DatabaseQueryException;
@@ -41,7 +41,7 @@ public class ComputerService {
 		try {
 			 created = computerDAO.create(computer);
 		} catch (DatabaseQueryException e) {
-			logger.error("Query error");
+			logger.error("Query error : " + e.getMessage());
 		}
 		return created;
 	}
@@ -51,7 +51,7 @@ public class ComputerService {
 		try {
 			computers = computerDAO.findAll();
 		} catch (DatabaseQueryException e) {
-			logger.error("Query error");
+			logger.error("Query error : "+ e.getMessage());
 		}
 		List<ComputerDTO> computersDTO = (List<ComputerDTO>)computers
 		.stream().map(s -> computerMapper.modelToDto(s))
@@ -64,7 +64,7 @@ public class ComputerService {
 		try {
 			computers = computerDAO.findAllPaged(limit, currentPage);
 		} catch (DatabaseQueryException e) {
-			logger.error("Query error");
+			logger.error("Query error : " + e.getMessage());
 		}
 		List<ComputerDTO> computersDTO = (List<ComputerDTO>)computers
 		.stream().map(s -> computerMapper.modelToDto(s))
@@ -77,7 +77,7 @@ public class ComputerService {
 		try {
 			computer = computerDAO.findById(id);
 		} catch (DatabaseQueryException e) {
-			logger.error("Query error");
+			logger.error("Query error :" + e.getMessage());
 		}
 		ComputerDTO computerDTO = computerMapper.modelToDto(computer);
 		return computerDTO;
@@ -89,7 +89,7 @@ public class ComputerService {
 		try {
 			computerDAO.update(computer);
 		} catch (DatabaseQueryException e) {
-			logger.error("Query error");
+			logger.error("Query error : " + e.getMessage());
 		}
 	}
 	
@@ -98,7 +98,7 @@ public class ComputerService {
 		try {
 			computerDAO.delete(ids);
 		} catch (DatabaseQueryException e) {
-			logger.error("Query error");
+			logger.error("Query error : " + e.getMessage());
 		}
 	}
 }

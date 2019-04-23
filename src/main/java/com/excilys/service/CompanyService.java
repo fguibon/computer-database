@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.mapper.CompanyMapper;
@@ -34,7 +34,7 @@ public class CompanyService {
 		try {
 			companies = companyDAO.findAll();
 		} catch (DatabaseQueryException e) {
-			logger.error("Query error");
+			logger.error("Query error : "+ e.getMessage());
 		}
 		List<CompanyDTO> companiesDTO = (List<CompanyDTO>)companies
 		.stream().map(s -> companyMapper.modelToDto(s))
@@ -47,8 +47,8 @@ public class CompanyService {
 		List<Company> companies = new ArrayList<Company>();
 		try {
 			companies = companyDAO.findAllPaged(page.getEntriesPerPage(), currentPage);
-		} catch (Exception e) {
-			logger.error("Query error");
+		} catch (DatabaseQueryException e) {
+			logger.error("Query error : "+ e.getMessage());
 		}
 		List<CompanyDTO> companiesDTO = (List<CompanyDTO>)companies
 		.stream().map(s -> companyMapper.modelToDto(s))
