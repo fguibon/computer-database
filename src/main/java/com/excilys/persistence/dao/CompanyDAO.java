@@ -56,12 +56,12 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public boolean create(Company dto) {
-		Connection conn = JDBCManager.getInstance();
-		try (PreparedStatement ps = conn.prepareStatement(INSERT);){
+		boolean created = false;
+		try (Connection conn = JDBCManager.getInstance();
+				PreparedStatement ps = conn.prepareStatement(INSERT);){
 			ps.setString(1, dto.getName());
-			ps.execute();
-			// TODO Verify if updated
-			return true;
+			if(ps.executeUpdate()!=0) created =true;
+			return created;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -156,24 +156,16 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public boolean update(Company dto) {
-		Connection conn = JDBCManager.getInstance();
-		boolean company = false;
-		try(PreparedStatement ps = conn.prepareStatement(UPDATE);) {
+		boolean updated = false;
+		try(Connection conn = JDBCManager.getInstance();PreparedStatement ps = conn.prepareStatement(UPDATE);) {
 			ps.setString(1, dto.getName());
 			ps.setLong(2, dto.getId());
-			ps.execute();
-			company = true;
+			if(ps.executeUpdate()!=0) updated = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
-		} finally {
-			if (conn!=null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {}
-			}
-		}
-		return company;
+		} 
+		return updated;
 	}
 
 	/**
@@ -182,20 +174,13 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public void delete(Long id) {
-		Connection conn = JDBCManager.getInstance();
-		try (PreparedStatement ps = conn.prepareStatement(DELETE);){
+		try (Connection conn = JDBCManager.getInstance();PreparedStatement ps = conn.prepareStatement(DELETE);){
 			ps.setLong(1, id);
 			ps.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
-		} finally {
-			if (conn!=null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {}
-			}
-		}
+		} 
 	}
 	
 
