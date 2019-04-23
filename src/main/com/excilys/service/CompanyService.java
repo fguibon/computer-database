@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import main.com.excilys.binding.dto.CompanyDTO;
 import main.com.excilys.binding.mapper.CompanyMapper;
 import main.com.excilys.model.Company;
+import main.com.excilys.model.Page;
 import main.com.excilys.persistence.dao.CompanyDAO;
-import main.com.excilys.validator.CompanyValidator;
 
 public class CompanyService {
 	
@@ -15,7 +15,6 @@ public class CompanyService {
 	
 	private CompanyDAO companyDAO = CompanyDAO.getInstance();
 	private CompanyMapper companyMapper = CompanyMapper.getInstance();
-	CompanyValidator companyValidator = new CompanyValidator();
 	
 	private CompanyService() {}
 	
@@ -32,8 +31,8 @@ public class CompanyService {
 	}
 	
 
-	public List<CompanyDTO> getCompanies(int limit, int currentPage) {
-		List<Company> companies = companyDAO.findAllPaged(limit, currentPage);
+	public List<CompanyDTO> getCompanies(Page page, int currentPage) {
+		List<Company> companies = companyDAO.findAllPaged(page.getEntriesPerPage(), currentPage);
 		List<CompanyDTO> companiesDTO = (List<CompanyDTO>)companies
 		.stream().map(s -> companyMapper.modelToDto(s))
 		.collect(Collectors.toList());

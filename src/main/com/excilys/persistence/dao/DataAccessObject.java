@@ -11,6 +11,6 @@ public abstract class DataAccessObject<T> {
 	public abstract boolean create(T dto);
 	public abstract List<T> findAll();
 	public abstract T findById(Long id);
-	public abstract T update( T dto);
+	public abstract boolean update( T dto);
 	public abstract void delete(Long id);
 }

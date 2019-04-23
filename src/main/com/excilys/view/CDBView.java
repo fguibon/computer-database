@@ -4,15 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import main.com.excilys.binding.dto.CompanyDTO;
 import main.com.excilys.binding.dto.ComputerDTO;
-import main.com.excilys.model.Company;
-import main.com.excilys.model.Computer;
 import main.com.excilys.model.Page;
 
 public class CDBView {
@@ -89,21 +84,17 @@ public class CDBView {
 	 * Asks for the id
 	 * @return a Long
 	 */
-	public Long queryId() {
+	public String queryId() {
 			
-		Long id = null;
 		System.out.println("Enter the id: ");
 		String ans ="";
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			ans= br.readLine();
-			id = Long.parseLong(ans);
-		} catch(NumberFormatException fn) {
-			this.notifyInvalidId();
 		} catch (IOException e) {
 			System.out.println("IO error"+e.getMessage());
 		}	
-		return id;
+		return ans;
 	}
 	
 	/**
@@ -127,11 +118,10 @@ public class CDBView {
 	 * Asks for the date
 	 * @return a String
 	 */
-	public LocalDate queryDate() {
-		LocalDate date=null;
-		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	public String queryDate() {
 		
-		String year ="",month="",day="";
+		
+		String date="",year ="",month="",day="";
 		
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -144,11 +134,7 @@ public class CDBView {
 		} catch (IOException e) {
 			System.out.println("IO error"+e.getMessage());
 		}
-		try {
-			date = LocalDate.parse(year+"-"+month+"-"+day,format);
-		} catch(DateTimeParseException e) {
-			System.out.println("Invalid date : "+e.getMessage());
-		}
+		date = year+"-"+month+"-"+day;
 		
 		return date;
 	}

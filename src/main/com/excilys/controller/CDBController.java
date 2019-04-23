@@ -1,11 +1,10 @@
 package main.com.excilys.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import main.com.excilys.binding.dto.CompanyDTO;
 import main.com.excilys.binding.dto.ComputerDTO;
-import main.com.excilys.model.Company;
-import main.com.excilys.model.Computer;
 import main.com.excilys.model.Page;
 import main.com.excilys.service.CompanyService;
 import main.com.excilys.service.ComputerService;
@@ -29,6 +28,8 @@ public class CDBController {
 	private CDBController(CompanyService companyService, ComputerService computerService){
 		page = new Page(LIMIT,CURRENT_PAGE);
 		view = new CDBView(System.in);
+		this.companyService = companyService;
+		this.computerService = computerService;
 	}
 	
 	public static CDBController getInstance() {
@@ -79,9 +80,9 @@ public class CDBController {
 	public void listComputers() {
 		currentPage =1;
 		boolean ok=true;
-		List<ComputerDTO> computers = null;
+		List<ComputerDTO> computers = new ArrayList<ComputerDTO>();
 		while(ok) {
-			computers = this.computerService.getComputers(LIMIT,currentPage);
+			computers = this.computerService.getComputers(this.LIMIT,currentPage);
 			if(computers.isEmpty())	ok=false;
 			page.setCurrentPage(currentPage++);
 			this.view.displayComputers(computers,page);
@@ -95,9 +96,9 @@ public class CDBController {
 	public void listCompanies() {
 		currentPage =1;
 		boolean ok=true;
-		List<CompanyDTO> companies = null;
+		List<CompanyDTO> companies = new ArrayList<CompanyDTO>();
 		while(ok) {
-			companies = this.companyService.getCompanies(LIMIT, currentPage);
+			companies = this.companyService.getCompanies(page, currentPage);
 			if(companies.isEmpty()) ok=false;
 			page.setCurrentPage(currentPage++);
 			this.view.displayCompanies(companies,page);
@@ -109,7 +110,7 @@ public class CDBController {
 	 */
 	public void showComputerDetail() {
 		ComputerDTO computer = null;
-		Long id = this.view.queryId();
+		Long id = Long.parseLong(this.view.queryId());
 		if(id!=null) computer = this.computerService.findById(id);
 		if(computer!=null)	this.view.displayComputer(computer);
 	}
@@ -128,8 +129,7 @@ public class CDBController {
 	 * option 5
 	 */
 	public void updateComputer() {
-		Computer computer = null;
-		computer = this.queryComputerToUpdate();
+		ComputerDTO computer = this.queryComputerToUpdate();
 		if(computer!=null) this.computerService.update(computer);	
 	}
 	
@@ -137,7 +137,7 @@ public class CDBController {
 	 * option 6
 	 */
 	public void deleteComputer() {
-		Long id = null;
+		String id = null;
 		id = this.queryComputerToDelete();
 		if(id!=null) this.computerService.delete(id);	
 	}
@@ -155,8 +155,8 @@ public class CDBController {
 			computer.setName(name);
 			computer.setIntroduced(view.queryDate());
 			computer.setDiscontinued(view.queryDate());
-			computer.setCompany(new Company());
-			computer.getCompany().setId(view.queryId());
+			computer.setCompanyDTO(new CompanyDTO());
+			computer.getCompanyDTO().setId(view.queryId());
 		} else {
 			view.notifyInvalidName();
 		}
@@ -169,12 +169,13 @@ public class CDBController {
 	 */
 	public ComputerDTO queryComputerToUpdate() {
 		ComputerDTO computer = new ComputerDTO();
+		computer.setCompanyDTO(new CompanyDTO());
 		
 		computer.setId(view.queryId());
 		computer.setName(view.queryName());
 		computer.setIntroduced(view.queryDate());
 		computer.setDiscontinued(view.queryDate());
-		computer.getCompany().setId(view.queryId());
+		computer.getCompanyDTO().setId(view.queryId());
 
 		return computer;
 	}
@@ -184,7 +185,7 @@ public class CDBController {
 	 * Asks for an id
 	 * @return the id
 	 */
-	public Long queryComputerToDelete() {
+	public String queryComputerToDelete() {
 		return view.queryId();
 	}
 

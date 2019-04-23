@@ -29,34 +29,34 @@ public class ComputerMapper {
 		
 		if (computerDTO.getId() != null) {
 			computer.setId(Long.parseLong(computerDTO.getId()));
-		}
-		
-		else {
 			computer.setName(computerDTO.getName());
 			computer.setIntroduced(LocalDate.parse(computerDTO.getIntroduced()));
 			computer.setDiscontinued(LocalDate.parse(computerDTO.getDiscontinued()));
 			Company company = companyDAO.findById(Long.parseLong(computerDTO.getCompanyDTO().getId()));
 
 			computer.setCompany(company);
-			
 		}
+		
+		
 		return computer;
 	}
 
 
 	public ComputerDTO modelToDto(Computer computer) {
-		ComputerDTO theComputerDTO = new ComputerDTO();
-		theComputerDTO.setId(Long.toString(computer.getId()));
-		theComputerDTO.setName(computer.getName());
+		ComputerDTO computerDTO = new ComputerDTO();
+		computerDTO.setId(Long.toString(computer.getId()));
+		computerDTO.setName(computer.getName());
 		if (computer.getIntroduced() != null) {
-			theComputerDTO.setIntroduced(computer.getIntroduced().toString());
+			computerDTO.setIntroduced(computer.getIntroduced().toString());
 		}
 		if (computer.getDiscontinued() != null) {
-			theComputerDTO.setDiscontinued(computer.getDiscontinued().toString());
+			computerDTO.setDiscontinued(computer.getDiscontinued().toString());
 		}
 		CompanyDTO companyDTO = new CompanyDTO();
-		companyDTO.setId(Long.toString(computer.getCompany().getId()));
-		theComputerDTO.setCompanyDTO(companyDTO);
-		return theComputerDTO;
+		if(computer.getCompany().getId()!=null) {
+			companyDTO.setId(computer.getCompany().getId().toString());
+		}
+		computerDTO.setCompanyDTO(companyDTO);
+		return computerDTO;
 }
 }

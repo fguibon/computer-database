@@ -155,14 +155,14 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 * @return a Company object
 	 */
 	@Override
-	public Company update(Company dto) {
+	public boolean update(Company dto) {
 		Connection conn = JDBCManager.getInstance();
-		Company company = null;
+		boolean company = false;
 		try(PreparedStatement ps = conn.prepareStatement(UPDATE);) {
 			ps.setString(1, dto.getName());
 			ps.setLong(2, dto.getId());
 			ps.execute();
-			company = this.findById(dto.getId());
+			company = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);

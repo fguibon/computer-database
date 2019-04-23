@@ -211,9 +211,10 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	 * Updates a Computer information
 	 * @return a Computer object
 	 */
+	
 	@Override
-	public Computer update(Computer dto) {
-		Computer computer = null;
+	public boolean update(Computer dto) {
+		boolean ok=false;
 		Connection conn = JDBCManager.getInstance();
 		try(PreparedStatement ps = conn.prepareStatement(UPDATE);) {
 			ps.setString(1, dto.getName());
@@ -222,7 +223,8 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			ps.setLong(4, dto.getCompany().getId());
 			ps.setLong(5, dto.getId());
 			ps.executeUpdate();
-			return computer;
+			ok=true;
+			return ok;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);

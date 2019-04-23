@@ -8,7 +8,6 @@ import main.com.excilys.binding.mapper.ComputerMapper;
 import main.com.excilys.model.Computer;
 import main.com.excilys.persistence.dao.ComputerDAO;
 import main.com.excilys.validator.ComputerValidator;
-import main.com.excilys.validator.Validator;
 
 public class ComputerService {
 
@@ -24,12 +23,12 @@ public class ComputerService {
 		return instance;
 	}
 	
-	public ComputerService(Validator<Computer> validator) {
+	public ComputerService(ComputerValidator validator) {
 		validator = new ComputerValidator();
 	}
 	
 	public boolean createComputer(ComputerDTO computerDTO) {
-		//computerValidator.validate(computer);
+		computerValidator.validate(computerDTO);
 		Computer computer = computerMapper.dtoToModel(computerDTO);
 		return computerDAO.create(computer);
 	}
@@ -57,12 +56,13 @@ public class ComputerService {
 	}
 	
 	public void update(ComputerDTO computerDTO) {
-		//computerValidator.validate(computerDTO);
+		computerValidator.validate(computerDTO);
 		Computer computer = computerMapper.dtoToModel(computerDTO);
 		computerDAO.update(computer);
 	}
 	
-	public void delete(Long id) {
-		computerDAO.delete(id);
+	public void delete(String id) {
+		Long ids = Long.parseLong(id);
+		computerDAO.delete(ids);
 	}
 }

@@ -1,17 +1,16 @@
 package main.com.excilys.validator;
 
-import main.com.excilys.model.Computer;
+import main.com.excilys.binding.dto.ComputerDTO;
 
-public class ComputerValidator implements Validator<Computer> {
+public class ComputerValidator {
 
 	public ComputerValidator() {	
 	}
 	
-	@Override
-	public void validate(Computer computer) {
+	public void validate(ComputerDTO computerDTO) {
 		boolean valid=false;
-		valid=( computer.getName()!=null 
-				&& computer.getDiscontinued().compareTo(computer.getIntroduced())<0 );
+		valid=( computerDTO.getName()!=null 
+				&& computerDTO.getDiscontinued().compareTo(computerDTO.getIntroduced())>0 );
 		if(!valid) throw new RuntimeException();
 	}
 	
