@@ -8,7 +8,7 @@ public class CompanyDAOTest {
 
 	@Test
 	public void test() {
-		fail("Not yet implemented");
+		ComputerDAO computerDAO = ComputerDAO.getInstance();
 	}
 
 }
