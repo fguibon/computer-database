@@ -36,7 +36,7 @@ public class CompanyDTO {
 	
 	@Override
 	public String toString() {
-		return "CompanyDTO [id=" + id + ", name=" + name + "]";
+		return "Company [id=" + id + ", name=" + name + "]";
 	}
 	
 }

@@ -2,8 +2,12 @@ package com.excilys.binding.mapper;
 
 import java.time.LocalDate;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
+import com.excilys.exception.DatabaseQueryException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.persistence.dao.CompanyDAO;
@@ -11,8 +15,10 @@ import com.excilys.persistence.dao.CompanyDAO;
 public class ComputerMapper {
 	
 	private static ComputerMapper instance = new ComputerMapper(CompanyDAO.getInstance());
-	private CompanyDAO companyDAO;
+	private static final Logger logger = 
+			LogManager.getLogger(ComputerMapper.class);
 	
+	private CompanyDAO companyDAO;
 	
 	
 	private ComputerMapper(CompanyDAO companyDAO) {
@@ -32,7 +38,12 @@ public class ComputerMapper {
 			computer.setName(computerDTO.getName());
 			computer.setIntroduced(LocalDate.parse(computerDTO.getIntroduced()));
 			computer.setDiscontinued(LocalDate.parse(computerDTO.getDiscontinued()));
-			Company company = companyDAO.findById(Long.parseLong(computerDTO.getCompanyDTO().getId()));
+			Company company = new Company();
+			try {
+				company = companyDAO.findById(Long.parseLong(computerDTO.getCompanyDTO().getId()));
+			} catch (NumberFormatException | DatabaseQueryException e) {
+				logger.error("Invalid conversion");
+			}
 
 			computer.setCompany(company);
 		}
@@ -55,6 +66,7 @@ public class ComputerMapper {
 		CompanyDTO companyDTO = new CompanyDTO();
 		if(computer.getCompany().getId()!=null) {
 			companyDTO.setId(computer.getCompany().getId().toString());
+			companyDTO.setName(computer.getName());
 		}
 		computerDTO.setCompanyDTO(companyDTO);
 		return computerDTO;

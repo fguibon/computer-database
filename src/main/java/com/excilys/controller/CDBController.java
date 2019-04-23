@@ -76,6 +76,7 @@ public class CDBController {
 
 	/**
 	 * option 1
+	 * @throws  
 	 */
 	public void listComputers() {
 		currentPage =1;

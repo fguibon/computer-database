@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.excilys.exception.DatabaseQueryException;
 import com.excilys.model.Company;
 import com.excilys.persistence.jdbc.JDBCManager;
 
@@ -53,9 +54,10 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	/**
 	 * Creates a company
 	 * @return a boolean value to know if it is created
+	 * @throws DatabaseQueryException 
 	 */
 	@Override
-	public boolean create(Company dto) {
+	public boolean create(Company dto) throws DatabaseQueryException {
 		boolean created = false;
 		try (Connection conn = JDBCManager.getInstance();
 				PreparedStatement ps = conn.prepareStatement(INSERT);){
@@ -63,30 +65,26 @@ public class CompanyDAO extends DataAccessObject<Company>{
 			if(ps.executeUpdate()!=0) created =true;
 			return created;	
 		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new DatabaseQueryException(INSERT);
 		}
 	}
 
 	/**
 	 * Finds and returns all companies in the table
 	 * @return a List of companies
+	 * @throws DatabaseQueryException 
 	 */
 	@Override
-	public List<Company> findAll() {
+	public List<Company> findAll() throws DatabaseQueryException {
 		
 		List<Company> companies = new ArrayList<Company>();
 		try (Connection conn = JDBCManager.getInstance();
 				ResultSet rs = conn.createStatement().executeQuery(SELECT_ALL);){
 			while (rs.next()) {
-				Long id = rs.getLong("id");
-				String name = rs.getString("name");
-				Company company = new Company(id, name);
-				companies.add(company);
+				companies.add( new Company(rs.getLong("id"),rs.getString("name")));
 			}
 		} catch(SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new DatabaseQueryException(SELECT_ALL) ;
 		}
 		return companies;
 	}
@@ -96,10 +94,12 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 * @param limit
 	 * @param currentPage
 	 * @return
+	 * @throws Exception 
 	 */
-	public List<Company> findAllPaged(int limit, int currentPage){
-		List<Company> companies = new ArrayList<Company>();
+	public List<Company> findAllPaged(int limit, int currentPage) 
+			throws DatabaseQueryException {
 		
+		List<Company> companies = new ArrayList<Company>();
 		try (Connection conn = JDBCManager.getInstance();
 				PreparedStatement ps = conn.prepareStatement(SELECT_ALL_PAGED);){
 			int offset = ((currentPage-1) * limit);
@@ -107,14 +107,10 @@ public class CompanyDAO extends DataAccessObject<Company>{
 			ps.setInt(2, offset);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				Company company = new Company();
-				company.setId(rs.getLong("id"));
-				company.setName(rs.getString("name"));
-				companies.add(company);
+				companies.add( new Company(rs.getLong("id"),rs.getString("name")));
 			}
 		} catch(SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new DatabaseQueryException(SELECT_ALL_PAGED);
 		}
 		
 		return companies;
@@ -124,9 +120,10 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	/**
 	 * Find a Company by its id
 	 * @return a Company object
+	 * @throws Exception 
 	 */
 	@Override
-	public Company findById(Long id) {
+	public Company findById(Long id) throws DatabaseQueryException {
 		Company company = new Company();
 		try (Connection conn = JDBCManager.getInstance();
 				PreparedStatement ps = conn.prepareStatement(SELECT_ONE);){
@@ -137,8 +134,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 				company.setName(rs.getString("name"));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new DatabaseQueryException(SELECT_ONE);
 		} 
 		return company;
 	}
@@ -146,35 +142,35 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	/**
 	 * Updates a Company information
 	 * @return a Company object
+	 * @throws DatabaseQueryException 
 	 */
 	@Override
-	public boolean update(Company dto) {
+	public boolean update(Company dto) throws DatabaseQueryException {
 		boolean updated = false;
 		try(Connection conn = JDBCManager.getInstance();
 				PreparedStatement ps = conn.prepareStatement(UPDATE);) {
 			ps.setString(1, dto.getName());
 			ps.setLong(2, dto.getId());
 			if(ps.executeUpdate()!=0) updated = true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+		} catch (SQLException e) {
+			throw new DatabaseQueryException(UPDATE);
 		} 
 		return updated;
 	}
 
 	/**
 	 * Deletes a company record
+	 * @throws DatabaseQueryException 
 	 * 
 	 */
 	@Override
-	public void delete(Long id) {
+	public void delete(Long id) throws DatabaseQueryException {
 		try (Connection conn = JDBCManager.getInstance();
 				PreparedStatement ps = conn.prepareStatement(DELETE);){
 			ps.setLong(1, id);
 			ps.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new DatabaseQueryException(DELETE);
 		} 
 	}
 	

@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.excilys.exception.DatabaseQueryException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.persistence.jdbc.JDBCManager;
@@ -56,12 +57,15 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	/**
 	 * Creates a computer
 	 * @return a boolean value to know if it is created
+	 * @throws DatabaseQueryException 
 	 */
 	@Override
-	public boolean create(Computer dto) {
+	public boolean create(Computer dto) throws DatabaseQueryException {
 		boolean created = false;
-		try(Connection conn = JDBCManager.getInstance();
-				PreparedStatement ps = conn.prepareStatement(INSERT);) {
+		try(
+				Connection conn = JDBCManager.getInstance();
+				PreparedStatement ps = conn.prepareStatement(INSERT);
+				) {
 			ps.setString(1, dto.getName());
 			ps.setTimestamp(2,Timestamp.valueOf(dto.getIntroduced().atStartOfDay()));
 			ps.setTimestamp(3,Timestamp.valueOf(dto.getDiscontinued().atStartOfDay()));
@@ -69,22 +73,23 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			if(ps.executeUpdate()!=0) created = true;
 			return created;
 		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new DatabaseQueryException(INSERT);
 		}
 	}
 
 	/**
 	 * Finds and return all computers in the table
 	 * @return a List of computers
+	 * @throws DatabaseQueryException 
 	 */
 	@Override
-	public List<Computer> findAll() {
+	public List<Computer> findAll() throws DatabaseQueryException {
 		List<Computer> computers = new ArrayList<Computer>();
 		
-		try(Connection conn = JDBCManager.getInstance();
-				ResultSet rs = conn.createStatement()
-					.executeQuery(SELECT_ALL);) {
+		try(
+				Connection conn = JDBCManager.getInstance();
+				ResultSet rs = conn.createStatement().executeQuery(SELECT_ALL);
+				) {
 			while (rs.next()) {
 				Computer computer = new Computer();
 				computer.setId(rs.getLong("id"));
@@ -104,13 +109,13 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 				computer.setDiscontinued(ldate);
 				Long company_id =rs.getLong("company_id");
 				if(company_id!=null) {
-					Company cp =CompanyDAO.getInstance().findById(company_id);
-					computer.setCompany(cp);
+					Company company = CompanyDAO.getInstance().findById(company_id);
+					computer.setCompany(company);
 				}
 				computers.add(computer);
 			}
 		} catch(SQLException e) {
-			e.printStackTrace();
+			throw new DatabaseQueryException(SELECT_ALL);
 		}
 		return computers;
 	}
@@ -120,16 +125,20 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	 * @param limit
 	 * @param currentPage
 	 * @return
+	 * @throws DatabaseQueryException 
 	 */
-	public List<Computer> findAllPaged(int limit, int currentPage) {
+	public List<Computer> findAllPaged(int limit, int currentPage) throws DatabaseQueryException {
 		List<Computer> computers = new ArrayList<Computer>();
 		int offset = ((currentPage-1) * limit);
 		
-		try (Connection conn = JDBCManager.getInstance();
-				PreparedStatement ps = conn.prepareStatement(SELECT_ALL_PAGED);){
-			ps.setInt(1,limit);
-			ps.setInt(2, offset);
-			ResultSet rs = ps.executeQuery();
+		try (
+				Connection connection = JDBCManager.getInstance();
+				PreparedStatement statement = connection.prepareStatement(SELECT_ALL_PAGED);
+				)
+		{
+			statement.setInt(1,limit);
+			statement.setInt(2, offset);
+			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				Computer computer = new Computer();
 				computer.setId(rs.getLong("id"));
@@ -149,14 +158,14 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 				computer.setDiscontinued(ldate);
 				Long company_id =rs.getLong("company_id");
 				if(company_id!=null) {
-					Company cp =CompanyDAO.getInstance().findById(company_id);
-					computer.setCompany(cp);
+					Company company =CompanyDAO.getInstance().findById(company_id);
+					computer.setCompany(company);
 				}
 				computers.add(computer);
 			}
 			rs.close();
 		} catch(SQLException e) {
-			e.printStackTrace();
+			throw new DatabaseQueryException(SELECT_ALL_PAGED);
 		}
 		return computers;
 	}
@@ -165,9 +174,10 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	/**
 	 * Find a Computer by its id
 	 * @return a Computer object
+	 * @throws DatabaseQueryException 
 	 */
 	@Override
-	public Computer findById(Long id) {
+	public Computer findById(Long id) throws DatabaseQueryException {
 		Computer computer = null;
 		
 		try (Connection conn = JDBCManager.getInstance();
@@ -200,8 +210,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 				}		
 			}	
 		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new DatabaseQueryException(SELECT_ONE);
 		}
 		return computer;
 	}
@@ -210,10 +219,11 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	/**
 	 * Updates a Computer information
 	 * @return a Computer object
+	 * @throws DatabaseQueryException 
 	 */
 	
 	@Override
-	public boolean update(Computer dto) {
+	public boolean update(Computer dto) throws DatabaseQueryException {
 		boolean updated=false;
 		try(Connection conn = JDBCManager.getInstance();
 				PreparedStatement ps = conn.prepareStatement(UPDATE);) {
@@ -224,25 +234,24 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			ps.setLong(5, dto.getId());
 			if(ps.executeUpdate()!=0)updated =true;
 			return updated;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+		} catch (SQLException e) {
+			throw new DatabaseQueryException(UPDATE);
 		}
 	}
 
 	/**
 	 * Deletes a computer from the database
+	 * @throws DatabaseQueryException 
 	 */
 	@Override
-	public void delete(Long id) {
+	public void delete(Long id) throws DatabaseQueryException {
 		
 		try (Connection conn = JDBCManager.getInstance();
 				PreparedStatement ps = conn.prepareStatement(DELETE);){
 			ps.setLong(1, id);
 			ps.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new DatabaseQueryException(DELETE);
 		}
 	}
 
