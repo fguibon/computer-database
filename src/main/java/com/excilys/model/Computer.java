@@ -111,11 +111,6 @@ public class Computer {
 		if (getClass() != obj.getClass())
 			return false;
 		Computer other = (Computer) obj;
-		if (company == null) {
-			if (other.company != null)
-				return false;
-		} else if (!company.equals(other.company))
-			return false;
 		if (discontinueddate == null) {
 			if (other.discontinueddate != null)
 				return false;
@@ -135,6 +130,11 @@ public class Computer {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
+			return false;
+		if (company == null) {
+			if (other.company != null)
+				return false;
+		} else if (!company.equals(other.company))
 			return false;
 		return true;
 	}

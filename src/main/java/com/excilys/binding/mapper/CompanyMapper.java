@@ -15,17 +15,22 @@ public class CompanyMapper {
 	
 	
 	public Company dtoToModel(CompanyDTO companyDTO) {
-		Company company = new Company();
-		company.setId(Long.parseLong(companyDTO.getId()));
-		company.setName(companyDTO.getName());
+		Company company = null;
+		if(companyDTO!=null) {
+			company = new Company(Long.parseLong(companyDTO.getId()),
+					companyDTO.getName());
+			return company;
+		}
 		return company;
 	}
 
 	
 	public CompanyDTO modelToDto(Company company) {
-		CompanyDTO companyDTO = new CompanyDTO();
-		companyDTO.setId(Long.toString(company.getId()));
-		companyDTO.setName(company.getName());
+		CompanyDTO companyDTO = null;
+		if(company !=null) {
+			companyDTO = new CompanyDTO(Long.toString(company.getId()),
+					company.getName());
+		}
 		return companyDTO;
 }
 }

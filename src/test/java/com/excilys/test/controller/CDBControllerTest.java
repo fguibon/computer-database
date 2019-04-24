@@ -1,10 +1,10 @@
-package com.excilys.service;
+package com.excilys.test.controller;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class CompanyServiceTest {
+public class CDBControllerTest {
 
 	@Test
 	public void test() {

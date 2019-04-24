@@ -1,10 +1,10 @@
-package com.excilys.binding.dto;
+package com.excilys.test.persistence.dao;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class CompanyDTOTest {
+public class ComputerDAOTest {
 
 	@Test
 	public void test() {

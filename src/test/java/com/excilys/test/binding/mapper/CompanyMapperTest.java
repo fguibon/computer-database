@@ -1,10 +1,11 @@
-package com.excilys.binding.mapper;
+package com.excilys.test.binding.mapper;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
 import com.excilys.binding.dto.CompanyDTO;
+import com.excilys.binding.mapper.CompanyMapper;
 import com.excilys.model.Company;
 
 public class CompanyMapperTest {

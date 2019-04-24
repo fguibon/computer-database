@@ -1,10 +1,10 @@
-package com.excilys.binding.dto;
+package com.excilys.test.service;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class ComputerDTOTest {
+public class CompanyServiceTest {
 
 	@Test
 	public void test() {

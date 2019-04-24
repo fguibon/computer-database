@@ -8,6 +8,14 @@ public class ComputerDTO {
 	private String discontinuedDate;
 	private CompanyDTO companyDTO;
 	
+	public ComputerDTO() {
+	}
+	
+	public ComputerDTO(String id, String name, String introducedDate, 
+			String discontinuedDate, CompanyDTO companyDTO) {
+		
+	}
+	
 	/**
 	 * @return the id
 	 */
@@ -86,6 +94,8 @@ public class ComputerDTO {
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
+	
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
