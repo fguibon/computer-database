@@ -57,11 +57,11 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 * @throws DatabaseQueryException 
 	 */
 	@Override
-	public boolean create(Company dto) throws DatabaseQueryException {
+	public boolean create(Company company) throws DatabaseQueryException {
 		boolean created = false;
 		try (Connection conn = JDBCManager.getInstance();
 				PreparedStatement ps = conn.prepareStatement(INSERT);){
-			ps.setString(1, dto.getName());
+			ps.setString(1, company.getName());
 			if(ps.executeUpdate()!=0) created =true;
 			return created;	
 		} catch (SQLException e) {
@@ -145,12 +145,12 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 * @throws DatabaseQueryException 
 	 */
 	@Override
-	public boolean update(Company dto) throws DatabaseQueryException {
+	public boolean update(Company company) throws DatabaseQueryException {
 		boolean updated = false;
 		try(Connection conn = JDBCManager.getInstance();
 				PreparedStatement ps = conn.prepareStatement(UPDATE);) {
-			ps.setString(1, dto.getName());
-			ps.setLong(2, dto.getId());
+			ps.setString(1, company.getName());
+			ps.setLong(2, company.getId());
 			if(ps.executeUpdate()!=0) updated = true;
 		} catch (SQLException e) {
 			throw new DatabaseQueryException(UPDATE);
