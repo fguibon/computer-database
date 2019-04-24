@@ -13,7 +13,11 @@ public class ComputerDTO {
 	
 	public ComputerDTO(String id, String name, String introducedDate, 
 			String discontinuedDate, CompanyDTO companyDTO) {
-		
+		this.id = id;
+		this.name=name;
+		this.introducedDate = introducedDate;
+		this.discontinuedDate = discontinuedDate;
+		this.companyDTO = companyDTO;
 	}
 	
 	/**
@@ -97,40 +101,17 @@ public class ComputerDTO {
 	
 	
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ComputerDTO other = (ComputerDTO) obj;
-		if (companyDTO == null) {
-			if (other.companyDTO != null)
-				return false;
-		} else if (!companyDTO.equals(other.companyDTO))
-			return false;
-		if (discontinuedDate == null) {
-			if (other.discontinuedDate != null)
-				return false;
-		} else if (!discontinuedDate.equals(other.discontinuedDate))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (introducedDate == null) {
-			if (other.introducedDate != null)
-				return false;
-		} else if (!introducedDate.equals(other.introducedDate))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
+	public boolean equals(Object o) {
+		boolean eq =
+				(o!=null) &&
+				(this.getClass()==o.getClass()) &&
+				(this.id == ((ComputerDTO) o).getId()) &&
+				(this.name == ((ComputerDTO) o).getName()) &&
+				(this.introducedDate == ((ComputerDTO) o).getIntroduced()) &&
+				(this.discontinuedDate == ((ComputerDTO) o).getDiscontinued()) &&
+				(this.companyDTO == ((ComputerDTO) o).getCompanyDTO())
+				;
+		return eq;
 	}
 	
 }

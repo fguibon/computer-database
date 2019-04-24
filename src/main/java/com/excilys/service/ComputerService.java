@@ -10,6 +10,7 @@ import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exception.DatabaseQueryException;
 import com.excilys.model.Computer;
+import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.persistence.dao.ComputerDAO;
 import com.excilys.validator.ComputerValidator;
 
@@ -21,7 +22,7 @@ public class ComputerService {
 			LogManager.getLogger(ComputerService.class);
 	
 	private ComputerDAO computerDAO = ComputerDAO.getInstance();
-	private ComputerMapper computerMapper = ComputerMapper.getInstance();
+	private ComputerMapper computerMapper = ComputerMapper.getInstance(CompanyDAO.getInstance());
 	ComputerValidator computerValidator = new ComputerValidator();
 	
 	private ComputerService() {}
