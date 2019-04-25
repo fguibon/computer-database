@@ -22,7 +22,7 @@ import com.excilys.persistence.jdbc.JDBCManager;
  */
 public class ComputerDAO extends DataAccessObject<Computer>{
 
-	private static ComputerDAO instance = new ComputerDAO();
+	private static ComputerDAO instance = null;
 	
 	private static final String INSERT =
 			"INSERT INTO computer (name,introduced,discontinued,company_id)"
@@ -47,10 +47,11 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 
 	
 	private ComputerDAO() {	
+		super();
 	}
 	
 	public static ComputerDAO getInstance() {
-		return instance;
+		return (instance!=null) ? instance : (instance = new ComputerDAO());
 	}
 
 

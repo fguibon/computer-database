@@ -16,18 +16,24 @@ import com.excilys.persistence.dao.CompanyDAO;
 
 public class CompanyService {
 	
-	private static CompanyService instance = new CompanyService();
+	private static CompanyService instance =null ;
 	private static final Logger logger = 
 			LogManager.getLogger(CompanyService.class);
 	
-	private CompanyDAO companyDAO = CompanyDAO.getInstance();
-	private CompanyMapper companyMapper = CompanyMapper.getInstance();
+	private CompanyDAO companyDAO; 
+	private CompanyMapper companyMapper; 
 	
-	private CompanyService() {}
 	
-	public static CompanyService getInstance() {
-		return instance;
+	private CompanyService(CompanyDAO companyDAO, CompanyMapper companyMapper) {
+		this.companyDAO = companyDAO;
+		this.companyMapper = companyMapper;
 	}
+	
+	
+	public static CompanyService getInstance(CompanyDAO companyDAO, CompanyMapper companyMapper) {
+		return (instance!=null) ? instance : (instance = new CompanyService(companyDAO,companyMapper));
+	}
+	
 	
 	public List<CompanyDTO> getCompanies() {
 		List<Company> companies = new ArrayList<Company>();

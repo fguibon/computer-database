@@ -18,7 +18,8 @@ import com.excilys.persistence.dao.CompanyDAO;
 
 public class ComputerMapper {
 
-	private static ComputerMapper instance=null; // = new ComputerMapper(CompanyDAO.getInstance());
+	private static ComputerMapper instance=null;
+	
 	private static final Logger logger = 
 			LogManager.getLogger(ComputerMapper.class);
 
@@ -77,7 +78,7 @@ public class ComputerMapper {
 			if(computer.getCompany()!=null) {
 				companyDTO = new CompanyDTO();
 				companyDTO.setId(computer.getCompany().getId().toString());
-				companyDTO.setName(computer.getName());
+				companyDTO.setName(computer.getCompany().getName());
 			}
 			computerDTO.setCompanyDTO(companyDTO);
 		}

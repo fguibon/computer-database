@@ -19,7 +19,7 @@ import com.excilys.persistence.jdbc.JDBCManager;
  */
 public class CompanyDAO extends DataAccessObject<Company>{
 
-	private static CompanyDAO instance = new CompanyDAO();
+	private static CompanyDAO instance = null;
 	
 	private static final String INSERT =
 			"INSERT INTO company (name) VALUES(?)";
@@ -47,7 +47,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	}
 	
 	public static CompanyDAO getInstance() {
-		return instance;
+		return (instance!=null) ? instance : (instance =new CompanyDAO());
 	}
 
 

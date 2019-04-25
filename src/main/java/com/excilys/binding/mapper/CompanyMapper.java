@@ -5,12 +5,12 @@ import com.excilys.model.Company;
 
 public class CompanyMapper {
 
-	private static CompanyMapper instance = new CompanyMapper();
+	private static CompanyMapper instance = null;
 	
 	private CompanyMapper() {}
 	
 	public static CompanyMapper getInstance() {
-		return instance;
+		return (instance!=null) ? instance : (instance =new CompanyMapper());
 	}
 	
 	

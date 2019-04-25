@@ -5,7 +5,9 @@ import java.util.List;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
+import com.excilys.binding.mapper.CompanyMapper;
 import com.excilys.model.Page;
+import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 import com.excilys.view.CDBView;
@@ -17,8 +19,7 @@ public class CDBController {
 	
 	private int currentPage;
 	
-	private static CDBController instance = new CDBController(
-			CompanyService.getInstance(),ComputerService.getInstance());
+	private static CDBController instance = null;
 	private Page page;
 	private CDBView view;
 	private CompanyService companyService;
@@ -33,7 +34,8 @@ public class CDBController {
 	}
 	
 	public static CDBController getInstance() {
-		return instance;
+		return (instance!=null) ? instance : (instance = new CDBController(
+				CompanyService.getInstance(CompanyDAO.getInstance(), CompanyMapper.getInstance()),ComputerService.getInstance()));
 	}
 	
 	
