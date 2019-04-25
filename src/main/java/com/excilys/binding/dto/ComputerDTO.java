@@ -1,5 +1,7 @@
 package com.excilys.binding.dto;
 
+import java.util.Objects;
+
 public class ComputerDTO {
 
 	private String id;
@@ -89,29 +91,22 @@ public class ComputerDTO {
 	}
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((companyDTO == null) ? 0 : companyDTO.hashCode());
-		result = prime * result + ((discontinuedDate == null) ? 0 : discontinuedDate.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((introducedDate == null) ? 0 : introducedDate.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
+		return Objects.hash(companyDTO, discontinuedDate, id, introducedDate, name);
 	}
 	
 	
 	@Override
-	public boolean equals(Object o) {
-		boolean eq =
-				(o!=null) &&
-				(this.getClass()==o.getClass()) &&
-				(this.id == ((ComputerDTO) o).getId()) &&
-				(this.name == ((ComputerDTO) o).getName()) &&
-				(this.introducedDate == ((ComputerDTO) o).getIntroduced()) &&
-				(this.discontinuedDate == ((ComputerDTO) o).getDiscontinued()) &&
-				(this.companyDTO == ((ComputerDTO) o).getCompanyDTO())
-				;
-		return eq;
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ComputerDTO other = (ComputerDTO) obj;
+		return Objects.equals(companyDTO, other.companyDTO) && Objects.equals(discontinuedDate, other.discontinuedDate)
+				&& Objects.equals(id, other.id) && Objects.equals(introducedDate, other.introducedDate)
+				&& Objects.equals(name, other.name);
 	}
 	
 }

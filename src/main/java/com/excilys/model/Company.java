@@ -1,5 +1,7 @@
 package com.excilys.model;
 
+import java.util.Objects;
+
 public class Company  {
 
 	private Long id;
@@ -48,11 +50,7 @@ public class Company  {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
+		return Objects.hash(id, name);
 	}
 
 	@Override
@@ -64,17 +62,8 @@ public class Company  {
 		if (getClass() != obj.getClass())
 			return false;
 		Company other = (Company) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
+		return Objects.equals(id, other.id) && Objects.equals(name, other.name);
 	}
+
 	
 }
