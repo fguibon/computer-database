@@ -11,4 +11,7 @@ public class DatabaseQueryException extends Exception {
 		super("SQL Query error : " +query );
 	}
 
+	public DatabaseQueryException() {
+	}
+
 }
