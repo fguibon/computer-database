@@ -75,7 +75,7 @@ public class ComputerMapper {
 				computerDTO.setDiscontinued(castString(computer.getDiscontinued()));
 			}
 			CompanyDTO companyDTO = null;
-			if(computer.getCompany()!=null) {
+			if(computer.getCompany()!=null && computer.getCompany().getId()!=null) {
 				companyDTO = new CompanyDTO();
 				companyDTO.setId(computer.getCompany().getId().toString());
 				companyDTO.setName(computer.getCompany().getName());

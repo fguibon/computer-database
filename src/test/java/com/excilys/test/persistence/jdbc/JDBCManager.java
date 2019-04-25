@@ -1,4 +1,4 @@
-package com.excilys.persistence.jdbc;
+package com.excilys.test.persistence.jdbc;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -6,9 +6,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import javax.sql.DataSource;
+import org.h2.jdbcx.JdbcDataSource;
 
-import com.mysql.cj.jdbc.MysqlDataSource;
+
+
+
 
 /**
  * Singleton to have only one access to the database
@@ -18,14 +20,14 @@ import com.mysql.cj.jdbc.MysqlDataSource;
 public class JDBCManager {
 
 	
-	public static DataSource getDataSource() {
+	public static JdbcDataSource getDataSource() {
 		Properties props = new Properties();
 		FileInputStream fis = null;
-		MysqlDataSource source = null;
+		JdbcDataSource source = null;
 		try {
-			fis = new FileInputStream("src/main/resources/db.properties");
+			fis = new FileInputStream("src/test/resources/db.properties");
 			props.load(fis);
-			source = new MysqlDataSource();
+			source = new JdbcDataSource();
 			source.setURL(props.getProperty("MYSQL_DB_URL"));
 			source.setUser(props.getProperty("MYSQL_DB_USERNAME"));
 			source.setPassword(props.getProperty("MYSQL_DB_PASSWORD"));

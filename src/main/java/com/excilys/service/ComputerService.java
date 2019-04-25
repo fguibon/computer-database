@@ -84,22 +84,25 @@ public class ComputerService {
 		return computerDTO;
 	}
 	
-	public void update(ComputerDTO computerDTO)  {
+	public boolean update(ComputerDTO computerDTO)  {
 		computerValidator.validate(computerDTO);
 		Computer computer = computerMapper.dtoToModel(computerDTO);
+		boolean updated =false;
 		try {
-			computerDAO.update(computer);
+			updated = computerDAO.update(computer);
 		} catch (DatabaseQueryException e) {
 			logger.error("Query error : " + e.getMessage());
 		}
+		return updated;
 	}
 	
-	public void delete(String id)  {
-		Long ids = Long.parseLong(id);
+	public boolean delete(Long id)  {
+		boolean deleted =false;
 		try {
-			computerDAO.delete(ids);
+			deleted = computerDAO.delete(id);
 		} catch (DatabaseQueryException e) {
 			logger.error("Query error : " + e.getMessage());
 		}
+		return deleted;
 	}
 }

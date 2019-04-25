@@ -21,16 +21,18 @@ import com.excilys.model.Computer;
 import com.excilys.persistence.dao.CompanyDAO;
 
 public class ComputerMapperTest {
-
+	
+	ComputerMapper mapper;
+	
 	Computer computer;
+	Company company;
 	ComputerDTO computerDTO;
 	CompanyDTO companyDTO;
-	Company company;
 
 	@Mock
 	CompanyDAO daoMock;
 
-	ComputerMapper mapper;
+	
 
 	@Before
 	public void setUp() throws Exception {
@@ -38,23 +40,13 @@ public class ComputerMapperTest {
 		MockitoAnnotations.initMocks(this);
 		company = new Company(4L, "NASA");
 		companyDTO = new CompanyDTO("4", "NASA");
-		when(daoMock.findById(4L)).thenReturn(company);
 		computer = new Computer(9L, "Coucou", LocalDate.of(2014, 4, 5), LocalDate.of(2015, 3, 2), company);
 		computerDTO = new ComputerDTO("9", "Coucou", "2014-04-05", "2015-03-02", companyDTO);
-
+		
+		when(daoMock.findById(4L)).thenReturn(company);
 		mapper = ComputerMapper.getInstance(daoMock);
 	}
 
-	@Test
-	public void parsingDateTest() {
-		String sDate = "2014-04-05";
-		LocalDate lDate = LocalDate.of(2014, 4, 5);
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		String sDate2 = format.format(Date.from(lDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
-		LocalDate lDate2 = LocalDate.parse(sDate);
-		assertEquals(sDate, sDate2);
-		assertEquals(lDate, lDate2);
-	}
 
 	@Test
 	public void modelToDTOtest() {
@@ -67,4 +59,14 @@ public class ComputerMapperTest {
 	}
 
 
+	@Test
+	public void parsingDateTest() {
+		String sDate = "2014-04-05";
+		LocalDate lDate = LocalDate.of(2014, 4, 5);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String sDate2 = format.format(Date.from(lDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+		LocalDate lDate2 = LocalDate.parse(sDate);
+		assertEquals(sDate, sDate2);
+		assertEquals(lDate, lDate2);
+	}
 }

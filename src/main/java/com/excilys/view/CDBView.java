@@ -35,15 +35,12 @@ public class CDBView {
 				+ "6: Delete a computer ");
 		;
 		int number =0;
-		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		try(BufferedReader br = new BufferedReader(new InputStreamReader(System.in));) {
 			String ans = br.readLine();
 			number = Integer.parseInt(ans);
-		} catch(NumberFormatException fn) {
-			this.notifyInvalidId();
-		} catch (IOException e) {
-			System.out.println("IO error : "+e.getMessage());
-		}
+		} catch(NumberFormatException | IOException e) {
+			this.notifyProblem();
+		} 
 		return number;
 	}
 	
@@ -84,17 +81,19 @@ public class CDBView {
 	 * Asks for the id
 	 * @return a Long
 	 */
-	public String queryId() {
+	public Long queryId() {
 			
 		System.out.println("Enter the id: ");
 		String ans ="";
-		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			ans= br.readLine();
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));){
+			ans= br.readLine();	
 		} catch (IOException e) {
-			System.out.println("IO error"+e.getMessage());
-		}	
-		return ans;
+			this.notifyProblem();
+		}
+		Long id = null;
+		try{ id = Long.parseLong(ans); } 
+		catch (NumberFormatException nfe) { this.notifyInvalidId();}
+		return id;
 	}
 	
 	/**
@@ -105,12 +104,12 @@ public class CDBView {
 		
 		String name="";
 		System.out.println("Enter the name: ");
-		try {	
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));){	
 			name = br.readLine();
 		} catch (IOException e) {
-			System.out.println("IO error"+e.getMessage());
+			this.notifyProblem();
 		}
+		if(name==null || name.isEmpty()) this.notifyInvalidName();
 		return name;
 	}
 	
@@ -119,10 +118,8 @@ public class CDBView {
 	 * @return a String
 	 */
 	public String queryDate() {
-		
-		
+			
 		String date="",year ="",month="",day="";
-		
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("Enter the year: ");
@@ -132,13 +129,20 @@ public class CDBView {
 			System.out.println("Enter the day: ");
 			day = br.readLine();
 		} catch (IOException e) {
-			System.out.println("IO error"+e.getMessage());
+			this.notifyProblem();
 		}
 		date = year+"-"+month+"-"+day;
 		
 		return date;
 	}
 	
+	public void notifyProblem() {
+		System.out.println("Invalid entry try again!");
+	}
+	
+	public void notifySuccess() {
+		System.out.println("Success!");
+	}
 	
 	public void notifyInvalidNumber() {
 		System.out.println("Invalid number please enter one between 1 and 6.");	

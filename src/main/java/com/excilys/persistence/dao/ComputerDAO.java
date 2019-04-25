@@ -10,6 +10,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.excilys.exception.DatabaseQueryException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
@@ -22,6 +25,9 @@ import com.excilys.persistence.jdbc.JDBCManager;
  */
 public class ComputerDAO extends DataAccessObject<Computer>{
 
+	private static final Logger logger = 
+			LogManager.getLogger(ComputerDAO.class);
+	
 	private static ComputerDAO instance = null;
 	
 	private static final String INSERT =
@@ -62,7 +68,6 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	 */
 	@Override
 	public boolean create(Computer dto) throws DatabaseQueryException {
-		boolean created = false;
 		try(
 				Connection conn = JDBCManager.getInstance();
 				PreparedStatement ps = conn.prepareStatement(INSERT);
@@ -71,9 +76,9 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			ps.setTimestamp(2,Timestamp.valueOf(dto.getIntroduced().atStartOfDay()));
 			ps.setTimestamp(3,Timestamp.valueOf(dto.getDiscontinued().atStartOfDay()));
 			ps.setLong(4, dto.getCompany().getId());
-			if(ps.executeUpdate()!=0) created = true;
-			return created;
+			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
+			logger.error("Query error : "+ e.getMessage());
 			throw new DatabaseQueryException(INSERT);
 		}
 	}
@@ -116,6 +121,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 				computers.add(computer);
 			}
 		} catch(SQLException e) {
+			logger.error("Query error : "+ e.getMessage());
 			throw new DatabaseQueryException(SELECT_ALL);
 		}
 		return computers;
@@ -132,10 +138,8 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 		List<Computer> computers = new ArrayList<Computer>();
 		int offset = ((currentPage-1) * limit);
 		
-		try (
-				Connection connection = JDBCManager.getInstance();
-				PreparedStatement statement = connection.prepareStatement(SELECT_ALL_PAGED);
-				)
+		try ( Connection connection = JDBCManager.getInstance();
+			PreparedStatement statement = connection.prepareStatement(SELECT_ALL_PAGED);)
 		{
 			statement.setInt(1,limit);
 			statement.setInt(2, offset);
@@ -166,6 +170,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			}
 			rs.close();
 		} catch(SQLException e) {
+			logger.error("Query error : "+ e.getMessage());
 			throw new DatabaseQueryException(SELECT_ALL_PAGED);
 		}
 		return computers;
@@ -211,6 +216,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 				}		
 			}	
 		} catch (SQLException e) {
+			logger.error("Query error : "+ e.getMessage());
 			throw new DatabaseQueryException(SELECT_ONE);
 		}
 		return computer;
@@ -225,7 +231,6 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	
 	@Override
 	public boolean update(Computer dto) throws DatabaseQueryException {
-		boolean updated=false;
 		try(Connection conn = JDBCManager.getInstance();
 				PreparedStatement ps = conn.prepareStatement(UPDATE);) {
 			ps.setString(1, dto.getName());
@@ -233,25 +238,27 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			ps.setTimestamp(3,Timestamp.valueOf(dto.getDiscontinued().atStartOfDay()));
 			ps.setLong(4, dto.getCompany().getId());
 			ps.setLong(5, dto.getId());
-			if(ps.executeUpdate()!=0)updated =true;
-			return updated;
+			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
+			logger.error("Query error : "+ e.getMessage());
 			throw new DatabaseQueryException(UPDATE);
 		}
 	}
 
 	/**
 	 * Deletes a computer from the database
+	 * @return 
 	 * @throws DatabaseQueryException 
 	 */
 	@Override
-	public void delete(Long id) throws DatabaseQueryException {
+	public boolean delete(Long id) throws DatabaseQueryException {
 		
 		try (Connection conn = JDBCManager.getInstance();
 				PreparedStatement ps = conn.prepareStatement(DELETE);){
 			ps.setLong(1, id);
-			ps.execute();
+			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
+			logger.error("Query error : "+ e.getMessage());
 			throw new DatabaseQueryException(DELETE);
 		}
 	}

@@ -12,7 +12,7 @@ public class MainApp {
 			LogManager.getLogger(MainApp.class);
 	
 	public static void main(String[] args) {
-		logger.error("App started");
+		logger.info("App started");
 		CDBController.getInstance().start();
 		
 	}

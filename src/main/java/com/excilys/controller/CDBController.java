@@ -71,6 +71,7 @@ public class CDBController {
 					break;
 				default:
 					view.notifyInvalidNumber();
+					break;
 			}
 		}
 	}
@@ -113,7 +114,7 @@ public class CDBController {
 	 */
 	public void showComputerDetail() {
 		ComputerDTO computer = null;
-		Long id = Long.parseLong(this.view.queryId());
+		Long id = this.view.queryId();
 		if(id!=null) computer = this.computerService.findById(id);
 		if(computer!=null)	this.view.displayComputer(computer);
 	}
@@ -124,7 +125,11 @@ public class CDBController {
 	public void createComputer() {
 		ComputerDTO computer =null;
 		computer = this.queryComputerToCreate();
-		if(computer!=null) this.computerService.createComputer(computer);
+		if(computer!=null) {
+			if(this.computerService.createComputer(computer)) {
+				view.notifySuccess();
+			}
+		}
 	}
 	
 
@@ -133,16 +138,20 @@ public class CDBController {
 	 */
 	public void updateComputer() {
 		ComputerDTO computer = this.queryComputerToUpdate();
-		if(computer!=null) this.computerService.update(computer);	
+		if(computer!=null) {
+			if(this.computerService.update(computer)) view.notifySuccess();
+		}
 	}
 	
 	/**
 	 * option 6
 	 */
 	public void deleteComputer() {
-		String id = null;
+		Long id = null;
 		id = this.queryComputerToDelete();
-		if(id!=null) this.computerService.delete(id);	
+		if(id!=null) {
+			if(this.computerService.delete(id)) view.notifySuccess();	
+		}
 	}
 	
 	
@@ -159,10 +168,8 @@ public class CDBController {
 			computer.setIntroduced(view.queryDate());
 			computer.setDiscontinued(view.queryDate());
 			computer.setCompanyDTO(new CompanyDTO());
-			computer.getCompanyDTO().setId(view.queryId());
-		} else {
-			view.notifyInvalidName();
-		}
+			computer.getCompanyDTO().setId(Long.toString(view.queryId()));
+		} 
 		return computer;
 	}
 	
@@ -174,11 +181,11 @@ public class CDBController {
 		ComputerDTO computer = new ComputerDTO();
 		computer.setCompanyDTO(new CompanyDTO());
 		
-		computer.setId(view.queryId());
+		computer.setId(Long.toString(view.queryId()));
 		computer.setName(view.queryName());
 		computer.setIntroduced(view.queryDate());
 		computer.setDiscontinued(view.queryDate());
-		computer.getCompanyDTO().setId(view.queryId());
+		computer.getCompanyDTO().setId(Long.toString(view.queryId()));
 
 		return computer;
 	}
@@ -188,7 +195,7 @@ public class CDBController {
 	 * Asks for an id
 	 * @return the id
 	 */
-	public String queryComputerToDelete() {
+	public Long queryComputerToDelete() {
 		return view.queryId();
 	}
 

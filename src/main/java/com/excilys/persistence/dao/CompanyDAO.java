@@ -8,6 +8,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.excilys.exception.DatabaseQueryException;
 import com.excilys.model.Company;
 import com.excilys.persistence.jdbc.JDBCManager;
@@ -19,6 +22,9 @@ import com.excilys.persistence.jdbc.JDBCManager;
  */
 public class CompanyDAO extends DataAccessObject<Company>{
 
+	private static final Logger logger = 
+			LogManager.getLogger(CompanyDAO.class);
+	
 	private static CompanyDAO instance = null;
 	
 	private static final String INSERT =
@@ -58,13 +64,12 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public boolean create(Company company) throws DatabaseQueryException {
-		boolean created = false;
 		try (Connection conn = JDBCManager.getInstance();
 				PreparedStatement ps = conn.prepareStatement(INSERT);){
 			ps.setString(1, company.getName());
-			if(ps.executeUpdate()!=0) created =true;
-			return created;	
+			return ps.executeUpdate()>0;	
 		} catch (SQLException e) {
+			logger.error("Query error : "+ e.getMessage());
 			throw new DatabaseQueryException(INSERT);
 		}
 	}
@@ -84,6 +89,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 				companies.add( new Company(rs.getLong("id"),rs.getString("name")));
 			}
 		} catch(SQLException e) {
+			logger.error("Query error : "+ e.getMessage());
 			throw new DatabaseQueryException(SELECT_ALL) ;
 		}
 		return companies;
@@ -110,9 +116,9 @@ public class CompanyDAO extends DataAccessObject<Company>{
 				companies.add( new Company(rs.getLong("id"),rs.getString("name")));
 			}
 		} catch(SQLException e) {
+			logger.error("Query error : "+ e.getMessage());
 			throw new DatabaseQueryException(SELECT_ALL_PAGED);
 		}
-		
 		return companies;
 	}
 
@@ -134,6 +140,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 				company.setName(rs.getString("name"));
 			}
 		} catch (SQLException e) {
+			logger.error("Query error : "+ e.getMessage());
 			throw new DatabaseQueryException(SELECT_ONE);
 		} 
 		return company;
@@ -146,16 +153,15 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public boolean update(Company company) throws DatabaseQueryException {
-		boolean updated = false;
 		try(Connection conn = JDBCManager.getInstance();
 				PreparedStatement ps = conn.prepareStatement(UPDATE);) {
 			ps.setString(1, company.getName());
 			ps.setLong(2, company.getId());
-			if(ps.executeUpdate()!=0) updated = true;
+			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
+			logger.error("Query error : "+ e.getMessage());
 			throw new DatabaseQueryException(UPDATE);
 		} 
-		return updated;
 	}
 
 	/**
@@ -164,12 +170,13 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 * 
 	 */
 	@Override
-	public void delete(Long id) throws DatabaseQueryException {
+	public boolean delete(Long id) throws DatabaseQueryException {
 		try (Connection conn = JDBCManager.getInstance();
 				PreparedStatement ps = conn.prepareStatement(DELETE);){
 			ps.setLong(1, id);
-			ps.execute();
+			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
+			logger.error("Query error : "+ e.getMessage());
 			throw new DatabaseQueryException(DELETE);
 		} 
 	}

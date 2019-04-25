@@ -14,5 +14,5 @@ public abstract class DataAccessObject<T> {
 	public abstract List<T> findAll() throws DatabaseQueryException;
 	public abstract T findById(Long id) throws DatabaseQueryException;
 	public abstract boolean update( T dto) throws DatabaseQueryException;
-	public abstract void delete(Long id) throws DatabaseQueryException;
+	public abstract boolean delete(Long id) throws DatabaseQueryException;
 }
