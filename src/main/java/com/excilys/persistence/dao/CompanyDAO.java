@@ -64,7 +64,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public boolean create(Company company) throws DatabaseQueryException {
-		try (Connection conn = JDBCManager.getInstance();
+		try (Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(INSERT);){
 			ps.setString(1, company.getName());
 			return ps.executeUpdate()>0;	
@@ -83,7 +83,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	public List<Company> findAll() throws DatabaseQueryException {
 		
 		List<Company> companies = new ArrayList<Company>();
-		try (Connection conn = JDBCManager.getInstance();
+		try (Connection conn = JDBCManager.getInstance().getConnection();
 				ResultSet rs = conn.createStatement().executeQuery(SELECT_ALL);){
 			while (rs.next()) {
 				companies.add( new Company(rs.getLong("id"),rs.getString("name")));
@@ -106,7 +106,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 			throws DatabaseQueryException {
 		
 		List<Company> companies = new ArrayList<Company>();
-		try (Connection conn = JDBCManager.getInstance();
+		try (Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(SELECT_ALL_PAGED);){
 			int offset = ((currentPage-1) * limit);
 			ps.setInt(1,limit);
@@ -131,7 +131,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	@Override
 	public Company findById(Long id) throws DatabaseQueryException {
 		Company company = new Company();
-		try (Connection conn = JDBCManager.getInstance();
+		try (Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(SELECT_ONE);){
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
@@ -153,7 +153,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public boolean update(Company company) throws DatabaseQueryException {
-		try(Connection conn = JDBCManager.getInstance();
+		try(Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(UPDATE);) {
 			ps.setString(1, company.getName());
 			ps.setLong(2, company.getId());
@@ -171,7 +171,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public boolean delete(Long id) throws DatabaseQueryException {
-		try (Connection conn = JDBCManager.getInstance();
+		try (Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(DELETE);){
 			ps.setLong(1, id);
 			return ps.executeUpdate()>0;

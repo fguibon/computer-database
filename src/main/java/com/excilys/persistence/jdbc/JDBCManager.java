@@ -1,14 +1,14 @@
 package com.excilys.persistence.jdbc;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
+import java.util.ResourceBundle;
 
-import javax.sql.DataSource;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import com.mysql.cj.jdbc.MysqlDataSource;
+import com.excilys.persistence.dao.CompanyDAO;
 
 /**
  * Singleton to have only one access to the database
@@ -17,35 +17,45 @@ import com.mysql.cj.jdbc.MysqlDataSource;
  */
 public class JDBCManager {
 
+	private static final Logger logger = 
+			LogManager.getLogger(CompanyDAO.class);
+	private static JDBCManager instance = null;
 	
-	public static DataSource getDataSource() {
-		Properties props = new Properties();
-		FileInputStream fis = null;
-		MysqlDataSource source = null;
-		try {
-			fis = new FileInputStream("src/main/resources/db.properties");
-			props.load(fis);
-			source = new MysqlDataSource();
-			source.setURL(props.getProperty("MYSQL_DB_URL"));
-			source.setUser(props.getProperty("MYSQL_DB_USERNAME"));
-			source.setPassword(props.getProperty("MYSQL_DB_PASSWORD"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return source;
+	private static String url;
+	private static String user;
+	private static String password;
+	
+	private JDBCManager() {
+		getConnectionProprieties();
 	}
 	
+	public static JDBCManager getInstance() {
+		return (instance!=null) ? instance : (instance =new JDBCManager());
+	}
 	
-	public static Connection getInstance() {
+	private static ResourceBundle bundle() {
+		return ResourceBundle.getBundle("database");
+	}
+
+	
+	public static void getConnectionProprieties() {
+
+		ResourceBundle bundle = bundle();
+		url=bundle.getString("MYSQL_DB_URL");
+		user=bundle.getString("MYSQL_DB_USERNAME");
+		password=bundle.getString("MYSQL_DB_PASSWORD");
+	}
+
+
+	public Connection getConnection() {
 		Connection cn = null;
 		try {
-			cn = getDataSource().getConnection();
+			cn = DriverManager.getConnection(url, user, password);
 		} catch (SQLException e){
-			System.out.println("Problem with the connexion : "+e.getMessage());
+			logger.error("Problem with the connexion : "+e.getMessage());
 		}
 		return cn;			
 	}
-	
-	
+
+
 }

@@ -35,7 +35,8 @@ public class CDBView {
 				+ "6: Delete a computer ");
 		;
 		int number =0;
-		try(BufferedReader br = new BufferedReader(new InputStreamReader(System.in));) {
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			String ans = br.readLine();
 			number = Integer.parseInt(ans);
 		} catch(NumberFormatException | IOException e) {
@@ -85,7 +86,8 @@ public class CDBView {
 			
 		System.out.println("Enter the id: ");
 		String ans ="";
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));){
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			ans= br.readLine();	
 		} catch (IOException e) {
 			this.notifyProblem();
