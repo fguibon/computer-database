@@ -28,7 +28,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	private static CompanyDAO instance = null;
 	
 	private static final String INSERT =
-			"INSERT INTO company (name) VALUES(?)";
+			"INSERT INTO company (name) VALUES(?);";
 
 	private static final String SELECT_ONE = 
 			"SELECT id,name FROM company WHERE id=?;";

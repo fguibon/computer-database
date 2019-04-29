@@ -32,7 +32,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 
 	private static final String INSERT =
 			"INSERT INTO computer (name,introduced,discontinued,company_id)"
-					+ " VALUES(?, ?, ?, ?)";
+					+ " VALUES (?, ?, ?, ?) ;";
 
 	private static final String SELECT_ONE = 
 			"SELECT id,name,introduced,discontinued,company_id FROM computer WHERE id=?;";
@@ -73,8 +73,18 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 				PreparedStatement ps = conn.prepareStatement(INSERT);
 				) {
 			ps.setString(1, computer.getName());
-			ps.setTimestamp(2,Timestamp.valueOf(computer.getIntroduced().atStartOfDay()));
-			ps.setTimestamp(3,Timestamp.valueOf(computer.getDiscontinued().atStartOfDay()));
+			LocalDate introducedDate = computer.getIntroduced();
+			if(introducedDate!=null) {
+				ps.setTimestamp(2,Timestamp.valueOf(introducedDate.atStartOfDay()));
+			} else {
+				ps.setTimestamp(2, null);
+			}
+			LocalDate discontinuedDate =computer.getDiscontinued();
+			if(discontinuedDate!=null) {
+				ps.setTimestamp(3,Timestamp.valueOf(discontinuedDate.atStartOfDay()));
+			} else {
+				ps.setTimestamp(3,null);
+			}
 			ps.setLong(4, computer.getCompany().getId());
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
@@ -108,11 +118,12 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 				}
 				computer.setIntroduced(ldate);
 
-				date = rs.getDate("discontinued");
-				if(date!=null) {
-					ldate  = date.toLocalDate();
+				Date date2 = rs.getDate("discontinued");
+				LocalDate ldate2 = null;
+				if(date2!=null) {
+					ldate2  = date2.toLocalDate();
 				}
-				computer.setDiscontinued(ldate);
+				computer.setDiscontinued(ldate2);
 				Long company_id =rs.getLong("company_id");
 				if(company_id!=null) {
 					Company company = CompanyDAO.getInstance().findById(company_id);
@@ -234,8 +245,18 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 		try(Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(UPDATE);) {
 			ps.setString(1, computer.getName());
-			ps.setTimestamp(2, Timestamp.valueOf(computer.getIntroduced().atStartOfDay()));
-			ps.setTimestamp(3,Timestamp.valueOf(computer.getDiscontinued().atStartOfDay()));
+			LocalDate introducedDate = computer.getIntroduced();
+			if(introducedDate!=null) {
+				ps.setTimestamp(2,Timestamp.valueOf(introducedDate.atStartOfDay()));
+			} else {
+				ps.setTimestamp(2, null);
+			}
+			LocalDate discontinuedDate =computer.getDiscontinued();
+			if(discontinuedDate!=null) {
+				ps.setTimestamp(3,Timestamp.valueOf(discontinuedDate.atStartOfDay()));
+			} else {
+				ps.setTimestamp(3,null);
+			}
 			ps.setLong(4, computer.getCompany().getId());
 			ps.setLong(5, computer.getId());
 			return ps.executeUpdate()>0;
