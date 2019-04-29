@@ -88,23 +88,23 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-				<li><a href="#" aria-label="Previous"> <span
+				<li><a href="?page=${currentPage - 1}&noOfRecords=${limit}" aria-label="Previous"> <span
 						aria-hidden="true">&laquo;</span>
 				</a></li>
-				<li><a href="#">1</a></li>
-				<li><a href="#">2</a></li>
-				<li><a href="#">3</a></li>
-				<li><a href="#">4</a></li>
-				<li><a href="#">5</a></li>
-				<li><a href="#" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+				<li><a href="?page=${1}&noOfRecords=${limit}">1</a></li>
+				<li><a href="?page=${2}&noOfRecords=${limit}">2</a></li>
+				<li><a href="?page=${3}&noOfRecords=${limit}">3</a></li>
+				<li><a href="?page=${4}&noOfRecords=${limit}">4</a></li>
+				<li><a href="?page=${5}&noOfRecords=${limit}">5</a></li>
+				<li><a href="?page=${currentPage + 1}&noOfRecords=${limit}" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 				</a></li>
 			</ul>
 
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
-				<button type="button" class="btn btn-default">10</button>
-				<button type="button" class="btn btn-default">50</button>
-				<button type="button" class="btn btn-default">100</button>
+				<a class="btn btn-default" href="?page=${currentPage}&noOfRecords=10">10</a>
+				<a class="btn btn-default" href="?page=${currentPage}&noOfRecords=50">50</a>
+				<a class="btn btn-default" href="?page=${currentPage}&noOfRecords=100">100</a>
 			</div>
 		</div>
 

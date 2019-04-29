@@ -52,7 +52,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 					+ "LIMIT ? OFFSET ? ; ";
 	
 	private static final String COUNT = 
-			"SELECT COUNT(id) FROM computer; ";
+			"SELECT id FROM computer; ";
 
 
 	private ComputerDAO() {	
