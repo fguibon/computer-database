@@ -4,7 +4,7 @@ package com.excilys.app;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.excilys.controller.CDBController;
+import com.excilys.controller.CLIController;
 
 public class MainApp {
 
@@ -13,7 +13,7 @@ public class MainApp {
 	
 	public static void main(String[] args) {
 		logger.info("App started");
-		CDBController.getInstance().start();
+		CLIController.getInstance().start();
 		
 	}
 

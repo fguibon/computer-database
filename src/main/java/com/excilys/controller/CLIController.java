@@ -10,31 +10,31 @@ import com.excilys.model.Page;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
-import com.excilys.view.CDBView;
+import com.excilys.view.CLIView;
 
-public class CDBController {
+public class CLIController {
 
 	private final int LIMIT=10;
 	private final int CURRENT_PAGE=1;
 	
 	private int currentPage;
 	
-	private static CDBController instance = null;
+	private static CLIController instance = null;
 	private Page page;
-	private CDBView view;
+	private CLIView view;
 	private CompanyService companyService;
 	private ComputerService computerService;
 	
 	
-	private CDBController(CompanyService companyService, ComputerService computerService){
+	private CLIController(CompanyService companyService, ComputerService computerService){
 		page = new Page(LIMIT,CURRENT_PAGE);
-		view = new CDBView(System.in);
+		view = new CLIView(System.in);
 		this.companyService = companyService;
 		this.computerService = computerService;
 	}
 	
-	public static CDBController getInstance() {
-		return (instance!=null) ? instance : (instance = new CDBController(
+	public static CLIController getInstance() {
+		return (instance!=null) ? instance : (instance = new CLIController(
 				CompanyService.getInstance(CompanyDAO.getInstance(), CompanyMapper.getInstance()),ComputerService.getInstance()));
 	}
 	

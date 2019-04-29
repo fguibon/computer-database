@@ -10,11 +10,11 @@ import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.model.Page;
 
-public class CDBView {
+public class CLIView {
 	
 	InputStream in;
 	
-	public CDBView (InputStream in) {
+	public CLIView (InputStream in) {
 		this.in = in;
 	}
 	
