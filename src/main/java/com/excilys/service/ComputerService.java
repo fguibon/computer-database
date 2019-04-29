@@ -105,4 +105,14 @@ public class ComputerService {
 		}
 		return deleted;
 	}
+	
+	public int count() {
+		int count =0;
+		try {
+			count = computerDAO.count();
+		} catch (DatabaseQueryException e){
+			logger.error("Query error : " + e.getMessage());
+		}
+		return count;
+	}
 }

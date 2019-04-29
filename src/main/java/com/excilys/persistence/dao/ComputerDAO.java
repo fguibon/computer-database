@@ -49,7 +49,10 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 
 	private static final String SELECT_ALL_PAGED =
 			"SELECT id,name,introduced,discontinued,company_id FROM computer "
-					+ "LIMIT ? OFFSET ? ;";
+					+ "LIMIT ? OFFSET ? ; ";
+	
+	private static final String COUNT = 
+			"SELECT COUNT(id) FROM computer; ";
 
 
 	private ComputerDAO() {	
@@ -285,5 +288,21 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			throw new DatabaseQueryException(DELETE);
 		}
 	}
+	
+	public int count() throws DatabaseQueryException {
+		int number = 0;
+		try (Connection conn = JDBCManager.getInstance().getConnection();
+				ResultSet rs = conn.createStatement().executeQuery(COUNT);){
+			while (rs.next()) {
+				number++;
+			}
+		} catch (SQLException e) {
+			logger.error("Query error : "+ e.getMessage());
+			throw new DatabaseQueryException(COUNT);
+		}
+		return number;
+	}
+	
+	
 
 }
