@@ -5,13 +5,18 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
 
+
+	<welcome-file-list>
+		<welcome-file>static/views/dashboard.jsp</welcome-file>
+	</welcome-file-list>
+
 	<servlet>
 		<servlet-name>DashboardServlet</servlet-name>
 		<servlet-class>com.excilys.servlet.DashboardServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>DashboardServlet</servlet-name>
-		<url-pattern></url-pattern>
+		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
