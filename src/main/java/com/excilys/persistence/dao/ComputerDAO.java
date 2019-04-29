@@ -149,7 +149,8 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 		List<Computer> computers = new ArrayList<Computer>();
 		int offset = ((currentPage-1) * limit);
 
-		try ( Connection connection = JDBCManager.getInstance().getConnection();
+		try ( 
+				Connection connection = JDBCManager.getInstance().getConnection();
 				PreparedStatement statement = connection.prepareStatement(SELECT_ALL_PAGED);)
 		{
 			statement.setInt(1,limit);
@@ -167,11 +168,12 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 				}
 				computer.setIntroduced(ldate);
 
-				date = rs.getDate("discontinued");
-				if(date!=null) {
-					ldate  = date.toLocalDate();
+				Date date2 = rs.getDate("discontinued");
+				LocalDate ldate2 = null;
+				if(date2!=null) {
+					ldate2  = date2.toLocalDate();
 				}
-				computer.setDiscontinued(ldate);
+				computer.setDiscontinued(ldate2);
 				Long company_id =rs.getLong("company_id");
 				if(company_id!=null) {
 					Company company =CompanyDAO.getInstance().findById(company_id);

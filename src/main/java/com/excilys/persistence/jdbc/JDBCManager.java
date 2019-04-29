@@ -41,6 +41,11 @@ public class JDBCManager {
 	public static void getConnectionProprieties() {
 
 		ResourceBundle bundle = bundle();
+		try {
+			Class.forName(bundle.getString("MYSQL_DB_DRIVER_CLASS"));
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Driver not Found!");
+		}
 		url=bundle.getString("MYSQL_DB_URL");
 		user=bundle.getString("MYSQL_DB_USERNAME");
 		password=bundle.getString("MYSQL_DB_PASSWORD");
