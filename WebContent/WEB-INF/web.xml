@@ -23,7 +23,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>AddComputerServlet</servlet-name>
-		<url-pattern>/add-computer</url-pattern>
+		<url-pattern>/addComputer</url-pattern>
 	</servlet-mapping>
 
 	<error-page>
