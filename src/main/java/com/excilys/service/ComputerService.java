@@ -16,7 +16,7 @@ import com.excilys.validator.ComputerValidator;
 
 public class ComputerService {
 
-	private static ComputerService instance = new ComputerService();
+	private static ComputerService instance = null;
 	
 	private static final Logger logger = 
 			LogManager.getLogger(ComputerService.class);
@@ -28,7 +28,7 @@ public class ComputerService {
 	private ComputerService() {}
 	
 	public static ComputerService getInstance() {
-		return instance;
+		return (instance!=null) ? instance : (instance = new ComputerService());
 	}
 	
 	public ComputerService(ComputerValidator validator) {

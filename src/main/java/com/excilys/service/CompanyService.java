@@ -20,18 +20,14 @@ public class CompanyService {
 	private static final Logger logger = 
 			LogManager.getLogger(CompanyService.class);
 	
-	private CompanyDAO companyDAO; 
-	private CompanyMapper companyMapper; 
+	private CompanyDAO companyDAO = CompanyDAO.getInstance();  
 	
-	
-	private CompanyService(CompanyDAO companyDAO, CompanyMapper companyMapper) {
-		this.companyDAO = companyDAO;
-		this.companyMapper = companyMapper;
+	private CompanyService() {
 	}
 	
 	
-	public static CompanyService getInstance(CompanyDAO companyDAO, CompanyMapper companyMapper) {
-		return (instance!=null) ? instance : (instance = new CompanyService(companyDAO,companyMapper));
+	public static CompanyService getInstance() {
+		return (instance!=null) ? instance : (instance = new CompanyService());
 	}
 	
 	
@@ -43,7 +39,7 @@ public class CompanyService {
 			logger.error("Query error : "+ e.getMessage());
 		}
 		List<CompanyDTO> companiesDTO = (List<CompanyDTO>)companies
-		.stream().map(s -> companyMapper.modelToDto(s))
+		.stream().map(s -> CompanyMapper.modelToDto(s))
 		.collect(Collectors.toList());
 		return companiesDTO;
 	}
@@ -57,7 +53,7 @@ public class CompanyService {
 			logger.error("Query error : "+ e.getMessage());
 		}
 		List<CompanyDTO> companiesDTO = (List<CompanyDTO>)companies
-		.stream().map(s -> companyMapper.modelToDto(s))
+		.stream().map(s -> CompanyMapper.modelToDto(s))
 		.collect(Collectors.toList());
 		return companiesDTO;
 	}
