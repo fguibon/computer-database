@@ -91,11 +91,11 @@
 				<li><a href="?page=${currentPage - 1}&noOfRecords=${limit}" aria-label="Previous"> <span
 						aria-hidden="true">&laquo;</span>
 				</a></li>
-				<li><a href="?page=${1}&noOfRecords=${limit}">1</a></li>
-				<li><a href="?page=${2}&noOfRecords=${limit}">2</a></li>
-				<li><a href="?page=${3}&noOfRecords=${limit}">3</a></li>
-				<li><a href="?page=${4}&noOfRecords=${limit}">4</a></li>
-				<li><a href="?page=${5}&noOfRecords=${limit}">5</a></li>
+				<li><a href="?page=1&noOfRecords=${limit}">1</a></li>
+				<li><a href="?page=2&noOfRecords=${limit}">2</a></li>
+				<li><a href="?page=3&noOfRecords=${limit}">3</a></li>
+				<li><a href="?page=4&noOfRecords=${limit}">4</a></li>
+				<li><a href="?page=5&noOfRecords=${limit}">5</a></li>
 				<li><a href="?page=${currentPage + 1}&noOfRecords=${limit}" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 				</a></li>
 			</ul>

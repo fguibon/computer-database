@@ -31,18 +31,19 @@ public class DashboardServlet extends HttpServlet {
 		int numberOfComputers = computerService.count();
 		int maximumPage = (int) Math.ceil(numberOfComputers * 1.0 / LIMIT);
 		
-		String currentPage =request.getParameter("page");
-		String recordsPerPage = request.getParameter("noOfRecords");
-		
-		if(currentPage != null && !currentPage.isEmpty()) offset = Integer.parseInt(currentPage); 
-		if(recordsPerPage !=null && !recordsPerPage.isEmpty()) limit = Integer.parseInt(recordsPerPage);
+		String pageParam =request.getParameter("page");
+		String noOfRecordsParam = request.getParameter("noOfRecords");
+		 
+		if(pageParam != null && !pageParam.isEmpty()) offset = Integer.parseInt(pageParam);
+		if(noOfRecordsParam !=null && !noOfRecordsParam.isEmpty()) limit = Integer.parseInt(noOfRecordsParam);
 		if(offset<1) offset = CURRENT_PAGE;
 		if(offset>maximumPage) offset = maximumPage;
+		
 		List<ComputerDTO> computers = new ArrayList<ComputerDTO>();
 		computers = computerService.getComputers(limit, offset);
 		
+		request.setAttribute("limit", limit);
 		request.setAttribute("currentPage", offset);
-		request.setAttribute("noOfRecords", limit);
 		request.setAttribute( "numberOfComputers", numberOfComputers );
 		request.setAttribute( "computers", computers );
 		
