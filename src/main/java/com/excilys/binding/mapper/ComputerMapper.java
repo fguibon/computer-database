@@ -96,7 +96,7 @@ public class ComputerMapper {
 	
 	private String castString(LocalDate ldate) {
 		try {
-			return (ldate==null)? null :format.format(Date.from(ldate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant())) ;
+			return (ldate==null)? null :format.format(Date.from(ldate.atTime(22,30).atZone(ZoneId.systemDefault()).toInstant())) ;
 		} catch (Exception e){
 			throw new RuntimeException();
 		}

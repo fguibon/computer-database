@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +89,13 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			} else {
 				ps.setTimestamp(3,null);
 			}
-			ps.setLong(4, computer.getCompany().getId());
+			Long id =computer.getCompany().getId();
+			if(id!=null) {
+				ps.setLong(4, id);
+			} else {
+				ps.setNull(4, Types.BIGINT);
+			}
+			
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
@@ -262,7 +269,12 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			} else {
 				ps.setTimestamp(3,null);
 			}
-			ps.setLong(4, computer.getCompany().getId());
+			Long id =computer.getCompany().getId();
+			if(id!=null) {
+				ps.setLong(4, id);
+			} else {
+				ps.setNull(4, Types.BIGINT);
+			}
 			ps.setLong(5, computer.getId());
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {

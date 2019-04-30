@@ -29,13 +29,14 @@ public class DashboardServlet extends HttpServlet {
 		int offset =CURRENT_PAGE;
 		int limit = LIMIT;
 		int numberOfComputers = computerService.count();
-		int maximumPage = (int) Math.ceil(numberOfComputers * 1.0 / LIMIT);
 		
 		String pageParam =request.getParameter("page");
 		String noOfRecordsParam = request.getParameter("noOfRecords");
 		 
-		if(pageParam != null && !pageParam.isEmpty()) offset = Integer.parseInt(pageParam);
 		if(noOfRecordsParam !=null && !noOfRecordsParam.isEmpty()) limit = Integer.parseInt(noOfRecordsParam);
+		int maximumPage = (int) Math.ceil(numberOfComputers * 1.0 / limit);
+		
+		if(pageParam != null && !pageParam.isEmpty()) offset = Integer.parseInt(pageParam);
 		if(offset<1) offset = CURRENT_PAGE;
 		if(offset>maximumPage) offset = maximumPage;
 		

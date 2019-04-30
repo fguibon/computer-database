@@ -29,7 +29,7 @@
 								<label for="computerName">Computer name</label> <input
 									type="text" class="form-control" id="computerName"
 									name="computerName" placeholder="Computer name"
-									pattern="^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~:[\]]{2,}$">
+									pattern="^[\w'\-,.0-9][^_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~:[\]]{2,}$">
 							</div>
 							<div class="form-group">
 								<label for="introduced">Introduced date</label> <input
@@ -46,6 +46,7 @@
 							<div class="form-group">
 								<label for="companyId">Company</label> 
 								<select class="form-control" id="companyId" name="companyId">
+									<option value="">None</option>
 									<c:forEach items="${companies}" var="company">
 										<option value="${company.getId()}">${company.getName()}</option>
 									</c:forEach>
