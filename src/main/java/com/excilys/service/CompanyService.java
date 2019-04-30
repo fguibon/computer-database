@@ -17,8 +17,7 @@ import com.excilys.persistence.dao.CompanyDAO;
 public class CompanyService {
 	
 	private static CompanyService instance =null ;
-	private static final Logger logger = 
-			LogManager.getLogger(CompanyService.class);
+	private static final Logger logger = LogManager.getLogger(CompanyService.class);
 	
 	private CompanyDAO companyDAO = CompanyDAO.getInstance(); 
 	private CompanyMapper companyMapper = CompanyMapper.getInstance();

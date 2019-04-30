@@ -28,17 +28,20 @@
 							<div class="form-group">
 								<label for="computerName">Computer name</label> <input
 									type="text" class="form-control" id="computerName"
-									name="computerName" placeholder="Computer name">
+									name="computerName" placeholder="Computer name"
+									pattern="^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~:[\]]{2,}$">
 							</div>
 							<div class="form-group">
 								<label for="introduced">Introduced date</label> <input
 									type="date" class="form-control" id="introduced"
-									name="introduced" placeholder="Introduced date">
+									name="introduced" placeholder="Introduced date"
+									pattern="(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}">
 							</div>
 							<div class="form-group">
 								<label for="discontinued">Discontinued date</label> <input
 									type="date" class="form-control" id="discontinued"
-									name="discontinued" placeholder="Discontinued date">
+									name="discontinued" placeholder="Discontinued date"
+									pattern="(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}">
 							</div>
 							<div class="form-group">
 								<label for="companyId">Company</label> 

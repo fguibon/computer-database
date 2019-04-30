@@ -41,7 +41,8 @@ public class ComputerMapper {
 
 		if (computerDTO != null) {
 			computer = new Computer();
-			computer.setId(Long.parseLong(computerDTO.getId()));
+			String id =computerDTO.getId();
+			if(!id.isEmpty()) computer.setId(Long.parseLong(id));
 			computer.setName(computerDTO.getName());
 			computer.setIntroduced(castLocalDate(computerDTO.getIntroduced()));
 			computer.setDiscontinued(castLocalDate(computerDTO.getDiscontinued()));

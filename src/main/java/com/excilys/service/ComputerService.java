@@ -12,7 +12,7 @@ import com.excilys.exception.DatabaseQueryException;
 import com.excilys.model.Computer;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.persistence.dao.ComputerDAO;
-import com.excilys.validator.ComputerValidator;
+import com.excilys.validator.Validator;
 
 public class ComputerService {
 
@@ -23,7 +23,7 @@ public class ComputerService {
 	
 	private ComputerDAO computerDAO = ComputerDAO.getInstance();
 	private ComputerMapper computerMapper = ComputerMapper.getInstance(CompanyDAO.getInstance());
-	ComputerValidator computerValidator = new ComputerValidator();
+	Validator computerValidator = Validator.getInstance();
 	
 	private ComputerService() {}
 	
@@ -31,12 +31,9 @@ public class ComputerService {
 		return (instance!=null) ? instance : (instance = new ComputerService());
 	}
 	
-	public ComputerService(ComputerValidator validator) {
-		validator = new ComputerValidator();
-	}
 	
 	public boolean createComputer(ComputerDTO computerDTO)  {
-		computerValidator.validate(computerDTO);
+		computerValidator.validateComputerToCreate(computerDTO);
 		Computer computer = computerMapper.dtoToModel(computerDTO);
 		boolean created =false;
 		try {
@@ -85,7 +82,7 @@ public class ComputerService {
 	}
 	
 	public boolean update(ComputerDTO computerDTO)  {
-		computerValidator.validate(computerDTO);
+		computerValidator.validateComputerToCreate(computerDTO);
 		Computer computer = computerMapper.dtoToModel(computerDTO);
 		boolean updated =false;
 		try {

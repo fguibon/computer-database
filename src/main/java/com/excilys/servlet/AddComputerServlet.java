@@ -15,12 +15,14 @@ import com.excilys.binding.mapper.CompanyMapper;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
+import com.excilys.validator.Validator;
 
 public class AddComputerServlet extends HttpServlet {
 
 
 	private static final long serialVersionUID = -8850897282598090626L;
 	
+	Validator validator = Validator.getInstance();
 	
 	private final ComputerService computerService = ComputerService.getInstance();
 	private final CompanyService companyService = CompanyService.getInstance(CompanyDAO.getInstance(), CompanyMapper.getInstance());
@@ -47,7 +49,8 @@ public class AddComputerServlet extends HttpServlet {
 		String discontinuedParam = request.getParameter("discontinued");
 		String companyId = request.getParameter("companyId");
 		
-		ComputerDTO computer = new ComputerDTO("1", nameParam, introducedParam, discontinuedParam, new CompanyDTO(companyId, ""));
+		ComputerDTO computer = new ComputerDTO("", nameParam, introducedParam, discontinuedParam, new CompanyDTO(companyId, ""));
+		validator.validateComputerToCreate(computer);
 		
 		computerService.createComputer(computer);
 		
