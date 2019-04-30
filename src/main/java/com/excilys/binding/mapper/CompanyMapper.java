@@ -14,7 +14,7 @@ public class CompanyMapper {
 	}
 	
 	
-	public static Company dtoToModel(CompanyDTO companyDTO) {
+	public Company dtoToModel(CompanyDTO companyDTO) {
 		Company company = null;
 		if(companyDTO!=null) {
 			company = new Company(Long.parseLong(companyDTO.getId()),
@@ -25,7 +25,7 @@ public class CompanyMapper {
 	}
 
 	
-	public static CompanyDTO modelToDto(Company company) {
+	public CompanyDTO modelToDto(Company company) {
 		CompanyDTO companyDTO = null;
 		if(company !=null) {
 			companyDTO = new CompanyDTO(Long.toString(company.getId()),
