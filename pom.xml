@@ -8,8 +8,17 @@
 	<version>1.0</version>
 	<packaging>war</packaging>
 
-	<name>slf4jconfig-log4j</name>
+	<name>cdb</name>
 	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<junit.version>4.12</junit.version>
+
+	</properties>
+
 
 	<dependencies>
 		<dependency>
@@ -68,10 +77,6 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.7.0</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
