@@ -6,7 +6,7 @@
 	<groupId>com.excilys</groupId>
 	<artifactId>computer-database</artifactId>
 	<version>1.0</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>slf4jconfig-log4j</name>
 	<url>http://maven.apache.org</url>
@@ -72,6 +72,13 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.2.1</version>
+				<configuration>
+					<warSourceDirectory>WebContent</warSourceDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
