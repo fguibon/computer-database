@@ -51,7 +51,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	private static final String SELECT_ALL_PAGED =
 			"SELECT id,name,introduced,discontinued,company_id FROM computer "
 					+ "LIMIT ? OFFSET ? ; ";
-	
+
 	private static final String COUNT = 
 			"SELECT id FROM computer; ";
 
@@ -89,13 +89,17 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			} else {
 				ps.setTimestamp(3,null);
 			}
-			Long id =computer.getCompany().getId();
-			if(id!=null) {
-				ps.setLong(4, id);
+			Company company = computer.getCompany();
+			if(company!=null) {
+				Long id =company.getId();
+				if(id!=null) {
+					ps.setLong(4, id);
+				} else {
+					ps.setNull(4, Types.BIGINT);
+				}
 			} else {
 				ps.setNull(4, Types.BIGINT);
 			}
-			
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
@@ -300,7 +304,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			throw new DatabaseQueryException(DELETE);
 		}
 	}
-	
+
 	public int count() throws DatabaseQueryException {
 		int number = 0;
 		try (Connection conn = JDBCManager.getInstance().getConnection();
@@ -314,7 +318,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 		}
 		return number;
 	}
-	
-	
+
+
 
 }

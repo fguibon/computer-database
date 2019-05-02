@@ -88,8 +88,9 @@ public class ComputerMapper {
 
 	private LocalDate castLocalDate(String date) {
 		try {
-			return (date==null)? null : LocalDate.parse(date);
+			return (date==null || date.isEmpty() )? null : LocalDate.parse(date);
 		} catch (Exception e){
+			logger.error("Failed cast to LocalDate :" +e.getMessage());
 			throw new InvalidDateException(date);
 		}
 	}
@@ -98,6 +99,7 @@ public class ComputerMapper {
 		try {
 			return (ldate==null)? null :format.format(Date.from(ldate.atTime(22,30).atZone(ZoneId.systemDefault()).toInstant())) ;
 		} catch (Exception e){
+			logger.error("Failed format to String :" + e.getMessage());
 			throw new RuntimeException();
 		}
 	}
