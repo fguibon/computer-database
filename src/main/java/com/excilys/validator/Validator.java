@@ -1,5 +1,7 @@
 package com.excilys.validator;
 
+import java.util.regex.Pattern;
+
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
 
@@ -33,14 +35,16 @@ public class Validator {
 
 	public boolean isValidId(String id) {
 		boolean valid=false; 
-		if(id!=null) valid=true;
+		if(id!=null && !id.trim().isEmpty() && Pattern.matches("^[1-9][0-9]*$",id)) valid=true;
+		if(id==null || id.trim().isEmpty()) valid=true;
 		return valid;
 	}
 	
 	
 	public boolean isValidName(String name) {
 		boolean valid=false;
-		valid=( name!=null && !name.trim().isEmpty() && name.length()>2);
+		valid=( name!=null && !name.trim().isEmpty() && name.length()>2 
+				&& Pattern.matches("^[\\w-,.0-9][^_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~:]{2,}$",name));
 		return valid;
 	}
 	
