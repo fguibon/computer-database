@@ -14,7 +14,7 @@ public class CompanyMapperTest {
 	public void modelToDTO_ValidData() {
 		Company company = new Company(3L,"John");
 		CompanyDTO companyDTO = new CompanyDTO("3","John");
-		assertEquals(companyDTO, CompanyMapper.getInstance().modelToDto(company));
+		assertEquals("Expected same company",companyDTO, CompanyMapper.getInstance().modelToDto(company));
 	}
 
 	
@@ -23,7 +23,7 @@ public class CompanyMapperTest {
 	public void DTOToModel_SameData() {
 		Company company = new Company(20L,"Franck");
 		CompanyDTO companyDTO = new CompanyDTO("20","Franck");
-		assertEquals(company, CompanyMapper.getInstance().dtoToModel(companyDTO));
+		assertEquals("Expected same company",company, CompanyMapper.getInstance().dtoToModel(companyDTO));
 	}
 
 }

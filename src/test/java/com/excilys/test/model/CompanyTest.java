@@ -12,7 +12,7 @@ public class CompanyTest {
 	public void comparisonEqualValues() {
 		Company company = new Company(6L,"Intel");
 		Company company2 = new Company(6L,"Intel");
-		assertEquals(company2, company);
+		assertEquals("Expected same companies",company2, company);
 		
 	}
 	
@@ -20,28 +20,28 @@ public class CompanyTest {
 	public void comparisonDifferentIds() {
 		Company company = new Company(5L,"Intel");
 		Company company2 = new Company(3L,"Intel");
-		assertNotEquals(company2, company);
+		assertNotEquals("Expected different companies",company2, company);
 	}
 	
 	@Test
 	public void comparisonDifferentNames() {
 		Company company = new Company(3L,"LG");
 		Company company2 = new Company(3L,"Intel");
-		assertNotEquals(company2, company);
+		assertNotEquals("Expected different companies",company2, company);
 	}
 	
 	@Test
 	public void comparisonReferenceNulle() {
 		Company company = null;
 		Company company2 = new Company(3L,"LG");
-		assertNotEquals(company2, company);
+		assertNotEquals("Expected different companies",company2, company);
 	}
 	
 	@Test
 	public void comparisonWithoutValue() {
 		Company company = new Company();
 		Company company2 = new Company();
-		assertEquals(company2, company);
+		assertEquals("Expected same companies",company2, company);
 	}
 	
 	

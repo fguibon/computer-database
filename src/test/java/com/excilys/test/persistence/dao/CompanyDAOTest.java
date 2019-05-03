@@ -35,7 +35,7 @@ public class CompanyDAOTest {
 		companyExpected.setId(6L);
 		Company companyActual = companyDAO.findById(6L);
 		
-		assertEquals(companyExpected, companyActual);
+		assertEquals("Expected same companies",companyExpected, companyActual);
 		
 	}
 	
@@ -52,14 +52,14 @@ public class CompanyDAOTest {
 		List<Company> companiesActual = new ArrayList<Company>();
 		companiesActual = companyDAO.findAll();
 		
-		assertEquals(companiesExpected, companiesActual);
+		assertEquals("Expected same company lists",companiesExpected, companiesActual);
 	}
 	
 	@Test
 	public void testFindById_Success() throws DatabaseQueryException {
 		Company companyActual = companyDAO.findById(1L);
 		
-		assertEquals(companyTest, companyActual);
+		assertEquals("Expected same companies",companyTest, companyActual);
 	}
 	
 	@Test
@@ -68,16 +68,16 @@ public class CompanyDAOTest {
 		companyDAO.update(new Company(1L,"IBM"));
 		Company companyActual = companyDAO.findById(1L);
 		
-		assertEquals(companyExpected, companyActual);
+		assertEquals("Expected same companies",companyExpected, companyActual);
 	}
 	
 	@Test
 	public void testDelete_Success() throws DatabaseQueryException {
 		Long id = 4L;
-		assertNotNull(companyDAO.findById(id));
+		assertNotNull("Expected company not null",companyDAO.findById(id));
 		companyDAO.delete(id);
-		assertNull(companyDAO.findById(id).getId());
-		assertNull(companyDAO.findById(id).getName());
+		assertNull("Expected company null",companyDAO.findById(id).getId());
+		assertNull("Expected company null",companyDAO.findById(id).getName());
 	}
 
 }

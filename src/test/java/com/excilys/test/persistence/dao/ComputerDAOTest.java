@@ -50,7 +50,7 @@ public class ComputerDAOTest {
 		
 		Computer computerActual = computerDAO.findById(11L);
 		
-		assertEquals(computerExpected, computerActual);
+		assertEquals("Expected same companies",computerExpected, computerActual);
 		
 	}
 	
@@ -61,14 +61,14 @@ public class ComputerDAOTest {
 		List<Computer> computersActual = new ArrayList<Computer>();
 		computersActual = computerDAO.findAll();
 		
-		assertEquals(computersExpected, computersActual);
+		assertEquals("List different from  expected",computersExpected, computersActual);
 	}
 	
 	@Test
 	public void testFindById_Success() throws DatabaseQueryException {
 		Computer computerActual = computerDAO.findById(1L);
 		
-		assertEquals(computerTest, computerActual);
+		assertEquals("Can't find computer",computerTest, computerActual);
 	}
 	
 	@Test
@@ -78,7 +78,7 @@ public class ComputerDAOTest {
 		computerDAO.update(computerExpected);
 		Computer computerActual = computerDAO.findById(1L);
 		
-		assertEquals(computerExpected, computerActual);
+		assertEquals("Objects not equals",computerExpected, computerActual);
 	}
 	
 	@Test
@@ -86,7 +86,7 @@ public class ComputerDAOTest {
 		Long id = 4L;
 		assertNotNull(computerDAO.findById(id));
 		computerDAO.delete(id);
-		assertNull(computerDAO.findById(id));
+		assertNull("Object not null",computerDAO.findById(id));
 	}
 	
 }

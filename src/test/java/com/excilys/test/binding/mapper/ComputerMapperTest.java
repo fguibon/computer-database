@@ -50,12 +50,12 @@ public class ComputerMapperTest {
 
 	@Test
 	public void modelToDTOtest() {
-		assertEquals(computerDTO, mapper.modelToDto(computer));
+		assertEquals("Expected same computer",computerDTO, mapper.modelToDto(computer));
 	}
 
 	@Test
 	public void DTOtoModelTest() {
-		assertEquals(computer, mapper.dtoToModel(computerDTO));
+		assertEquals("Expected same computer",computer, mapper.dtoToModel(computerDTO));
 	}
 
 
@@ -66,7 +66,7 @@ public class ComputerMapperTest {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		String sDate2 = format.format(Date.from(lDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
 		LocalDate lDate2 = LocalDate.parse(sDate);
-		assertEquals(sDate, sDate2);
-		assertEquals(lDate, lDate2);
+		assertEquals("Expected same dates",sDate, sDate2);
+		assertEquals("Expected same dates",lDate, lDate2);
 	}
 }

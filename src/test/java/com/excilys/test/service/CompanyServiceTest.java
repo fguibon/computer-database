@@ -48,12 +48,9 @@ public class CompanyServiceTest {
 	
 	@Test
 	public void test_getCompanies() {
-		assertEquals(companiesDTO,service.getCompanies());
+		assertEquals("Expected same companies",companiesDTO,service.getCompanies());
 	}
 	
-	@Test
-	public void test_getCompaniesPaged() {
-		fail("Not yet implemented");
-	}
+
 
 }
