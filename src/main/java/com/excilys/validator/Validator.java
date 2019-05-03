@@ -10,6 +10,7 @@ import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exceptions.CompanyValidationException;
 import com.excilys.exceptions.ComputerValidationException;
+import com.excilys.exceptions.DateParseException;
 import com.excilys.exceptions.DateValidationException;
 import com.excilys.exceptions.IdValidationException;
 import com.excilys.exceptions.NameValidationException;
@@ -29,7 +30,7 @@ public class Validator {
 		return (instance!=null) ? instance : (instance = new Validator());
 	}
 	
-	public boolean validateComputerToCreate(ComputerDTO computerDTO) throws ValidationException {
+	public boolean validateComputerToCreate(ComputerDTO computerDTO) throws ValidationException, DateParseException {
 		boolean valid=false;
 		valid=( isValidName(computerDTO.getName()) 
 				&& areValidDates(computerDTO.getIntroduced(), computerDTO.getDiscontinued()));
@@ -40,7 +41,7 @@ public class Validator {
 		return valid;
 	}
 	
-	public boolean validateComputerToUpdate(ComputerDTO computerDTO) throws ValidationException {
+	public boolean validateComputerToUpdate(ComputerDTO computerDTO) throws ValidationException, DateParseException {
 		boolean valid =(isValidId(computerDTO.getId()) 
 				&& isValidName(computerDTO.getName())
 				&& areValidDates(computerDTO.getIntroduced(), computerDTO.getDiscontinued())
@@ -83,7 +84,7 @@ public class Validator {
 		return valid;
 	}
 	
-	private boolean areValidDates(String introducedDate, String discontinuedDate) throws ValidationException {
+	private boolean areValidDates(String introducedDate, String discontinuedDate) throws ValidationException, DateParseException {
 		boolean valid= false;
 		if (isValidDate(introducedDate) && isValidDate(discontinuedDate)){
 			if((introducedDate.isEmpty() || introducedDate!=null) 
@@ -102,7 +103,7 @@ public class Validator {
 		return valid;
 	}
 	
-	private boolean isValidDate(String date) throws ValidationException {
+	private boolean isValidDate(String date) throws ValidationException, DateParseException {
 		boolean valid= false;
 		if (date!=null && !date.trim().isEmpty() 
 				&& Pattern.matches(date,"(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}") 

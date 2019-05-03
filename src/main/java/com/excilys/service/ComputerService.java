@@ -1,11 +1,14 @@
 package com.excilys.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exceptions.DatabaseQueryException;
+import com.excilys.exceptions.DateParseException;
+import com.excilys.exceptions.MappingException;
 import com.excilys.exceptions.ValidationException;
 import com.excilys.model.Computer;
 import com.excilys.persistence.dao.ComputerDAO;
@@ -27,7 +30,7 @@ public class ComputerService {
 	}
 	
 	
-	public boolean createComputer(ComputerDTO computerDTO) throws ValidationException, DatabaseQueryException  {
+	public boolean createComputer(ComputerDTO computerDTO) throws ValidationException, DatabaseQueryException, MappingException, DateParseException  {
 		computerValidator.validateComputerToCreate(computerDTO);
 		Computer computer = computerMapper.dtoToModel(computerDTO);
 		boolean created = computerDAO.create(computer);
@@ -36,9 +39,10 @@ public class ComputerService {
 	
 	public List<ComputerDTO> getComputers() throws DatabaseQueryException {
 		List<Computer> computers = computerDAO.findAll();
-		List<ComputerDTO> computersDTO = (List<ComputerDTO>)computers
-		.stream().map(s -> computerMapper.modelToDto(s))
-		.collect(Collectors.toList());
+		List<ComputerDTO> computersDTO = new ArrayList<>();
+		computersDTO = (List<ComputerDTO>)computers.stream().map(s -> computerMapper.modelToDto(s))
+.collect(Collectors.toList());
+		
 		return computersDTO;
 	}
 	
@@ -58,7 +62,7 @@ public class ComputerService {
 		return computerDTO;
 	}
 	
-	public boolean update(ComputerDTO computerDTO) throws ValidationException, DatabaseQueryException  {
+	public boolean update(ComputerDTO computerDTO) throws ValidationException, DatabaseQueryException, MappingException, DateParseException  {
 		computerValidator.validateComputerToUpdate(computerDTO);
 		boolean updated = computerDAO.update(computerMapper.dtoToModel(computerDTO));
 		return updated;

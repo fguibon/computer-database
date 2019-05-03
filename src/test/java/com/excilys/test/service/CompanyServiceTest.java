@@ -43,7 +43,7 @@ public class CompanyServiceTest {
 		
 		when(daoMock.findAll()).thenReturn(companies);
 		
-		service = CompanyService.getInstance(daoMock,mapperMock);
+		service = CompanyService.getInstance();
 	}
 	
 	@Test

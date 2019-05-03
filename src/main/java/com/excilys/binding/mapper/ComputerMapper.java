@@ -10,10 +10,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.exceptions.DatabaseQueryException;
-import com.excilys.exceptions.InvalidDateException;
+import com.excilys.exceptions.DateParseException;
+import com.excilys.exceptions.MappingException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
-import com.excilys.persistence.dao.CompanyDAO;
+import com.excilys.service.CompanyService;
 
 public class ComputerMapper {
 
@@ -22,7 +23,6 @@ public class ComputerMapper {
 	private static final Logger logger = 
 			LogManager.getLogger(ComputerMapper.class);
 
-	private CompanyDAO companyDAO = CompanyDAO.getInstance();
 	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
 
@@ -33,25 +33,31 @@ public class ComputerMapper {
 	}
 
 
-	public Computer dtoToModel(ComputerDTO computerDTO){
+	public Computer dtoToModel(ComputerDTO computerDTO) throws MappingException, DateParseException{
 		Computer computer = new Computer();
 
-		if (computerDTO != null) {
-			String id =computerDTO.getId();
-			computer.setId(convertStringToId(id));
-			computer.setName(computerDTO.getName());
+		computer.setId(convertStringToId(computerDTO.getId()));
+		computer.setName(computerDTO.getName());
+		try {
 			computer.setIntroduced(castLocalDate(computerDTO.getIntroduced()));
+		} catch (DateParseException e1) {
+			logger.error(e1.getMessage(), e1);
+			throw new DateParseException("Failed to parse date");
+		}
+		try {
 			computer.setDiscontinued(castLocalDate(computerDTO.getDiscontinued()));
+		} catch (DateParseException e1) {
+			logger.error(e1.getMessage(), e1);
+			throw new DateParseException("Failed to parse date");
+		}
 
-			Company company = new Company();
-			
-			try {
-				company = companyDAO.findById(convertStringToId(computerDTO.getCompanyId()));
-			} catch (NumberFormatException | DatabaseQueryException e) {
-				logger.error("Invalid conversion");
-			}
-
-			computer.setCompany(company);
+		Company company = new Company();
+		Long id =convertStringToId(computerDTO.getCompanyId());
+		company.setId(id);
+		try {
+			company.setName(CompanyService.getInstance().findById(id).getName());
+		} catch (DatabaseQueryException e) {
+			logger.error(e.getMessage(), e);
 		}
 
 		return computer;
@@ -61,47 +67,37 @@ public class ComputerMapper {
 	public ComputerDTO modelToDto(Computer computer) {
 		ComputerDTO computerDTO = new ComputerDTO();
 		if(computer!=null) {
-			computerDTO = new ComputerDTO();
 			computerDTO.setId(Long.toString(computer.getId()));
 			computerDTO.setName(computer.getName());
-			if (computer.getIntroduced() != null) {
-				computerDTO.setIntroduced(castString(computer.getIntroduced()));
-			}
-			if (computer.getDiscontinued() != null) {
-				computerDTO.setDiscontinued(castString(computer.getDiscontinued()));
-			}
-			if(computer.getCompany()!=null) {
-				computerDTO.setCompanyId(convertIdToString(computer.getCompany().getId()));
-			}	
+			computerDTO.setIntroduced(castString(computer.getIntroduced()));
+			computerDTO.setDiscontinued(castString(computer.getDiscontinued()));
+			computerDTO.setCompanyId(convertIdToString(computer.getCompany().getId()));
+	
 		}
 		return computerDTO;
 	}
 
-	public LocalDate castLocalDate(String date) {
+	public LocalDate castLocalDate(String date) throws DateParseException {
 		try {
 			return (date==null || date.isEmpty() )? null : LocalDate.parse(date);
 		} catch (Exception e){
 			logger.error("Failed cast to LocalDate :" +e.getMessage());
-			throw new InvalidDateException(date);
+			throw new DateParseException("Could not parse date : "+date);
 		}
 	}
 	
-	public String castString(LocalDate ldate) {
-		try {
-			return (ldate==null)? null :format.format(Date.from(ldate.atTime(22,30).atZone(ZoneId.systemDefault()).toInstant())) ;
-		} catch (Exception e){
-			logger.error("Failed format to String :" + e.getMessage());
-			throw new InvalidDateException("Local date invalid");
-		}
+	public String castString(LocalDate ldate)  {
+		return (ldate==null)? null :format.format(Date.from(ldate.atTime(22,30).atZone(ZoneId.systemDefault()).toInstant())) ;
+
 	}
 	
 	
-	public String convertIdToString(Long id) {
+	private String convertIdToString(Long id) {
 		return (id == null || id == 0) ? null : String.valueOf(id);
 	}
 	
 	
-	public Long convertStringToId(String id) {
+	private Long convertStringToId(String id) throws NumberFormatException {
 		return (id == null || "0".equals(id)) ? null : Long.valueOf(id);
-}
+	}
 }

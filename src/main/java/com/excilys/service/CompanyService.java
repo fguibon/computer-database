@@ -25,7 +25,7 @@ public class CompanyService {
 	}
 	
 	
-	public static CompanyService getInstance(CompanyDAO dao, CompanyMapper mapper) {
+	public static CompanyService getInstance() {
 		return (instance!=null) ? instance : (instance = new CompanyService());
 	}
 	
@@ -55,6 +55,13 @@ public class CompanyService {
 		.stream().map(s -> companyMapper.modelToDto(s))
 		.collect(Collectors.toList());
 		return companiesDTO;
+	}
+	
+	public CompanyDTO findById(Long id) throws DatabaseQueryException  {
+		Company company = companyDAO.findById(id);
+
+		CompanyDTO companyDTO = companyMapper.modelToDto(company);
+		return companyDTO;
 	}
 	 
 }

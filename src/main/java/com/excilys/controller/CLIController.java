@@ -5,9 +5,8 @@ import java.util.List;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
-import com.excilys.binding.mapper.CompanyMapper;
+import com.excilys.exceptions.DatabaseQueryException;
 import com.excilys.model.Page;
-import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 import com.excilys.view.CLIView;
@@ -35,14 +34,15 @@ public class CLIController {
 	
 	public static CLIController getInstance() {
 		return (instance!=null) ? instance : (instance = new CLIController(
-				CompanyService.getInstance(CompanyDAO.getInstance(), CompanyMapper.getInstance()),ComputerService.getInstance()));
+				CompanyService.getInstance(),ComputerService.getInstance()));
 	}
 	
 	
 	/**
 	 * Function calling the display of the starting menu
+	 * @throws Exception 
 	 */
-	public void start() {
+	public void start() throws Exception {
 		boolean ok = true;
 		while(ok) {
 			int choice =view.menu();
@@ -78,10 +78,11 @@ public class CLIController {
 	
 
 	/**
+	 * @throws DatabaseQueryException 
 	 * option 1
 	 * @throws  
 	 */
-	public void listComputers() {
+	public void listComputers() throws DatabaseQueryException {
 		currentPage =1;
 		boolean ok=true;
 		List<ComputerDTO> computers = new ArrayList<ComputerDTO>();
@@ -102,7 +103,7 @@ public class CLIController {
 		boolean ok=true;
 		List<CompanyDTO> companies = new ArrayList<CompanyDTO>();
 		while(ok) {
-			companies = this.companyService.getCompanies(page, currentPage);
+			companies = this.companyService.getCompanies(page.getEntriesPerPage(), currentPage);
 			if(companies.isEmpty()) ok=false;
 			page.setCurrentPage(currentPage++);
 			this.view.displayCompanies(companies,page);
@@ -111,8 +112,9 @@ public class CLIController {
 	
 	/** 
 	 * option 3
+	 * @throws DatabaseQueryException 
 	 */
-	public void showComputerDetail() {
+	public void showComputerDetail() throws DatabaseQueryException {
 		ComputerDTO computer = null;
 		Long id = this.view.queryId();
 		if(id!=null) computer = this.computerService.findById(id);
@@ -121,8 +123,10 @@ public class CLIController {
 	
 	/**
 	 * option 4
+	 * @throws Exception 
+	 *
 	 */
-	public void createComputer() {
+	public void createComputer() throws Exception {
 		ComputerDTO computer =null;
 		computer = this.queryComputerToCreate();
 		if(computer!=null) {
@@ -135,8 +139,9 @@ public class CLIController {
 
 	/**
 	 * option 5
+	 * @throws Exception 
 	 */
-	public void updateComputer() {
+	public void updateComputer() throws Exception {
 		ComputerDTO computer = this.queryComputerToUpdate();
 		if(computer!=null) {
 			if(this.computerService.update(computer)) view.notifySuccess();
@@ -145,8 +150,9 @@ public class CLIController {
 	
 	/**
 	 * option 6
+	 * @throws DatabaseQueryException 
 	 */
-	public void deleteComputer() {
+	public void deleteComputer() throws DatabaseQueryException {
 		Long id = null;
 		id = this.queryComputerToDelete();
 		if(id!=null) {

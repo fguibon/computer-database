@@ -12,8 +12,12 @@ public class MainApp {
 			LogManager.getLogger(MainApp.class);
 	
 	public static void main(String[] args) {
-		logger.info("App started");
-		CLIController.getInstance().start();
+		try {
+			CLIController.getInstance().start();
+			logger.info("App started");
+		} catch (Exception e) {
+			logger.error("Failed to start app : "+ e.getMessage());
+		}
 		
 	}
 

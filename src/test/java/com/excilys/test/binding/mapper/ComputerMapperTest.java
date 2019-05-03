@@ -15,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.ComputerMapper;
+import com.excilys.exceptions.DateParseException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.persistence.dao.CompanyDAO;
@@ -45,12 +46,12 @@ public class ComputerMapperTest {
 
 
 	@Test
-	public void modelToDTOtest() {
+	public void modelToDTOtest() throws DateParseException {
 		assertEquals("Expected same computer",computerDTO, mapper.modelToDto(computer));
 	}
 
 	@Test
-	public void DTOtoModelTest() {
+	public void DTOtoModelTest() throws Exception {
 		assertEquals("Expected same computer",computer, mapper.dtoToModel(computerDTO));
 	}
 

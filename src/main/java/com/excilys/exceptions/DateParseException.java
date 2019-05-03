@@ -1,13 +1,13 @@
 package com.excilys.exceptions;
 
-public class InvalidDateException extends RuntimeException {
+public class DateParseException extends Exception {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public InvalidDateException(String s) {
+	public DateParseException(String s) {
 		super("Invalid date format");
 	}
 

@@ -14,10 +14,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
-import com.excilys.binding.mapper.CompanyMapper;
-import com.excilys.exceptions.DatabaseQueryException;
-import com.excilys.exceptions.ValidationException;
-import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 import com.excilys.validator.Validator;
@@ -27,7 +23,7 @@ public class AddComputerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private final ComputerService computerService = ComputerService.getInstance();
-	private final CompanyService companyService = CompanyService.getInstance(CompanyDAO.getInstance(), CompanyMapper.getInstance());
+	private final CompanyService companyService = CompanyService.getInstance();
 	private static final Logger logger = LogManager.getLogger(DashboardServlet.class);
 	
 	Validator validator = Validator.getInstance();
@@ -58,13 +54,13 @@ public class AddComputerServlet extends HttpServlet {
 		ComputerDTO computer =new ComputerDTO("", nameParam, introducedParam, discontinuedParam, companyId);
 		try {
 			validator.validateComputerToCreate(computer);
-		} catch (ValidationException e1) {
-			logger.warn(e1.getMessage(), e1);
+		} catch (Exception e) {
+			logger.warn(e.getMessage(), e);
 		}
 		
 		try {
 			computerService.createComputer(computer);
-		} catch (DatabaseQueryException | ValidationException e) {
+		} catch (Exception e) {
 			logger.warn(e.getMessage(), e);
 		} 
 		request.getServletContext().getRequestDispatcher("/WEB-INF/jsp/addComputer.jsp")

@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.mapper.CompanyMapper;
+import com.excilys.exceptions.MappingException;
 import com.excilys.model.Company;
 
 public class CompanyMapperTest {
@@ -20,7 +21,7 @@ public class CompanyMapperTest {
 	
 	
 	
-	public void DTOToModel_SameData() {
+	public void DTOToModel_SameData() throws MappingException {
 		Company company = new Company(20L,"Franck");
 		CompanyDTO companyDTO = new CompanyDTO("20","Franck");
 		assertEquals("Expected same company",company, CompanyMapper.getInstance().dtoToModel(companyDTO));
