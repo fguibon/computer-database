@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.mapper.CompanyMapper;
-import com.excilys.exception.DatabaseQueryException;
+import com.excilys.exceptions.DatabaseQueryException;
 import com.excilys.model.Company;
 import com.excilys.model.Page;
 import com.excilys.persistence.dao.CompanyDAO;

@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.excilys.exception.DatabaseQueryException;
+import com.excilys.exceptions.DatabaseQueryException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.persistence.dao.ComputerDAO;

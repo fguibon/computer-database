@@ -1,4 +1,4 @@
-package com.excilys.exception;
+package com.excilys.exceptions;
 
 public class DatabaseQueryException extends Exception {
 
