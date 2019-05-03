@@ -84,8 +84,17 @@ public class Validator {
 	}
 	
 	private boolean areValidDates(String introducedDate, String discontinuedDate) throws ValidationException {
-		boolean valid= (isValidDate(introducedDate) && isValidDate(discontinuedDate)
-				&& discontinuedDate.compareTo(introducedDate)>0);
+		boolean valid= false;
+		if (isValidDate(introducedDate) && isValidDate(discontinuedDate)){
+			if((introducedDate.isEmpty() || introducedDate!=null) 
+					| (discontinuedDate.isEmpty() || discontinuedDate!=null)) {
+				valid = true;
+			} else {
+				valid =(discontinuedDate.compareTo(introducedDate)>0)? true : false;
+			}
+		} else {
+			valid = false;
+		}
 		if(!valid) {
 			logger.warn("Dates are not valid!");
 			throw new DateValidationException();
@@ -94,9 +103,11 @@ public class Validator {
 	}
 	
 	private boolean isValidDate(String date) throws ValidationException {
-		boolean valid= (date!=null && !date.trim().isEmpty() 
+		boolean valid= false;
+		if (date!=null && !date.trim().isEmpty() 
 				&& Pattern.matches(date,"(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}") 
-				&& ComputerMapper.getInstance().castLocalDate(date).getYear()>1970); 
+				&& ComputerMapper.getInstance().castLocalDate(date).getYear()>1970) valid=true; 
+		if(date== null || date.trim().isEmpty()) valid = true;
 		if(!valid) {
 			logger.warn("Date is not valid!");
 			throw new DateValidationException();

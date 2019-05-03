@@ -37,5 +37,11 @@ public class Page {
 	public void setEntriesPerPage(int entriesPerPage) {
 		this.entriesPerPage = entriesPerPage;
 	}
+
+	@Override
+	public String toString() {
+		return "Page [currentPage=" + currentPage + ", entriesPerPage=" + entriesPerPage + "]";
+	}
+	
 	
 }

@@ -29,9 +29,7 @@ public class ComputerMapperTest {
 	String companyId = "4";
 
 	@Mock
-	CompanyDAO daoMock;
-
-	
+	CompanyDAO daoMock;	
 
 	@Before
 	public void setUp() throws Exception {
@@ -42,7 +40,7 @@ public class ComputerMapperTest {
 		computerDTO = new ComputerDTO("9", "Coucou", "2014-04-05", "2015-03-02", companyId);
 		
 		when(daoMock.findById(4L)).thenReturn(company);
-		mapper = ComputerMapper.getInstance(daoMock);
+		mapper = ComputerMapper.getInstance();
 	}
 
 

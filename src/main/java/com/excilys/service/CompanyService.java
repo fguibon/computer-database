@@ -11,7 +11,6 @@ import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.mapper.CompanyMapper;
 import com.excilys.exceptions.DatabaseQueryException;
 import com.excilys.model.Company;
-import com.excilys.model.Page;
 import com.excilys.persistence.dao.CompanyDAO;
 
 public class CompanyService {
@@ -45,10 +44,10 @@ public class CompanyService {
 	}
 	
 
-	public List<CompanyDTO> getCompanies(Page page, int currentPage) {
+	public List<CompanyDTO> getCompanies(int limit, int currentPage) {
 		List<Company> companies = new ArrayList<Company>();
 		try {
-			companies = companyDAO.findAllPaged(page.getEntriesPerPage(), currentPage);
+			companies = companyDAO.findAllPaged(limit, currentPage);
 		} catch (DatabaseQueryException e) {
 			logger.error("Query error : "+ e.getMessage());
 		}

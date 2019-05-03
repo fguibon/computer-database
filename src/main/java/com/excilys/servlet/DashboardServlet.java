@@ -9,7 +9,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.excilys.binding.dto.ComputerDTO;
+import com.excilys.exceptions.DatabaseQueryException;
 import com.excilys.service.ComputerService;
 
 
@@ -19,8 +23,9 @@ public class DashboardServlet extends HttpServlet {
 	private final int CURRENT_PAGE=1;
 
 	private final ComputerService computerService = ComputerService.getInstance();
+	private static final Logger logger = LogManager.getLogger(DashboardServlet.class);
 	
-	private static final long serialVersionUID = -4872201161261134158L;
+	private static final long serialVersionUID = 1L;
 
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -28,7 +33,12 @@ public class DashboardServlet extends HttpServlet {
 			throws ServletException, IOException {
 		int offset =CURRENT_PAGE;
 		int limit = LIMIT;
-		int numberOfComputers = computerService.count();
+		int numberOfComputers=0;
+		try {
+			numberOfComputers = computerService.count();
+		} catch (DatabaseQueryException e) {
+			logger.warn(e.getMessage(), e);
+		}
 		
 		String pageParam =request.getParameter("page");
 		String noOfRecordsParam = request.getParameter("noOfRecords");
@@ -41,7 +51,11 @@ public class DashboardServlet extends HttpServlet {
 		if(offset>maximumPage) offset = maximumPage;
 		
 		List<ComputerDTO> computers = new ArrayList<ComputerDTO>();
-		computers = computerService.getComputers(limit, offset);
+		try {
+			computers = computerService.getComputers(limit, offset);
+		} catch (DatabaseQueryException e) {
+			logger.warn(e.getMessage(), e);
+		}
 		
 		request.setAttribute("limit", limit);
 		request.setAttribute("currentPage", offset);

@@ -9,9 +9,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.CompanyMapper;
+import com.excilys.exceptions.DatabaseQueryException;
+import com.excilys.exceptions.ValidationException;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
@@ -20,13 +25,14 @@ import com.excilys.validator.Validator;
 public class AddComputerServlet extends HttpServlet {
 
 
-	private static final long serialVersionUID = -8850897282598090626L;
+	private static final long serialVersionUID = 1L;
+	private final ComputerService computerService = ComputerService.getInstance();
+	private final CompanyService companyService = CompanyService.getInstance(CompanyDAO.getInstance(), CompanyMapper.getInstance());
+	private static final Logger logger = LogManager.getLogger(DashboardServlet.class);
 	
 	Validator validator = Validator.getInstance();
 	
-	private final ComputerService computerService = ComputerService.getInstance();
-	private final CompanyService companyService = CompanyService.getInstance(CompanyDAO.getInstance(), CompanyMapper.getInstance());
-
+	
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 
 			throws ServletException, IOException {
@@ -50,10 +56,17 @@ public class AddComputerServlet extends HttpServlet {
 		String companyId = request.getParameter("companyId");
 		
 		ComputerDTO computer =new ComputerDTO("", nameParam, introducedParam, discontinuedParam, companyId);
-		validator.validateComputerToCreate(computer);
+		try {
+			validator.validateComputerToCreate(computer);
+		} catch (ValidationException e1) {
+			logger.warn(e1.getMessage(), e1);
+		}
 		
-		computerService.createComputer(computer);
-		
+		try {
+			computerService.createComputer(computer);
+		} catch (DatabaseQueryException | ValidationException e) {
+			logger.warn(e.getMessage(), e);
+		} 
 		request.getServletContext().getRequestDispatcher("/WEB-INF/jsp/addComputer.jsp")
 		.forward(request, response);
 	}
