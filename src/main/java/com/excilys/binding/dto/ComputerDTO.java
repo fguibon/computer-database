@@ -8,18 +8,18 @@ public class ComputerDTO {
 	private String name;
 	private String introducedDate;
 	private String discontinuedDate;
-	private CompanyDTO companyDTO;
+	private String companyId;
 	
 	public ComputerDTO() {
 	}
 	
 	public ComputerDTO(String id, String name, String introducedDate, 
-			String discontinuedDate, CompanyDTO companyDTO) {
+			String discontinuedDate,String companyId) {
 		this.id = id;
 		this.name=name;
 		this.introducedDate = introducedDate;
 		this.discontinuedDate = discontinuedDate;
-		this.companyDTO = companyDTO;
+		this.companyId = companyId;
 	}
 	
 	/**
@@ -71,27 +71,27 @@ public class ComputerDTO {
 		this.discontinuedDate = discontinued;
 	}
 	/**
-	 * @return the companyDTO
+	 * @return the companyId
 	 */
-	public CompanyDTO getCompanyDTO() {
-		return companyDTO;
+	public String getCompanyId() {
+		return companyId;
 	}
 	/**
-	 * @param companyDTO the companyDTO to set
+	 * @param companyId the companyId to set
 	 */
-	public void setCompanyDTO(CompanyDTO companyDTO) {
-		this.companyDTO = companyDTO;
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
 	}
 	
 	
 	@Override
 	public String toString() {
 		return "Computer [id=" + id + ", name=" + name + ", introducedDate=" + introducedDate + ", discontinuedDate="
-				+ discontinuedDate + ", " + companyDTO + "]";
+				+ discontinuedDate + ", company id=" + companyId + "]";
 	}
 	@Override
 	public int hashCode() {
-		return Objects.hash(companyDTO, discontinuedDate, id, introducedDate, name);
+		return Objects.hash(companyId, discontinuedDate, id, introducedDate, name);
 	}
 	
 	
@@ -104,7 +104,7 @@ public class ComputerDTO {
 		if (getClass() != obj.getClass())
 			return false;
 		ComputerDTO other = (ComputerDTO) obj;
-		return Objects.equals(companyDTO, other.companyDTO) && Objects.equals(discontinuedDate, other.discontinuedDate)
+		return Objects.equals(companyId, other.companyId) && Objects.equals(discontinuedDate, other.discontinuedDate)
 				&& Objects.equals(id, other.id) && Objects.equals(introducedDate, other.introducedDate)
 				&& Objects.equals(name, other.name);
 	}

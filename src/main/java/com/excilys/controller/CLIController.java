@@ -167,8 +167,7 @@ public class CLIController {
 			computer.setName(name);
 			computer.setIntroduced(view.queryDate());
 			computer.setDiscontinued(view.queryDate());
-			computer.setCompanyDTO(new CompanyDTO());
-			computer.getCompanyDTO().setId(Long.toString(view.queryId()));
+			computer.setCompanyId(Long.toString(view.queryId()));
 		} 
 		return computer;
 	}
@@ -179,13 +178,12 @@ public class CLIController {
 	 */
 	public ComputerDTO queryComputerToUpdate() {
 		ComputerDTO computer = new ComputerDTO();
-		computer.setCompanyDTO(new CompanyDTO());
 		
 		computer.setId(Long.toString(view.queryId()));
 		computer.setName(view.queryName());
 		computer.setIntroduced(view.queryDate());
 		computer.setDiscontinued(view.queryDate());
-		computer.getCompanyDTO().setId(Long.toString(view.queryId()));
+		computer.setCompanyId(Long.toString(view.queryId()));
 
 		return computer;
 	}

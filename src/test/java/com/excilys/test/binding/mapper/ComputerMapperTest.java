@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.model.Company;
@@ -27,7 +26,7 @@ public class ComputerMapperTest {
 	Computer computer;
 	Company company;
 	ComputerDTO computerDTO;
-	CompanyDTO companyDTO;
+	String companyId = "4";
 
 	@Mock
 	CompanyDAO daoMock;
@@ -39,9 +38,8 @@ public class ComputerMapperTest {
 
 		MockitoAnnotations.initMocks(this);
 		company = new Company(4L, "NASA");
-		companyDTO = new CompanyDTO("4", "NASA");
 		computer = new Computer(9L, "Coucou", LocalDate.of(2014, 4, 5), LocalDate.of(2015, 3, 2), company);
-		computerDTO = new ComputerDTO("9", "Coucou", "2014-04-05", "2015-03-02", companyDTO);
+		computerDTO = new ComputerDTO("9", "Coucou", "2014-04-05", "2015-03-02", companyId);
 		
 		when(daoMock.findById(4L)).thenReturn(company);
 		mapper = ComputerMapper.getInstance(daoMock);

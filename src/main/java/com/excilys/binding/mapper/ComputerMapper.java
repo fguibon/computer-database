@@ -8,7 +8,6 @@ import java.util.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.exception.DatabaseQueryException;
 import com.excilys.exception.InvalidDateException;
@@ -48,9 +47,9 @@ public class ComputerMapper {
 			computer.setDiscontinued(castLocalDate(computerDTO.getDiscontinued()));
 
 			Company company = null;
-			if(computerDTO.getCompanyDTO()!=null) {
+			if(computerDTO.getCompanyId()!=null) {
 				try {
-					company = companyDAO.findById(Long.parseLong(computerDTO.getCompanyDTO().getId()));
+					company = companyDAO.findById(Long.parseLong(computerDTO.getCompanyId()));
 				} catch (NumberFormatException | DatabaseQueryException e) {
 					logger.error("Invalid conversion");
 				}
@@ -75,13 +74,9 @@ public class ComputerMapper {
 			if (computer.getDiscontinued() != null) {
 				computerDTO.setDiscontinued(castString(computer.getDiscontinued()));
 			}
-			CompanyDTO companyDTO = null;
 			if(computer.getCompany()!=null && computer.getCompany().getId()!=null) {
-				companyDTO = new CompanyDTO();
-				companyDTO.setId(computer.getCompany().getId().toString());
-				companyDTO.setName(computer.getCompany().getName());
-			}
-			computerDTO.setCompanyDTO(companyDTO);
+				computerDTO.setCompanyId(computer.getCompany().getId().toString());
+			}	
 		}
 		return computerDTO;
 	}
