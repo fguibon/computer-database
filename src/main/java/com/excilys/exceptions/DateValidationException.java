@@ -10,6 +10,6 @@ public class DateValidationException extends ValidationException {
 
 	@Override
 	public String getMessage() {
-		return "The id provided is not valid.";
+		return "The date provided is not valid.";
 	}
 }

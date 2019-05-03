@@ -77,7 +77,7 @@
 							<td><a href="editComputer" onclick="">${computer.getName()}</a></td>
 							<td>${computer.getIntroduced()}</td>
 							<td>${computer.getDiscontinued()}</td>
-							<td>${computer.getCompanyDTO().getName()}</td>
+							<td>${computer.getCompanyName()}</td>
 						</tr>
 					</c:forEach>
 

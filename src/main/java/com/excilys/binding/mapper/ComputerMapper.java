@@ -9,12 +9,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.excilys.binding.dto.ComputerDTO;
-import com.excilys.exceptions.DatabaseQueryException;
 import com.excilys.exceptions.DateParseException;
 import com.excilys.exceptions.MappingException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
-import com.excilys.service.CompanyService;
 
 public class ComputerMapper {
 
@@ -54,11 +52,7 @@ public class ComputerMapper {
 		Company company = new Company();
 		Long id =convertStringToId(computerDTO.getCompanyId());
 		company.setId(id);
-		try {
-			company.setName(CompanyService.getInstance().findById(id).getName());
-		} catch (DatabaseQueryException e) {
-			logger.error(e.getMessage(), e);
-		}
+		company.setName(computerDTO.getCompanyName());
 
 		return computer;
 	}
@@ -72,6 +66,7 @@ public class ComputerMapper {
 			computerDTO.setIntroduced(castString(computer.getIntroduced()));
 			computerDTO.setDiscontinued(castString(computer.getDiscontinued()));
 			computerDTO.setCompanyId(convertIdToString(computer.getCompany().getId()));
+			computerDTO.setCompanyName(computer.getCompany().getName());
 	
 		}
 		return computerDTO;

@@ -9,6 +9,7 @@ public class ComputerDTO {
 	private String introducedDate;
 	private String discontinuedDate;
 	private String companyId;
+	private String companyName;
 	
 	public ComputerDTO() {
 	}
@@ -107,6 +108,20 @@ public class ComputerDTO {
 		return Objects.equals(companyId, other.companyId) && Objects.equals(discontinuedDate, other.discontinuedDate)
 				&& Objects.equals(id, other.id) && Objects.equals(introducedDate, other.introducedDate)
 				&& Objects.equals(name, other.name);
+	}
+
+	/**
+	 * @return the companyName
+	 */
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	/**
+	 * @param companyName the companyName to set
+	 */
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 	
 }

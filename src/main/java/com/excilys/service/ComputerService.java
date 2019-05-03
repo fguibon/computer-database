@@ -39,7 +39,7 @@ public class ComputerService {
 	
 	public List<ComputerDTO> getComputers() throws DatabaseQueryException {
 		List<Computer> computers = computerDAO.findAll();
-		List<ComputerDTO> computersDTO = new ArrayList<>();
+		List<ComputerDTO> computersDTO = new ArrayList<ComputerDTO>();
 		computersDTO = (List<ComputerDTO>)computers.stream().map(s -> computerMapper.modelToDto(s))
 .collect(Collectors.toList());
 		

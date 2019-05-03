@@ -20,7 +20,7 @@
 		<h2Version>1.4.197</h2Version>
 		<jstlVersion>1.2</jstlVersion>
 		<seleniumVersion>3.141.59</seleniumVersion>
-		
+
 		<mavenCompilerVersion>3.7.0</mavenCompilerVersion>
 		<mavenWarVersion>3.2.1</mavenWarVersion>
 		<mavenCheckstyleVersion>3.0.0</mavenCheckstyleVersion>
@@ -84,6 +84,10 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${mavenCompilerVersion}</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
