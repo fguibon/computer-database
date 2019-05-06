@@ -14,7 +14,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.excilys.exceptions.DatabaseQueryException;
+import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.persistence.jdbc.JDBCManager;
@@ -68,10 +68,10 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	/**
 	 * Creates a computer
 	 * @return a boolean value to know if it is created
-	 * @throws DatabaseQueryException 
+	 * @throws Exception 
 	 */
 	@Override
-	public boolean create(Computer computer) throws DatabaseQueryException {
+	public boolean create(Computer computer) throws DatabaseException {
 		try(
 				Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(INSERT);
@@ -103,17 +103,17 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(INSERT);
+			throw new DatabaseException(INSERT);
 		}
 	}
 
 	/**
 	 * Finds and return all computers in the table
 	 * @return a List of computers
-	 * @throws DatabaseQueryException 
+	 * @throws Exception 
 	 */
 	@Override
-	public List<Computer> findAll() throws DatabaseQueryException {
+	public List<Computer> findAll() throws DatabaseException {
 		List<Computer> computers = new ArrayList<Computer>();
 
 		try(
@@ -147,7 +147,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			}
 		} catch(SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(SELECT_ALL);
+			throw new DatabaseException(SELECT_ALL);
 		}
 		return computers;
 	}
@@ -157,9 +157,9 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	 * @param limit
 	 * @param currentPage
 	 * @return
-	 * @throws DatabaseQueryException 
+	 * @throws Exception 
 	 */
-	public List<Computer> findAllPaged(int limit, int currentPage) throws DatabaseQueryException {
+	public List<Computer> findAllPaged(int limit, int currentPage) throws DatabaseException {
 		List<Computer> computers = new ArrayList<Computer>();
 		int offset = ((currentPage-1) * limit);
 
@@ -198,7 +198,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			rs.close();
 		} catch(SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(SELECT_ALL_PAGED);
+			throw new DatabaseException(SELECT_ALL_PAGED);
 		}
 		return computers;
 	}
@@ -207,10 +207,10 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	/**
 	 * Find a Computer by its id
 	 * @return a Computer object
-	 * @throws DatabaseQueryException 
+	 * @throws Exception 
 	 */
 	@Override
-	public Computer findById(Long id) throws DatabaseQueryException {
+	public Computer findById(Long id) throws DatabaseException {
 		Computer computer = null;
 
 		try (Connection conn = JDBCManager.getInstance().getConnection();
@@ -244,7 +244,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			}	
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(SELECT_ONE);
+			throw new DatabaseException(SELECT_ONE);
 		}
 		return computer;
 	}
@@ -253,11 +253,11 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	/**
 	 * Updates a Computer information
 	 * @return a Computer object
-	 * @throws DatabaseQueryException 
+	 * @throws Exception 
 	 */
 
 	@Override
-	public boolean update(Computer computer) throws DatabaseQueryException {
+	public boolean update(Computer computer) throws DatabaseException {
 		try(Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(UPDATE);) {
 			ps.setString(1, computer.getName());
@@ -283,17 +283,17 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(UPDATE);
+			throw new DatabaseException(UPDATE);
 		}
 	}
 
 	/**
 	 * Deletes a computer from the database
-	 * @return 
-	 * @throws DatabaseQueryException 
+	 * @return  
+	 * @throws Exception 
 	 */
 	@Override
-	public boolean delete(Long id) throws DatabaseQueryException {
+	public boolean delete(Long id) throws DatabaseException {
 
 		try (Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(DELETE);){
@@ -301,11 +301,11 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(DELETE);
+			throw new DatabaseException(DELETE);
 		}
 	}
 
-	public int count() throws DatabaseQueryException {
+	public int count() throws DatabaseException {
 		int number = 0;
 		try (Connection conn = JDBCManager.getInstance().getConnection();
 				ResultSet rs = conn.createStatement().executeQuery(COUNT);){
@@ -314,7 +314,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			}
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(COUNT);
+			throw new DatabaseException(COUNT);
 		}
 		return number;
 	}

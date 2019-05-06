@@ -1,14 +1,13 @@
 package com.excilys.persistence.jdbc;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ResourceBundle;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.excilys.persistence.dao.CompanyDAO;
+import com.excilys.exceptions.DatabaseException;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * Singleton to have only one access to the database
@@ -18,48 +17,33 @@ import com.excilys.persistence.dao.CompanyDAO;
 public class JDBCManager {
 
 	private static final Logger logger = 
-			LogManager.getLogger(CompanyDAO.class);
+			LogManager.getLogger(JDBCManager.class);
 	private static JDBCManager instance = null;
 	
-	private static String url;
-	private static String user;
-	private static String password;
+	private static HikariConfig config;
+    private static HikariDataSource dataSource;
+	
 	
 	private JDBCManager() {
-		getConnectionProprieties();
+		config = new HikariConfig("/datasource.properties");
+		config.setMaximumPoolSize(10);
+		dataSource = new HikariDataSource(config);
 	}
 	
 	public static JDBCManager getInstance() {
 		return (instance!=null) ? instance : (instance =new JDBCManager());
 	}
-	
-	private static ResourceBundle bundle() {
-		return ResourceBundle.getBundle("database");
-	}
 
-	
-	public static void getConnectionProprieties() {
 
-		ResourceBundle bundle = bundle();
+	public Connection getConnection() throws DatabaseException {
 		try {
-			Class.forName(bundle.getString("MYSQL_DB_DRIVER_CLASS"));
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException("Driver not Found!");
-		}
-		url=bundle.getString("MYSQL_DB_URL");
-		user=bundle.getString("MYSQL_DB_USERNAME");
-		password=bundle.getString("MYSQL_DB_PASSWORD");
-	}
-
-
-	public Connection getConnection() {
-		Connection cn = null;
-		try {
-			cn = DriverManager.getConnection(url, user, password);
+			Connection connection = dataSource.getConnection();
+			return connection;
+			
 		} catch (SQLException e){
-			logger.error("Problem with the connexion : "+e.getMessage());
-		}
-		return cn;			
+			logger.error("Problem with the connexion");
+			throw new DatabaseException("Problem with the connexion : "+e.getMessage());
+		}			
 	}
 
 

@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.excilys.exceptions.DatabaseQueryException;
+import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.test.ScriptExecuter;
@@ -27,7 +27,7 @@ public class CompanyDAOTest {
 	}
 	
 	@Test
-	public void testCreateCompany_Success() throws DatabaseQueryException {
+	public void testCreateCompany_Success() throws DatabaseException {
 		Company companyExpected = companyTest;
 		companyDAO.create(companyExpected);
 		
@@ -40,7 +40,7 @@ public class CompanyDAOTest {
 	
 
 	@Test
-	public void testFindAll_Success() throws DatabaseQueryException {
+	public void testFindAll_Success() throws DatabaseException {
 		List<Company> companiesExpected = new ArrayList<Company>();
 		companiesExpected.add(companyTest);
 		companiesExpected.add(new Company.Builder().setId(2L).setName("Thinking Machines").build());
@@ -55,14 +55,14 @@ public class CompanyDAOTest {
 	}
 	
 	@Test
-	public void testFindById_Success() throws DatabaseQueryException {
+	public void testFindById_Success() throws DatabaseException {
 		Company companyActual = companyDAO.findById(1L);
 		
 		assertEquals("Expected same companies",companyTest, companyActual);
 	}
 	
 	@Test
-	public void testUpdate_Success() throws DatabaseQueryException {
+	public void testUpdate_Success() throws DatabaseException {
 		Company companyExpected = companyTest;
 		companyDAO.update(new Company.Builder().setId(1L).setName("Apple Inc.").build());
 		Company companyActual = companyDAO.findById(1L);
@@ -71,7 +71,7 @@ public class CompanyDAOTest {
 	}
 	
 	@Test
-	public void testDelete_Success() throws DatabaseQueryException {
+	public void testDelete_Success() throws DatabaseException {
 		Long id = 4L;
 		assertNotNull("Expected company not null",companyDAO.findById(id));
 		companyDAO.delete(id);

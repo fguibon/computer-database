@@ -1,13 +1,13 @@
 package com.excilys.exceptions;
 
-public class DatabaseQueryException extends Exception {
+public class DatabaseException extends Exception {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public DatabaseQueryException(String query) {
+	public DatabaseException(String query) {
 		super(query);
 	}
 

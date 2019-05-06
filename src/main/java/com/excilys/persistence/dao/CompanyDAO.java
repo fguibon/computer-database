@@ -11,7 +11,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.excilys.exceptions.DatabaseQueryException;
+import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.model.Page;
 import com.excilys.persistence.jdbc.JDBCManager;
@@ -61,27 +61,27 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	/**
 	 * Creates a company
 	 * @return a boolean value to know if it is created
-	 * @throws DatabaseQueryException 
+	 * @throws DatabaseException 
 	 */
 	@Override
-	public boolean create(Company company) throws DatabaseQueryException {
+	public boolean create(Company company) throws DatabaseException {
 		try (Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(INSERT);){
 			ps.setString(1, company.getName());
 			return ps.executeUpdate()>0;	
 		} catch (SQLException e) {
 			logger.error(e.getMessage(),e);
-			throw new DatabaseQueryException("Cannot insert company : "+ company.toString());
+			throw new DatabaseException("Cannot insert company : "+ company.toString());
 		}
 	}
 
 	/**
 	 * Finds and returns all companies in the table
 	 * @return a List of companies
-	 * @throws DatabaseQueryException 
+	 * @throws DatabaseException 
 	 */
 	@Override
-	public List<Company> findAll() throws DatabaseQueryException {
+	public List<Company> findAll() throws DatabaseException {
 		
 		List<Company> companies = new ArrayList<Company>();
 		try (Connection conn = JDBCManager.getInstance().getConnection();
@@ -92,7 +92,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 			}
 		} catch(SQLException e) {
 			logger.error(e.getMessage(),e);
-			throw new DatabaseQueryException("Cannot find companies") ;
+			throw new DatabaseException("Cannot find companies") ;
 		}
 		return companies;
 	}
@@ -102,10 +102,10 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 * @param limit
 	 * @param currentPage
 	 * @return
-	 * @throws Exception 
+	 * @throws DatabaseException 
 	 */
 	public List<Company> findAllPaged(int limit, int currentPage) 
-			throws DatabaseQueryException {
+			throws DatabaseException {
 		
 		List<Company> companies = new ArrayList<Company>();
 		try (Connection conn = JDBCManager.getInstance().getConnection();
@@ -120,7 +120,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 			}
 		} catch(SQLException e) {
 			logger.error(e.getMessage(),e);
-			throw new DatabaseQueryException("Cannot find companies with these parameters : " 
+			throw new DatabaseException("Cannot find companies with these parameters : " 
 			+new Page(limit,currentPage).toString());
 		}
 		return companies;
@@ -130,10 +130,10 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	/**
 	 * Find a Company by its id
 	 * @return a Company object
-	 * @throws Exception 
+	 * @throws DatabaseException 
 	 */
 	@Override
-	public Company findById(Long id) throws DatabaseQueryException {
+	public Company findById(Long id) throws DatabaseException {
 		Company company = new Company();
 		try (Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(SELECT_ONE);){
@@ -145,7 +145,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 			}
 		} catch (SQLException e) {
 			logger.error(e.getMessage(), e);
-			throw new DatabaseQueryException("Cannot find the id provided : "+ id);
+			throw new DatabaseException("Cannot find the id provided : "+ id);
 		} 
 		return company;
 	}
@@ -153,10 +153,10 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	/**
 	 * Updates a Company information
 	 * @return a Company object
-	 * @throws DatabaseQueryException 
+	 * @throws DatabaseException 
 	 */
 	@Override
-	public boolean update(Company company) throws DatabaseQueryException {
+	public boolean update(Company company) throws DatabaseException {
 		try(Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(UPDATE);) {
 			ps.setString(1, company.getName());
@@ -164,24 +164,24 @@ public class CompanyDAO extends DataAccessObject<Company>{
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(UPDATE);
+			throw new DatabaseException(UPDATE);
 		} 
 	}
 
 	/**
 	 * Deletes a company record
-	 * @throws DatabaseQueryException 
+	 * @throws DatabaseException 
 	 * 
 	 */
 	@Override
-	public boolean delete(Long id) throws DatabaseQueryException {
+	public boolean delete(Long id) throws DatabaseException {
 		try (Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(DELETE);){
 			ps.setLong(1, id);
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(DELETE);
+			throw new DatabaseException(DELETE);
 		} 
 	}
 	

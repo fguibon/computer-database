@@ -13,7 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.excilys.binding.dto.ComputerDTO;
-import com.excilys.exceptions.DatabaseQueryException;
+import com.excilys.exceptions.DatabaseException;
 import com.excilys.service.ComputerService;
 
 
@@ -36,7 +36,7 @@ public class DashboardServlet extends HttpServlet {
 		int numberOfComputers=0;
 		try {
 			numberOfComputers = computerService.count();
-		} catch (DatabaseQueryException e) {
+		} catch (DatabaseException e) {
 			logger.warn(e.getMessage(), e);
 		}
 		
@@ -53,7 +53,7 @@ public class DashboardServlet extends HttpServlet {
 		List<ComputerDTO> computers = new ArrayList<ComputerDTO>();
 		try {
 			computers = computerService.getComputers(limit, offset);
-		} catch (DatabaseQueryException e) {
+		} catch (DatabaseException e) {
 			logger.warn(e.getMessage(), e);
 		}
 		

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
-import com.excilys.exceptions.DatabaseQueryException;
+import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Page;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
@@ -78,11 +78,11 @@ public class CLIController {
 	
 
 	/**
-	 * @throws DatabaseQueryException 
+	 * @throws DatabaseException  
 	 * option 1
 	 * @throws  
 	 */
-	public void listComputers() throws DatabaseQueryException {
+	public void listComputers() throws DatabaseException {
 		currentPage =1;
 		boolean ok=true;
 		List<ComputerDTO> computers = new ArrayList<ComputerDTO>();
@@ -112,9 +112,9 @@ public class CLIController {
 	
 	/** 
 	 * option 3
-	 * @throws DatabaseQueryException 
+	 * @throws DatabaseException 
 	 */
-	public void showComputerDetail() throws DatabaseQueryException {
+	public void showComputerDetail() throws DatabaseException {
 		ComputerDTO computer = null;
 		Long id = this.view.queryId();
 		if(id!=null) computer = this.computerService.findById(id);
@@ -150,9 +150,9 @@ public class CLIController {
 	
 	/**
 	 * option 6
-	 * @throws DatabaseQueryException 
+	 * @throws DatabaseException 
 	 */
-	public void deleteComputer() throws DatabaseQueryException {
+	public void deleteComputer() throws DatabaseException {
 		Long id = null;
 		id = this.queryComputerToDelete();
 		if(id!=null) {
