@@ -2,7 +2,7 @@ package com.excilys.persistence.dao;
 
 import java.util.List;
 
-import com.excilys.exception.DatabaseQueryException;
+import com.excilys.exceptions.DatabaseQueryException;
 
 public abstract class DataAccessObject<T> {
 	

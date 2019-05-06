@@ -9,10 +9,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
-import com.excilys.binding.mapper.CompanyMapper;
-import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 import com.excilys.validator.Validator;
@@ -20,13 +21,14 @@ import com.excilys.validator.Validator;
 public class AddComputerServlet extends HttpServlet {
 
 
-	private static final long serialVersionUID = -8850897282598090626L;
+	private static final long serialVersionUID = 1L;
+	private final ComputerService computerService = ComputerService.getInstance();
+	private final CompanyService companyService = CompanyService.getInstance();
+	private static final Logger logger = LogManager.getLogger(DashboardServlet.class);
 	
 	Validator validator = Validator.getInstance();
 	
-	private final ComputerService computerService = ComputerService.getInstance();
-	private final CompanyService companyService = CompanyService.getInstance(CompanyDAO.getInstance(), CompanyMapper.getInstance());
-
+	
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 
 			throws ServletException, IOException {
@@ -47,13 +49,22 @@ public class AddComputerServlet extends HttpServlet {
 		String nameParam =request.getParameter("computerName");
 		String introducedParam = request.getParameter("introduced");
 		String discontinuedParam = request.getParameter("discontinued");
-		String companyId = request.getParameter("companyId");
+		String companyIdParam = request.getParameter("companyId");
 		
-		ComputerDTO computer =new ComputerDTO("", nameParam, introducedParam, discontinuedParam, new CompanyDTO(companyId, ""));
-		validator.validateComputerToCreate(computer);
+		ComputerDTO computer =new ComputerDTO.Builder().setName(nameParam)
+				.setIntroduced(introducedParam).setDiscontinued(discontinuedParam)
+				.setCompanyId(companyIdParam).build();
+		try {
+			validator.validateComputerToCreate(computer);
+		} catch (Exception e) {
+			logger.warn(e.getMessage(), e);
+		}
 		
-		computerService.createComputer(computer);
-		
+		try {
+			computerService.createComputer(computer);
+		} catch (Exception e) {
+			logger.warn(e.getMessage(), e);
+		} 
 		request.getServletContext().getRequestDispatcher("/WEB-INF/jsp/addComputer.jsp")
 		.forward(request, response);
 	}

@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.ComputerMapper;
-import com.excilys.exception.DatabaseQueryException;
+import com.excilys.exceptions.DatabaseQueryException;
+import com.excilys.exceptions.DateParseException;
+import com.excilys.exceptions.MappingException;
+import com.excilys.exceptions.ValidationException;
 import com.excilys.model.Computer;
-import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.persistence.dao.ComputerDAO;
 import com.excilys.validator.Validator;
 
@@ -18,11 +18,9 @@ public class ComputerService {
 
 	private static ComputerService instance = null;
 	
-	private static final Logger logger = 
-			LogManager.getLogger(ComputerService.class);
 	
 	private ComputerDAO computerDAO = ComputerDAO.getInstance();
-	private ComputerMapper computerMapper = ComputerMapper.getInstance(CompanyDAO.getInstance());
+	private ComputerMapper computerMapper = ComputerMapper.getInstance();
 	Validator computerValidator = Validator.getInstance();
 	
 	private ComputerService() {}
@@ -32,84 +30,51 @@ public class ComputerService {
 	}
 	
 	
-	public boolean createComputer(ComputerDTO computerDTO)  {
+	public boolean createComputer(ComputerDTO computerDTO) throws ValidationException, DatabaseQueryException, MappingException, DateParseException  {
 		computerValidator.validateComputerToCreate(computerDTO);
 		Computer computer = computerMapper.dtoToModel(computerDTO);
-		boolean created =false;
-		try {
-			 created = computerDAO.create(computer);
-		} catch (DatabaseQueryException e) {
-			logger.error("Query error : " + e.getMessage());
-		}
+		boolean created = computerDAO.create(computer);
 		return created;
 	}
 	
-	public List<ComputerDTO> getComputers() {
-		List<Computer> computers = new ArrayList<Computer>();
-		try {
-			computers = computerDAO.findAll();
-		} catch (DatabaseQueryException e) {
-			logger.error("Query error : "+ e.getMessage());
-		}
+	public List<ComputerDTO> getComputers() throws DatabaseQueryException {
+		List<Computer> computers = computerDAO.findAll();
+		List<ComputerDTO> computersDTO = new ArrayList<ComputerDTO>();
+		computersDTO = (List<ComputerDTO>)computers.stream().map(s -> computerMapper.modelToDto(s))
+.collect(Collectors.toList());
+		
+		return computersDTO;
+	}
+	
+	public List<ComputerDTO> getComputers(int limit, int currentPage) throws DatabaseQueryException {
+		List<Computer> computers = computerDAO.findAllPaged(limit, currentPage);
+		
 		List<ComputerDTO> computersDTO = (List<ComputerDTO>)computers
 		.stream().map(s -> computerMapper.modelToDto(s))
 		.collect(Collectors.toList());
 		return computersDTO;
 	}
 	
-	public List<ComputerDTO> getComputers(int limit, int currentPage) {
-		List<Computer> computers = new ArrayList<Computer>();
-		try {
-			computers = computerDAO.findAllPaged(limit, currentPage);
-		} catch (DatabaseQueryException e) {
-			logger.error("Query error : " + e.getMessage());
-		}
-		List<ComputerDTO> computersDTO = (List<ComputerDTO>)computers
-		.stream().map(s -> computerMapper.modelToDto(s))
-		.collect(Collectors.toList());
-		return computersDTO;
-	}
-	
-	public ComputerDTO findById(Long id)  {
-		Computer computer = new Computer();
-		try {
-			computer = computerDAO.findById(id);
-		} catch (DatabaseQueryException e) {
-			logger.error("Query error :" + e.getMessage());
-		}
+	public ComputerDTO findById(Long id) throws DatabaseQueryException  {
+		Computer computer = computerDAO.findById(id);
+
 		ComputerDTO computerDTO = computerMapper.modelToDto(computer);
 		return computerDTO;
 	}
 	
-	public boolean update(ComputerDTO computerDTO)  {
-		computerValidator.validateComputerToCreate(computerDTO);
-		Computer computer = computerMapper.dtoToModel(computerDTO);
-		boolean updated =false;
-		try {
-			updated = computerDAO.update(computer);
-		} catch (DatabaseQueryException e) {
-			logger.error("Query error : " + e.getMessage());
-		}
+	public boolean update(ComputerDTO computerDTO) throws ValidationException, DatabaseQueryException, MappingException, DateParseException  {
+		computerValidator.validateComputerToUpdate(computerDTO);
+		boolean updated = computerDAO.update(computerMapper.dtoToModel(computerDTO));
 		return updated;
 	}
 	
-	public boolean delete(Long id)  {
-		boolean deleted =false;
-		try {
-			deleted = computerDAO.delete(id);
-		} catch (DatabaseQueryException e) {
-			logger.error("Query error : " + e.getMessage());
-		}
+	public boolean delete(Long id) throws DatabaseQueryException  {
+		boolean deleted = computerDAO.delete(id);
 		return deleted;
 	}
 	
-	public int count() {
-		int count =0;
-		try {
-			count = computerDAO.count();
-		} catch (DatabaseQueryException e){
-			logger.error("Query error : " + e.getMessage());
-		}
+	public int count() throws DatabaseQueryException {
+		int count =  computerDAO.count();
 		return count;
 	}
 }

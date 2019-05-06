@@ -11,8 +11,9 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.excilys.exception.DatabaseQueryException;
+import com.excilys.exceptions.DatabaseQueryException;
 import com.excilys.model.Company;
+import com.excilys.model.Page;
 import com.excilys.persistence.jdbc.JDBCManager;
 
 /**
@@ -69,8 +70,8 @@ public class CompanyDAO extends DataAccessObject<Company>{
 			ps.setString(1, company.getName());
 			return ps.executeUpdate()>0;	
 		} catch (SQLException e) {
-			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(INSERT);
+			logger.error(e.getMessage(),e);
+			throw new DatabaseQueryException("Cannot insert company : "+ company.toString());
 		}
 	}
 
@@ -86,11 +87,12 @@ public class CompanyDAO extends DataAccessObject<Company>{
 		try (Connection conn = JDBCManager.getInstance().getConnection();
 				ResultSet rs = conn.createStatement().executeQuery(SELECT_ALL);){
 			while (rs.next()) {
-				companies.add( new Company(rs.getLong("id"),rs.getString("name")));
+				companies.add( new Company.Builder().setId(rs.getLong("id"))
+						.setName(rs.getString("name")).build());
 			}
 		} catch(SQLException e) {
-			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(SELECT_ALL) ;
+			logger.error(e.getMessage(),e);
+			throw new DatabaseQueryException("Cannot find companies") ;
 		}
 		return companies;
 	}
@@ -113,11 +115,13 @@ public class CompanyDAO extends DataAccessObject<Company>{
 			ps.setInt(2, offset);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				companies.add( new Company(rs.getLong("id"),rs.getString("name")));
+				companies.add( new Company.Builder().setId(rs.getLong("id"))
+						.setName(rs.getString("name")).build());
 			}
 		} catch(SQLException e) {
-			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(SELECT_ALL_PAGED);
+			logger.error(e.getMessage(),e);
+			throw new DatabaseQueryException("Cannot find companies with these parameters : " 
+			+new Page(limit,currentPage).toString());
 		}
 		return companies;
 	}
@@ -140,8 +144,8 @@ public class CompanyDAO extends DataAccessObject<Company>{
 				company.setName(rs.getString("name"));
 			}
 		} catch (SQLException e) {
-			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(SELECT_ONE);
+			logger.error(e.getMessage(), e);
+			throw new DatabaseQueryException("Cannot find the id provided : "+ id);
 		} 
 		return company;
 	}

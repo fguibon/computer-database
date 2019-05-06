@@ -14,15 +14,6 @@ public class Computer {
 	
 	public Computer() {	}
 	
-	public Computer(Long id, String name, LocalDate introducedDate, 
-			LocalDate discontinuedDate, Company company) {
-		this.id=id;
-		this.name=name;
-		this.introducedDate=introducedDate;
-		this.discontinuedDate=discontinuedDate;
-		this.company=company;
-	}
-	
 
 	/**
 	 * @return the id
@@ -83,6 +74,52 @@ public class Computer {
 	 */
 	public void setCompany(Company company) {
 		this.company = company;
+	}
+	
+	
+	public static class Builder {
+		private Long id;
+		private String name;
+		private LocalDate introducedDate;
+		private LocalDate discontinuedDate;
+		private Company company;
+
+		public Builder() {}
+
+		public Builder setId(Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder setName(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Builder setIntroduced(LocalDate introduced) {
+			this.introducedDate = introduced;
+			return this;
+		}
+
+		public Builder setDiscontinued(LocalDate discontinued) {
+			this.discontinuedDate = discontinued;
+			return this;
+		}
+
+		public Builder setCompany(Company company) {
+			this.company = company;
+			return this;
+		}
+
+		public Computer build() {
+			Computer computer = new Computer();
+			computer.setId(this.id);
+			computer.setName(this.name);
+			computer.setIntroduced(this.introducedDate);
+			computer.setDiscontinued(this.discontinuedDate);
+			computer.setCompany(this.company);
+			return computer;
+		}	
 	}
 
 	@Override
