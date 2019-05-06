@@ -93,6 +93,6 @@ public class ComputerMapper {
 	
 	
 	private Long convertStringToId(String id) throws NumberFormatException {
-		return (id == null || "0".equals(id)) ? null : Long.valueOf(id);
+		return (id == null || "0".equals(id) || id.isEmpty()) ? null : Long.valueOf(id);
 	}
 }

@@ -23,6 +23,11 @@ public class Validator {
 	private static final Logger logger = 
 			LogManager.getLogger(Validator.class);
 	
+	private static Pattern DATE_PATTERN = Pattern.compile("^((2000|2400|2800|(19|2[0-9](0[48]|[2468][048]|[13579][26])))-02-29)$"
+		      + "|^(((19|2[0-9])[0-9]{2})-02-(0[1-9]|1[0-9]|2[0-8]))$"
+		      + "|^(((19|2[0-9])[0-9]{2})-(0[13578]|10|12)-(0[1-9]|[12][0-9]|3[01]))$"
+		      + "|^(((19|2[0-9])[0-9]{2})-(0[469]|11)-(0[1-9]|[12][0-9]|30))$");
+	
 	private Validator() {	
 	}
 	
@@ -89,9 +94,9 @@ public class Validator {
 		if (isValidDate(introducedDate) && isValidDate(discontinuedDate)){
 			if(!introducedDate.isEmpty() && introducedDate!=null && !discontinuedDate.isEmpty() && discontinuedDate!=null) {
 				valid =(discontinuedDate.compareTo(introducedDate)>0)? true : false;
+			} else {
+				valid =true;
 			}
-		} else {
-			valid = false;
 		}
 		if(!valid) {
 			logger.warn("Dates are not valid "+introducedDate+" "+discontinuedDate);
@@ -103,7 +108,7 @@ public class Validator {
 	private boolean isValidDate(String date) throws ValidationException, DateParseException {
 		boolean valid= false;
 		if (date!=null && !date.trim().isEmpty() 
-				&& Pattern.matches(date,"[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])") 
+				&& DATE_PATTERN.matcher(date).matches() 
 				&& ComputerMapper.getInstance().castLocalDate(date).getYear()>1970) valid=true; 
 		if(date== null || date.trim().isEmpty()) valid = true;
 		if(!valid) {
