@@ -8,32 +8,35 @@ import com.excilys.model.Company;
 
 public class CompanyTest {
 
+	
+	Company companyTest = new Company.Builder().setId(6L).setName("Intel").build();
+	
 	@Test
 	public void comparisonEqualValues() {
-		Company company = new Company(6L,"Intel");
-		Company company2 = new Company(6L,"Intel");
+		Company company = companyTest;
+		Company company2 = new Company.Builder().setId(6L).setName("Intel").build();
 		assertEquals("Expected same companies",company2, company);
 		
 	}
 	
 	@Test
 	public void comparisonDifferentIds() {
-		Company company = new Company(5L,"Intel");
-		Company company2 = new Company(3L,"Intel");
+		Company company = companyTest;
+		Company company2 = new Company.Builder().setId(3L).setName("Intel").build();
 		assertNotEquals("Expected different companies",company2, company);
 	}
 	
 	@Test
 	public void comparisonDifferentNames() {
-		Company company = new Company(3L,"LG");
-		Company company2 = new Company(3L,"Intel");
+		Company company = companyTest;
+		Company company2 = new Company.Builder().setId(3L).setName("Intell").build();
 		assertNotEquals("Expected different companies",company2, company);
 	}
 	
 	@Test
 	public void comparisonReferenceNulle() {
 		Company company = null;
-		Company company2 = new Company(3L,"LG");
+		Company company2 = companyTest;
 		assertNotEquals("Expected different companies",company2, company);
 	}
 	

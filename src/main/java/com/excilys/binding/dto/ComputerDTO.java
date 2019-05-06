@@ -10,19 +10,10 @@ public class ComputerDTO {
 	private String discontinuedDate;
 	private String companyId;
 	private String companyName;
-	
-	public ComputerDTO() {
-	}
-	
-	public ComputerDTO(String id, String name, String introducedDate, 
-			String discontinuedDate,String companyId) {
-		this.id = id;
-		this.name=name;
-		this.introducedDate = introducedDate;
-		this.discontinuedDate = discontinuedDate;
-		this.companyId = companyId;
-	}
-	
+
+	public ComputerDTO() {}
+
+
 	/**
 	 * @return the id
 	 */
@@ -83,32 +74,6 @@ public class ComputerDTO {
 	public void setCompanyId(String companyId) {
 		this.companyId = companyId;
 	}
-	
-	
-	@Override
-	public String toString() {
-		return "Computer [id=" + id + ", name=" + name + ", introducedDate=" + introducedDate + ", discontinuedDate="
-				+ discontinuedDate + ", company id=" + companyId + "]";
-	}
-	@Override
-	public int hashCode() {
-		return Objects.hash(companyId, discontinuedDate, id, introducedDate, name);
-	}
-	
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ComputerDTO other = (ComputerDTO) obj;
-		return Objects.equals(companyId, other.companyId) && Objects.equals(discontinuedDate, other.discontinuedDate)
-				&& Objects.equals(id, other.id) && Objects.equals(introducedDate, other.introducedDate)
-				&& Objects.equals(name, other.name);
-	}
 
 	/**
 	 * @return the companyName
@@ -123,5 +88,83 @@ public class ComputerDTO {
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
 	}
-	
+
+	public static class Builder {
+		private String id;
+		private String name;
+		private String introducedDate;
+		private String discontinuedDate;
+		private String companyId;
+		private String companyName;
+
+		public Builder() {}
+
+		public Builder setId(String id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder setName(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Builder setIntroduced(String introduced) {
+			this.introducedDate = introduced;
+			return this;
+		}
+
+		public Builder setDiscontinued(String discontinued) {
+			this.discontinuedDate = discontinued;
+			return this;
+		}
+		
+		public Builder setCompanyId(String companyId) {
+			this.companyId = companyId;
+			return this;
+		}
+
+		public Builder setCompanyName(String companyName) {
+			this.companyName = companyName;
+			return this;
+		}
+
+		public ComputerDTO build() {
+			ComputerDTO dto = new ComputerDTO();
+			dto.setId(this.id);
+			dto.setName(this.name);
+			dto.setIntroduced(this.introducedDate);
+			dto.setDiscontinued(this.discontinuedDate);
+			dto.setCompanyId(this.companyId);
+			dto.setCompanyName(this.companyName);
+			return dto;
+		}	
+	}
+
+
+	@Override
+	public String toString() {
+		return "Computer [id=" + id + ", name=" + name + ", introducedDate=" + introducedDate + ", discontinuedDate="
+				+ discontinuedDate + ", company id=" + companyId + "]";
+	}
+	@Override
+	public int hashCode() {
+		return Objects.hash(companyId, discontinuedDate, id, introducedDate, name);
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ComputerDTO other = (ComputerDTO) obj;
+		return Objects.equals(companyId, other.companyId) && Objects.equals(discontinuedDate, other.discontinuedDate)
+				&& Objects.equals(id, other.id) && Objects.equals(introducedDate, other.introducedDate)
+				&& Objects.equals(name, other.name);
+	}
+
 }

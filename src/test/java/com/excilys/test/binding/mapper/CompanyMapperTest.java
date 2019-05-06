@@ -13,8 +13,8 @@ public class CompanyMapperTest {
 
 	@Test
 	public void modelToDTO_ValidData() {
-		Company company = new Company(3L,"John");
-		CompanyDTO companyDTO = new CompanyDTO("3","John");
+		Company company = new Company.Builder().setId(3L).setName("John").build();
+		CompanyDTO companyDTO = new CompanyDTO.Builder().setId("3").setName("John").build();
 		assertEquals("Expected same company",companyDTO, CompanyMapper.getInstance().modelToDto(company));
 	}
 
@@ -22,8 +22,8 @@ public class CompanyMapperTest {
 	
 	
 	public void DTOToModel_SameData() throws MappingException {
-		Company company = new Company(20L,"Franck");
-		CompanyDTO companyDTO = new CompanyDTO("20","Franck");
+		Company company = new Company.Builder().setId(20L).setName("Franck").build();
+		CompanyDTO companyDTO = new CompanyDTO.Builder().setId("20").setName("Franck").build();
 		assertEquals("Expected same company",company, CompanyMapper.getInstance().dtoToModel(companyDTO));
 	}
 

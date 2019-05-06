@@ -18,7 +18,7 @@ import com.excilys.test.ScriptExecuter;
 public class CompanyDAOTest {
 
 	CompanyDAO companyDAO;
-	Company companyTest = new Company(1L,"Apple Inc.");
+	Company companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
 	
 	@Before
 	public void setUp() throws Exception {
@@ -28,8 +28,7 @@ public class CompanyDAOTest {
 	
 	@Test
 	public void testCreateCompany_Success() throws DatabaseQueryException {
-		Company companyExpected = new Company();
-		companyExpected.setName("IBM");
+		Company companyExpected = companyTest;
 		companyDAO.create(companyExpected);
 		
 		companyExpected.setId(6L);
@@ -44,10 +43,10 @@ public class CompanyDAOTest {
 	public void testFindAll_Success() throws DatabaseQueryException {
 		List<Company> companiesExpected = new ArrayList<Company>();
 		companiesExpected.add(companyTest);
-		companiesExpected.add(new Company(2L, "Thinking Machines"));
-		companiesExpected.add(new Company(3L,"RCA"));
-		companiesExpected.add(new Company(4L,"Netronics"));
-		companiesExpected.add(new Company(5L,"Tandy Corporation"));
+		companiesExpected.add(new Company.Builder().setId(2L).setName("Thinking Machines").build());
+		companiesExpected.add(new Company.Builder().setId(3L).setName("RCA").build());
+		companiesExpected.add(new Company.Builder().setId(4L).setName("Netronics").build());
+		companiesExpected.add(new Company.Builder().setId(5L).setName("Tandy Corporation").build());
 		
 		List<Company> companiesActual = new ArrayList<Company>();
 		companiesActual = companyDAO.findAll();
@@ -64,8 +63,8 @@ public class CompanyDAOTest {
 	
 	@Test
 	public void testUpdate_Success() throws DatabaseQueryException {
-		Company companyExpected = new Company(1L,"IBM");
-		companyDAO.update(new Company(1L,"IBM"));
+		Company companyExpected = companyTest;
+		companyDAO.update(new Company.Builder().setId(1L).setName("Apple Inc.").build());
 		Company companyActual = companyDAO.findById(1L);
 		
 		assertEquals("Expected same companies",companyExpected, companyActual);

@@ -36,9 +36,13 @@ public class ComputerMapperTest {
 	public void setUp() throws Exception {
 
 		MockitoAnnotations.initMocks(this);
-		company = new Company(4L, "NASA");
-		computer = new Computer(9L, "Coucou", LocalDate.of(2014, 4, 5), LocalDate.of(2015, 3, 2), company);
-		computerDTO = new ComputerDTO("9", "Coucou", "2014-04-05", "2015-03-02", companyId);
+		company = new Company.Builder().setId(4L).setName("NASA").build();
+		computer = new Computer.Builder().setId(9L).setName("Coucou")
+				.setIntroduced(LocalDate.of(2014, 4, 5)).setDiscontinued(LocalDate.of(2015, 3, 2))
+				.setCompany(company).build();
+		computerDTO = new ComputerDTO.Builder().setId("9").setName("Coucou")
+				.setIntroduced("2014-04-05").setDiscontinued("2015-03-02")
+				.setCompanyId(companyId).build();
 		
 		when(daoMock.findById(4L)).thenReturn(company);
 		mapper = ComputerMapper.getInstance();

@@ -49,9 +49,11 @@ public class AddComputerServlet extends HttpServlet {
 		String nameParam =request.getParameter("computerName");
 		String introducedParam = request.getParameter("introduced");
 		String discontinuedParam = request.getParameter("discontinued");
-		String companyId = request.getParameter("companyId");
+		String companyIdParam = request.getParameter("companyId");
 		
-		ComputerDTO computer =new ComputerDTO("0", nameParam, introducedParam, discontinuedParam, companyId);
+		ComputerDTO computer =new ComputerDTO.Builder().setName(nameParam)
+				.setIntroduced(introducedParam).setDiscontinued(discontinuedParam)
+				.setCompanyId(companyIdParam).build();
 		try {
 			validator.validateComputerToCreate(computer);
 		} catch (Exception e) {

@@ -87,7 +87,8 @@ public class CompanyDAO extends DataAccessObject<Company>{
 		try (Connection conn = JDBCManager.getInstance().getConnection();
 				ResultSet rs = conn.createStatement().executeQuery(SELECT_ALL);){
 			while (rs.next()) {
-				companies.add( new Company(rs.getLong("id"),rs.getString("name")));
+				companies.add( new Company.Builder().setId(rs.getLong("id"))
+						.setName(rs.getString("name")).build());
 			}
 		} catch(SQLException e) {
 			logger.error(e.getMessage(),e);
@@ -114,7 +115,8 @@ public class CompanyDAO extends DataAccessObject<Company>{
 			ps.setInt(2, offset);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				companies.add( new Company(rs.getLong("id"),rs.getString("name")));
+				companies.add( new Company.Builder().setId(rs.getLong("id"))
+						.setName(rs.getString("name")).build());
 			}
 		} catch(SQLException e) {
 			logger.error(e.getMessage(),e);
