@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.mapper.CompanyMapper;
-import com.excilys.exceptions.DatabaseQueryException;
+import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.persistence.dao.CompanyDAO;
 
@@ -34,7 +34,7 @@ public class CompanyService {
 		List<Company> companies = new ArrayList<Company>();
 		try {
 			companies = companyDAO.findAll();
-		} catch (DatabaseQueryException e) {
+		} catch (DatabaseException e) {
 			logger.error("Query error : "+ e.getMessage());
 		}
 		List<CompanyDTO> companiesDTO = (List<CompanyDTO>)companies
@@ -48,7 +48,7 @@ public class CompanyService {
 		List<Company> companies = new ArrayList<Company>();
 		try {
 			companies = companyDAO.findAllPaged(limit, currentPage);
-		} catch (DatabaseQueryException e) {
+		} catch (DatabaseException e) {
 			logger.error("Query error : "+ e.getMessage());
 		}
 		List<CompanyDTO> companiesDTO = (List<CompanyDTO>)companies
@@ -57,7 +57,7 @@ public class CompanyService {
 		return companiesDTO;
 	}
 	
-	public CompanyDTO findById(Long id) throws DatabaseQueryException  {
+	public CompanyDTO findById(Long id) throws DatabaseException  {
 		Company company = companyDAO.findById(id);
 
 		CompanyDTO companyDTO = companyMapper.modelToDto(company);

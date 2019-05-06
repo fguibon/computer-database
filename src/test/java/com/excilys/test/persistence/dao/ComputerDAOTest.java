@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.excilys.exceptions.DatabaseQueryException;
+import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.persistence.dao.ComputerDAO;
@@ -45,7 +45,7 @@ public class ComputerDAOTest {
 	}
 	
 	@Test
-	public void testCreateComputer_Success() throws DatabaseQueryException {
+	public void testCreateComputer_Success() throws DatabaseException {
 		Computer computerExpected = computerTest;
 		computerDAO.create(computerExpected);
 		computerExpected.setId(11L);
@@ -57,7 +57,7 @@ public class ComputerDAOTest {
 	}
 	
 	@Test
-	public void testFindAll_Success() throws DatabaseQueryException {
+	public void testFindAll_Success() throws DatabaseException {
 		List<Computer> computersExpected = computersTest;
 		
 		List<Computer> computersActual = new ArrayList<Computer>();
@@ -67,14 +67,14 @@ public class ComputerDAOTest {
 	}
 	
 	@Test
-	public void testFindById_Success() throws DatabaseQueryException {
+	public void testFindById_Success() throws DatabaseException {
 		Computer computerActual = computerDAO.findById(1L);
 		
 		assertEquals("Can't find computer",computerTest, computerActual);
 	}
 	
 	@Test
-	public void testUpdate_Success() throws DatabaseQueryException {
+	public void testUpdate_Success() throws DatabaseException {
 		Computer computerExpected = computerTest;
 		computerDAO.update(computerExpected);
 		Computer computerActual = computerDAO.findById(1L);
@@ -83,7 +83,7 @@ public class ComputerDAOTest {
 	}
 	
 	@Test
-	public void testDelete_Success() throws DatabaseQueryException {
+	public void testDelete_Success() throws DatabaseException {
 		Long id = 4L;
 		assertNotNull(computerDAO.findById(id));
 		computerDAO.delete(id);

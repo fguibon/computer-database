@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.ComputerMapper;
-import com.excilys.exceptions.DatabaseQueryException;
+import com.excilys.exceptions.DatabaseException;
 import com.excilys.exceptions.DateParseException;
 import com.excilys.exceptions.MappingException;
 import com.excilys.exceptions.ValidationException;
@@ -30,14 +30,14 @@ public class ComputerService {
 	}
 	
 	
-	public boolean createComputer(ComputerDTO computerDTO) throws ValidationException, DatabaseQueryException, MappingException, DateParseException  {
+	public boolean createComputer(ComputerDTO computerDTO) throws ValidationException, DateParseException, MappingException, DatabaseException  {
 		computerValidator.validateComputerToCreate(computerDTO);
 		Computer computer = computerMapper.dtoToModel(computerDTO);
 		boolean created = computerDAO.create(computer);
 		return created;
 	}
 	
-	public List<ComputerDTO> getComputers() throws DatabaseQueryException {
+	public List<ComputerDTO> getComputers() throws DatabaseException {
 		List<Computer> computers = computerDAO.findAll();
 		List<ComputerDTO> computersDTO = new ArrayList<ComputerDTO>();
 		computersDTO = (List<ComputerDTO>)computers.stream().map(s -> computerMapper.modelToDto(s))
@@ -46,7 +46,7 @@ public class ComputerService {
 		return computersDTO;
 	}
 	
-	public List<ComputerDTO> getComputers(int limit, int currentPage) throws DatabaseQueryException {
+	public List<ComputerDTO> getComputers(int limit, int currentPage) throws DatabaseException {
 		List<Computer> computers = computerDAO.findAllPaged(limit, currentPage);
 		
 		List<ComputerDTO> computersDTO = (List<ComputerDTO>)computers
@@ -55,25 +55,25 @@ public class ComputerService {
 		return computersDTO;
 	}
 	
-	public ComputerDTO findById(Long id) throws DatabaseQueryException  {
+	public ComputerDTO findById(Long id) throws DatabaseException  {
 		Computer computer = computerDAO.findById(id);
 
 		ComputerDTO computerDTO = computerMapper.modelToDto(computer);
 		return computerDTO;
 	}
 	
-	public boolean update(ComputerDTO computerDTO) throws ValidationException, DatabaseQueryException, MappingException, DateParseException  {
+	public boolean update(ComputerDTO computerDTO) throws DatabaseException, ValidationException, DateParseException, MappingException  {
 		computerValidator.validateComputerToUpdate(computerDTO);
 		boolean updated = computerDAO.update(computerMapper.dtoToModel(computerDTO));
 		return updated;
 	}
 	
-	public boolean delete(Long id) throws DatabaseQueryException  {
+	public boolean delete(Long id) throws DatabaseException  {
 		boolean deleted = computerDAO.delete(id);
 		return deleted;
 	}
 	
-	public int count() throws DatabaseQueryException {
+	public int count() throws DatabaseException {
 		int count =  computerDAO.count();
 		return count;
 	}
