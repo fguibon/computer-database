@@ -29,7 +29,7 @@ public class JDBCManager {
 	
 	private JDBCManager() {
 		config = new HikariConfig("/datasource.properties");
-		config.setMaximumPoolSize(10);
+		config.setMaximumPoolSize(5);
 		dataSource = new HikariDataSource(config);
 	}
 	
