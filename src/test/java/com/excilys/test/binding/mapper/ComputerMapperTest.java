@@ -42,7 +42,7 @@ public class ComputerMapperTest {
 				.setCompany(company).build();
 		computerDTO = new ComputerDTO.Builder().setId("9").setName("Coucou")
 				.setIntroduced("2014-04-05").setDiscontinued("2015-03-02")
-				.setCompanyId(companyId).build();
+				.setCompanyId(companyId).setCompanyName("NASA").build();
 		
 		when(daoMock.findById(4L)).thenReturn(company);
 		mapper = ComputerMapper.getInstance();

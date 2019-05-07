@@ -71,7 +71,7 @@ public class EditComputerServlet extends HttpServlet {
 		}
 
 		try {
-			boolean updated = computerService.update(computer);
+			computerService.update(computer);
 		} catch (Exception e) {
 			logger.warn(e.getMessage(), e);
 		} 
