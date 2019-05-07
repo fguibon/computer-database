@@ -2,7 +2,11 @@ package com.excilys.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,9 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.exceptions.DatabaseException;
+import com.excilys.exceptions.InvalidArgumentsException;
 import com.excilys.service.ComputerService;
 
 
@@ -69,6 +73,30 @@ public class DashboardServlet extends HttpServlet {
 
 	public  void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException  {
-		doGet(request, response) ;
+		String computersSelection = request.getParameter("selection");
+		String[] computers = computersSelection.split(",");
+		
+		List<Long> computersToDelete = new ArrayList<Long>();
+		try {
+			 if (Objects.isNull(computers)) {
+	                computersToDelete= Collections.emptyList();
+	            } else {
+	                computersToDelete = Arrays.stream(computers).map(Long::valueOf).collect(Collectors.toList());
+	            }
+		} catch(NumberFormatException e) {
+			logger.error("Could not format the ids");
+			throw new InvalidArgumentsException(e.getMessage());
+		}
+		
+		computersToDelete.stream().forEach(id -> {
+			try {
+				computerService.delete(id);
+			} catch (DatabaseException e) {
+				logger.warn("Invalid id");
+			}
+		});
+
+		response.sendRedirect("dashboard");
+		
 	}
 }

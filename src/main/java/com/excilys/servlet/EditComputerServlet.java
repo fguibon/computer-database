@@ -76,8 +76,7 @@ public class EditComputerServlet extends HttpServlet {
 			logger.warn(e.getMessage(), e);
 		} 
 		
-		request.getServletContext().getRequestDispatcher("/WEB-INF/jsp/editComputer.jsp")
-		.forward(request, response);
+		response.sendRedirect("dashboard");
 
 	}
 

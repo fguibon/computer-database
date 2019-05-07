@@ -28,8 +28,7 @@ public class Validator {
 		      + "|^(((19|2[0-9])[0-9]{2})-(0[13578]|10|12)-(0[1-9]|[12][0-9]|3[01]))$"
 		      + "|^(((19|2[0-9])[0-9]{2})-(0[469]|11)-(0[1-9]|[12][0-9]|30))$");
 	
-	private Validator() {	
-	}
+	private Validator() {}
 	
 	public static Validator getInstance() {
 		return (instance!=null) ? instance : (instance = new Validator());
@@ -41,7 +40,7 @@ public class Validator {
 				&& areValidDates(computerDTO.getIntroduced(), computerDTO.getDiscontinued()));
 		if(!valid) {
 			logger.warn("Computer data is not valid!");
-			throw new ComputerValidationException();
+			throw new ComputerValidationException("Computer data is not valid : "+computerDTO);
 		}
 		return valid;
 	}
@@ -53,7 +52,7 @@ public class Validator {
 				&& isValidId(computerDTO.getCompanyId()));
 		if(!valid) {
 			logger.warn("Computer data is not valid!");
-			throw new ComputerValidationException();
+			throw new ComputerValidationException("Computer data is not valid : "+computerDTO);
 		}
 		return valid;
 	}
@@ -62,7 +61,7 @@ public class Validator {
 		boolean valid = isValidName(companyDTO.getName());
 		if(!valid) {
 			logger.warn("Company data is not valid!");
-			throw new CompanyValidationException();
+			throw new CompanyValidationException("Company data is not valid : "+companyDTO);
 		}
 		return valid;
 	}
@@ -72,8 +71,8 @@ public class Validator {
 		if(id!=null && !id.trim().isEmpty() && Pattern.matches("^[1-9][0-9]*$",id)) valid=true;
 		if(id==null || id.trim().isEmpty()) valid=true;
 		if(!valid) {
-			logger.warn("Id data is not valid!");
-			throw new IdValidationException();
+			logger.warn("Id is not valid");
+			throw new IdValidationException("Id is not valid : "+id);
 		}
 		return valid;
 	}
@@ -83,8 +82,8 @@ public class Validator {
 		boolean valid =( name!=null && !name.trim().isEmpty() && name.length()>2 
 				&& Pattern.matches("^[\\w-,.0-9][^_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~:]{2,}$",name));
 		if(!valid) {
-			logger.warn("Name is not valid!");
-			throw new NameValidationException();
+			logger.warn("Name is not valid");
+			throw new NameValidationException("Name is not valid : "+name);
 		}
 		return valid;
 	}
@@ -99,8 +98,8 @@ public class Validator {
 			}
 		}
 		if(!valid) {
-			logger.warn("Dates are not valid "+introducedDate+" "+discontinuedDate);
-			throw new DateValidationException();
+			logger.warn("Dates are not valid");
+			throw new DateValidationException("Dates are not valid "+introducedDate+" "+discontinuedDate);
 		}
 		return valid;
 	}
@@ -112,8 +111,8 @@ public class Validator {
 				&& ComputerMapper.getInstance().castLocalDate(date).getYear()>1970) valid=true; 
 		if(date== null || date.trim().isEmpty()) valid = true;
 		if(!valid) {
-			logger.warn("Date is not valid : "+date);
-			throw new DateValidationException();
+			logger.warn("Date is not valid");
+			throw new DateValidationException("Date is not valid : "+date);
 		}
 		return valid;
 	}
