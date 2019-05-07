@@ -53,11 +53,11 @@ public class DashboardServlet extends HttpServlet {
 		
 		if(pageParam != null && !pageParam.isEmpty()) offset = Integer.parseInt(pageParam);
 		if(offset<1) offset = CURRENT_PAGE;
-		if(offset>maximumPage) offset = maximumPage;
+		if(offset>=maximumPage) offset = maximumPage;
 		
 		List<ComputerDTO> computers = new ArrayList<ComputerDTO>();
+		String filter = (stringToSearch==null)? "":stringToSearch;
 		try {
-			String filter = (stringToSearch==null)? "":stringToSearch;
 			computers = computerService.getComputers(limit, offset,filter);
 		} catch (DatabaseException e) {
 			logger.warn(e.getMessage(), e);
@@ -67,6 +67,7 @@ public class DashboardServlet extends HttpServlet {
 		request.setAttribute("currentPage", offset);
 		request.setAttribute( "numberOfComputers", numberOfComputers );
 		request.setAttribute( "computers", computers );
+		request.setAttribute("filter",filter);
 		
 		request.getServletContext().getRequestDispatcher("/WEB-INF/jsp/dashboard.jsp")
 		.forward(request, response);
@@ -98,7 +99,8 @@ public class DashboardServlet extends HttpServlet {
 			}
 		});
 
-		response.sendRedirect("dashboard");
+		request.getServletContext().getRequestDispatcher("/WEB-INF/jsp/dashboard.jsp")
+		.forward(request, response);
 		
 	}
 }

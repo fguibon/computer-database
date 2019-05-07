@@ -31,7 +31,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 
 	private static ComputerDAO instance = null;
 
-	private static final String INSERT =
+	private static final String CREATE =
 			"INSERT INTO computer (name,introduced,discontinued,company_id)"
 					+ " VALUES (?, ?, ?, ?) ;";
 
@@ -41,6 +41,10 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	private static final String SELECT_ALL = 
 			"SELECT * FROM computer;";
 
+	private static final String SELECT_ALL_PAGED =
+			"SELECT id,name,introduced,discontinued,company_id FROM computer "
+					+ "WHERE UPPER(name) LIKE UPPER(?) LIMIT ? OFFSET ? ; ";
+
 	private static final String UPDATE= 
 			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=?"
 					+ " WHERE id=? ;";
@@ -48,9 +52,6 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	private static final String DELETE=
 			"DELETE FROM computer WHERE id=? ;";
 
-	private static final String SELECT_ALL_PAGED =
-			"SELECT id,name,introduced,discontinued,company_id FROM computer "
-					+ "LIMIT ? OFFSET ? ; ";
 
 	private static final String COUNT = 
 			"SELECT id FROM computer; ";
@@ -74,7 +75,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	public boolean create(Computer computer) throws DatabaseException {
 		try(
 				Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(INSERT);
+				PreparedStatement ps = conn.prepareStatement(CREATE);
 				) {
 			ps.setString(1, computer.getName());
 			LocalDate introducedDate = computer.getIntroduced();
@@ -103,7 +104,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseException(INSERT);
+			throw new DatabaseException(CREATE);
 		}
 	}
 
@@ -159,17 +160,18 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	 * @return
 	 * @throws Exception 
 	 */
-	public List<Computer> findAllPaged(int limit, int currentPage) throws DatabaseException {
+	public List<Computer> findAllPaged(String filter, int limit, int currentPage ) throws DatabaseException {
 		List<Computer> computers = new ArrayList<Computer>();
 		int offset = ((currentPage-1) * limit);
 
 		try ( 
 				Connection connection = JDBCManager.getInstance().getConnection();
-				PreparedStatement statement = connection.prepareStatement(SELECT_ALL_PAGED);)
+				PreparedStatement ps = connection.prepareStatement(SELECT_ALL_PAGED);)
 		{
-			statement.setInt(1,limit);
-			statement.setInt(2, offset);
-			ResultSet rs = statement.executeQuery();
+			ps.setString(1, "%" +filter +"%");
+			ps.setInt(2,limit);
+			ps.setInt(3, offset);
+			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				Computer computer = new Computer();
 				computer.setId(rs.getLong("id"));

@@ -28,7 +28,8 @@
 					<form id="searchForm" action="dashboard" method="GET" class="form-inline">
 
 						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name" /> <input
+							class="form-control" placeholder="Search name"
+							value="${filter}" /> <input
 							type="submit" id="searchsubmit" value="Filter by name"
 							class="btn btn-primary" />
 					</form>
@@ -90,15 +91,15 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-				<li><a href="?page=${currentPage - 1}&noOfRecords=${limit}"
+				<li><a href="?page=${currentPage - 1}&noOfRecords=${limit}&search=${filter}"
 					aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 				</a></li>
-				<li><a href="?page=1&noOfRecords=${limit}">1</a></li>
-				<li><a href="?page=2&noOfRecords=${limit}">2</a></li>
-				<li><a href="?page=3&noOfRecords=${limit}">3</a></li>
-				<li><a href="?page=4&noOfRecords=${limit}">4</a></li>
-				<li><a href="?page=5&noOfRecords=${limit}">5</a></li>
-				<li><a href="?page=${currentPage + 1}&noOfRecords=${limit}"
+				<li><a href="?page=1&noOfRecords=${limit}&search=${filter}">1</a></li>
+				<li><a href="?page=2&noOfRecords=${limit}&search=${filter}">2</a></li>
+				<li><a href="?page=3&noOfRecords=${limit}&search=${filter}">3</a></li>
+				<li><a href="?page=4&noOfRecords=${limit}&search=${filter}">4</a></li>
+				<li><a href="?page=5&noOfRecords=${limit}&search=${filter}">5</a></li>
+				<li><a href="?page=${currentPage + 1}&noOfRecords=${limit}&search=${filter}"
 					aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 				</a></li>
 			</ul>
@@ -106,10 +107,10 @@
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
 				<a class="btn btn-default"
-					href="?page=${currentPage}&noOfRecords=10">10</a> <a
-					class="btn btn-default" href="?page=${currentPage}&noOfRecords=50">50</a>
+					href="?page=${currentPage}&noOfRecords=10&search=${filter}">10</a> <a
+					class="btn btn-default" href="?page=${currentPage}&noOfRecords=50&search=${filter}">50</a>
 				<a class="btn btn-default"
-					href="?page=${currentPage}&noOfRecords=100">100</a>
+					href="?page=${currentPage}&noOfRecords=100&search=${filter}">100</a>
 			</div>
 		</div>
 
