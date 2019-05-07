@@ -46,11 +46,11 @@ public class ComputerService {
 		return computersDTO;
 	}
 	
-	public List<ComputerDTO> getComputers(int limit, int currentPage) throws DatabaseException {
+	public List<ComputerDTO> getComputers(int limit, int currentPage, String filter) throws DatabaseException {
 		List<Computer> computers = computerDAO.findAllPaged(limit, currentPage);
 		
 		List<ComputerDTO> computersDTO = (List<ComputerDTO>)computers
-		.stream().map(s -> computerMapper.modelToDto(s))
+		.stream().filter(s -> s.getName().contains(filter)).map(s -> computerMapper.modelToDto(s))
 		.collect(Collectors.toList());
 		return computersDTO;
 	}

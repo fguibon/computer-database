@@ -226,7 +226,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 					Date introDate =rs.getDate("introduced");
 					LocalDate ldate = (introDate==null)? null:introDate.toLocalDate();
 					computer.setIntroduced(ldate);
-					
+
 					Date discoDate = rs.getDate("discontinued");
 					LocalDate ldate2 = (discoDate==null)?null:discoDate.toLocalDate();
 					computer.setDiscontinued(ldate2);
@@ -271,7 +271,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			} else {
 				ps.setTimestamp(3,null);
 			}
-			
+
 			Long id =(computer.getCompany()==null) ? null :computer.getCompany().getId();
 			if(id!=null) {
 				ps.setLong(4, id);
@@ -304,6 +304,11 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 		}
 	}
 
+	/**
+	 * Get the computers total count
+	 * @return
+	 * @throws DatabaseException
+	 */
 	public int count() throws DatabaseException {
 		int number = 0;
 		try (Connection conn = JDBCManager.getInstance().getConnection();
@@ -317,7 +322,5 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 		}
 		return number;
 	}
-
-
 
 }

@@ -87,7 +87,7 @@ public class CLIController {
 		boolean ok=true;
 		List<ComputerDTO> computers = new ArrayList<ComputerDTO>();
 		while(ok) {
-			computers = this.computerService.getComputers(this.LIMIT,currentPage);
+			computers = this.computerService.getComputers(this.LIMIT,currentPage,"");
 			if(computers.isEmpty())	ok=false;
 			page.setCurrentPage(currentPage++);
 			this.view.displayComputers(computers,page);
