@@ -1,6 +1,5 @@
 package com.excilys.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,17 +36,8 @@ public class ComputerService {
 		return created;
 	}
 	
-	public List<ComputerDTO> getComputers() throws DatabaseException {
-		List<Computer> computers = computerDAO.findAll();
-		List<ComputerDTO> computersDTO = new ArrayList<ComputerDTO>();
-		computersDTO = (List<ComputerDTO>)computers.stream().map(s -> computerMapper.modelToDto(s))
-.collect(Collectors.toList());
-		
-		return computersDTO;
-	}
-	
-	public List<ComputerDTO> getComputers(int limit, int currentPage, String filter) throws DatabaseException {
-		List<Computer> computers = computerDAO.findAllPaged(filter, limit, currentPage);
+	public List<ComputerDTO> getComputers(int limit, int currentPage, String filter, String field, String order) throws DatabaseException {
+		List<Computer> computers = computerDAO.findAllPaged(filter, field, order, limit, currentPage);
 		
 		List<ComputerDTO> computersDTO = (List<ComputerDTO>)computers
 		.stream().map(s -> computerMapper.modelToDto(s))

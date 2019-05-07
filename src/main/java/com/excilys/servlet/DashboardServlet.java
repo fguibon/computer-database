@@ -47,6 +47,8 @@ public class DashboardServlet extends HttpServlet {
 		String pageParam =request.getParameter("page");
 		String noOfRecordsParam = request.getParameter("noOfRecords");
 		String stringToSearch = request.getParameter("search");
+		String fieldParam = request.getParameter("field");
+		String orderParam = request.getParameter("order");
 		 
 		if(noOfRecordsParam !=null && !noOfRecordsParam.isEmpty()) limit = Integer.parseInt(noOfRecordsParam);
 		int maximumPage = (int) Math.ceil(numberOfComputers * 1.0 / limit);
@@ -57,8 +59,10 @@ public class DashboardServlet extends HttpServlet {
 		
 		List<ComputerDTO> computers = new ArrayList<ComputerDTO>();
 		String filter = (stringToSearch==null)? "":stringToSearch;
+		String field = (fieldParam==null)? "":fieldParam;
+		String order = (orderParam==null)? "":orderParam;
 		try {
-			computers = computerService.getComputers(limit, offset,filter);
+			computers = computerService.getComputers(limit, offset,filter,field,order);
 		} catch (DatabaseException e) {
 			logger.warn(e.getMessage(), e);
 		}

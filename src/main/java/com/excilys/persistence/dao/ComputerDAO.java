@@ -26,6 +26,10 @@ import com.excilys.persistence.jdbc.JDBCManager;
  */
 public class ComputerDAO extends DataAccessObject<Computer>{
 
+	private static enum Field { ID,NAME,INTRODUCED,DISCONTINUED,COMPANY_ID}
+	
+	private static enum Order {ASC, DESC}
+	
 	private static final Logger logger = 
 			LogManager.getLogger(ComputerDAO.class);
 
@@ -43,7 +47,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 
 	private static final String SELECT_ALL_PAGED =
 			"SELECT id,name,introduced,discontinued,company_id FROM computer "
-					+ "WHERE UPPER(name) LIKE UPPER(?) LIMIT ? OFFSET ? ; ";
+					+ "WHERE UPPER(name) LIKE UPPER(?) ORDER BY ? ? LIMIT ? OFFSET ? ; ";
 
 	private static final String UPDATE= 
 			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=?"
@@ -113,7 +117,6 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	 * @return a List of computers
 	 * @throws Exception 
 	 */
-	@Override
 	public List<Computer> findAll() throws DatabaseException {
 		List<Computer> computers = new ArrayList<Computer>();
 
@@ -160,17 +163,20 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	 * @return
 	 * @throws Exception 
 	 */
-	public List<Computer> findAllPaged(String filter, int limit, int currentPage ) throws DatabaseException {
+	public List<Computer> findAllPaged(String filter, String field, String order, 
+			int limit, int currentPage ) throws DatabaseException {
 		List<Computer> computers = new ArrayList<Computer>();
 		int offset = ((currentPage-1) * limit);
 
 		try ( 
-				Connection connection = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = connection.prepareStatement(SELECT_ALL_PAGED);)
+			Connection connection = JDBCManager.getInstance().getConnection();
+			PreparedStatement ps = connection.prepareStatement(SELECT_ALL_PAGED);)
 		{
 			ps.setString(1, "%" +filter +"%");
-			ps.setInt(2,limit);
-			ps.setInt(3, offset);
+			ps.setString(2, getField(field).toString().toLowerCase());
+			ps.setString(3, getOrder(order).toString().toLowerCase());
+			ps.setInt(4,limit);
+			ps.setInt(5, offset);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				Computer computer = new Computer();
@@ -323,6 +329,34 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			throw new DatabaseException(COUNT);
 		}
 		return number;
+	}
+	
+	public Field getField(String choice) {
+		switch(choice) {
+		case "id":
+			return Field.ID;
+		case "name":
+			return Field.NAME;
+		case "intro":
+			return Field.INTRODUCED;
+		case "disco":
+			return Field.DISCONTINUED;
+		case "company":
+			return Field.COMPANY_ID;
+		default:
+			return Field.ID;
+		}
+	}
+	
+	public Order getOrder(String choice) {
+		switch(choice) {
+			case "asc":
+				return Order.ASC;
+			case "desc":
+				return Order.DESC;
+			default:
+				return Order.ASC;
+		}
 	}
 
 }
