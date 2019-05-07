@@ -24,13 +24,11 @@ public class CompanyMapper {
 		Company company = new Company();
 		try {
 			company.setId(this.convertStringToId(companyDTO.getId()));
+			company.setName(companyDTO.getName());
 		} catch (NumberFormatException e) {
-			logger.error(e.getMessage(),e);
-			throw new MappingException();
+			logger.error("Could not transform the dto to model");
+			throw new MappingException("Failed to transform the dto to model : "+companyDTO);
 		}
-		
-		company.setName(companyDTO.getName());
-
 		return company;
 	}
 

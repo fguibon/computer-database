@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,8 +15,8 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboard"> Application - Computer Database
-			</a>
+			<a class="navbar-brand" href="dashboard"> Application - Computer
+				Database </a>
 		</div>
 	</header>
 
@@ -41,7 +41,7 @@
 			</div>
 		</div>
 
-		<form id="deleteForm" action="#" method="POST">
+		<form id="deleteForm" action="dashboard" method="POST">
 			<input type="hidden" name="selection" value="">
 		</form>
 
@@ -74,7 +74,8 @@
 						<tr>
 							<td class="editMode"><input type="checkbox" name="cb"
 								class="cb" value="${computer.getId()}"></td>
-							<td><a href="edit-computer?id=${computer.getId()}" onclick="">${computer.getName()}</a></td>
+							<td><a href="edit-computer?id=${computer.getId()}"
+								onclick="">${computer.getName()}</a></td>
 							<td>${computer.getIntroduced()}</td>
 							<td>${computer.getDiscontinued()}</td>
 							<td>${computer.getCompanyName()}</td>
@@ -89,23 +90,26 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-				<li><a href="?page=${currentPage - 1}&noOfRecords=${limit}" aria-label="Previous"> <span
-						aria-hidden="true">&laquo;</span>
+				<li><a href="?page=${currentPage - 1}&noOfRecords=${limit}"
+					aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 				</a></li>
 				<li><a href="?page=1&noOfRecords=${limit}">1</a></li>
 				<li><a href="?page=2&noOfRecords=${limit}">2</a></li>
 				<li><a href="?page=3&noOfRecords=${limit}">3</a></li>
 				<li><a href="?page=4&noOfRecords=${limit}">4</a></li>
 				<li><a href="?page=5&noOfRecords=${limit}">5</a></li>
-				<li><a href="?page=${currentPage + 1}&noOfRecords=${limit}" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+				<li><a href="?page=${currentPage + 1}&noOfRecords=${limit}"
+					aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 				</a></li>
 			</ul>
 
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
-				<a class="btn btn-default" href="?page=${currentPage}&noOfRecords=10">10</a>
-				<a class="btn btn-default" href="?page=${currentPage}&noOfRecords=50">50</a>
-				<a class="btn btn-default" href="?page=${currentPage}&noOfRecords=100">100</a>
+				<a class="btn btn-default"
+					href="?page=${currentPage}&noOfRecords=10">10</a> <a
+					class="btn btn-default" href="?page=${currentPage}&noOfRecords=50">50</a>
+				<a class="btn btn-default"
+					href="?page=${currentPage}&noOfRecords=100">100</a>
 			</div>
 		</div>
 

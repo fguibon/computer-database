@@ -4,12 +4,8 @@ public class IdValidationException extends ValidationException {
 
 	private static final long serialVersionUID = 1L;
 
-	public IdValidationException() {
-		super();
+	public IdValidationException(String message) {
+		super(message);
 	}
 
-	@Override
-	public String getMessage() {
-		return "The id provided is not valid.";
-	}
 }
