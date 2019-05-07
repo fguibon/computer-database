@@ -2,6 +2,8 @@ package com.excilys.persistence.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.TimeZone;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +17,8 @@ import com.zaxxer.hikari.HikariDataSource;
  *
  */
 public class JDBCManager {
-
+	
+	static {TimeZone.setDefault(TimeZone.getTimeZone("UTC"));}
 	private static final Logger logger = 
 			LogManager.getLogger(JDBCManager.class);
 	private static JDBCManager instance = null;

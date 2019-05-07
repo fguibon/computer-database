@@ -51,7 +51,7 @@ public class SeleniumTest {
 
 		driver.get("http://localhost:8080/computer-database/");
 
-		assertEquals("Computer Database", driver.getTitle());
+		assertEquals("localhost", driver.getTitle());
 
 	}
 

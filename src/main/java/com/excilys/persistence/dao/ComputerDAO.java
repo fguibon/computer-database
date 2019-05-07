@@ -42,11 +42,11 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			"SELECT * FROM computer;";
 
 	private static final String UPDATE= 
-			"UPDATE computer SET name= ?, introduced = ?, discontinued = ?, company_id = ?"
-					+ " WHERE id= ? ;";
+			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=?"
+					+ " WHERE id=? ;";
 
 	private static final String DELETE=
-			"DELETE FROM computer WHERE id= ? ;";
+			"DELETE FROM computer WHERE id=? ;";
 
 	private static final String SELECT_ALL_PAGED =
 			"SELECT id,name,introduced,discontinued,company_id FROM computer "
@@ -223,17 +223,13 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 					computer = new Computer();
 					computer.setId(computer_id);
 					computer.setName(rs.getString("name"));
-					Date date =rs.getDate("introduced");
-					LocalDate ldate = null;
-					if(date!=null) {
-						ldate  = date.toLocalDate();
-					}
+					Date introDate =rs.getDate("introduced");
+					LocalDate ldate = (introDate==null)? null:introDate.toLocalDate();
 					computer.setIntroduced(ldate);
-					date = rs.getDate("discontinued");
-					if(date!=null) {
-						ldate  = date.toLocalDate();
-					}
-					computer.setDiscontinued(ldate);
+					
+					Date discoDate = rs.getDate("discontinued");
+					LocalDate ldate2 = (discoDate==null)?null:discoDate.toLocalDate();
+					computer.setDiscontinued(ldate2);
 
 					Long company_id =rs.getLong("company_id");
 					if(company_id!=null) {
@@ -258,8 +254,10 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 
 	@Override
 	public boolean update(Computer computer) throws DatabaseException {
-		try(Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(UPDATE);) {
+		try(
+				Connection conn = JDBCManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(UPDATE);) 
+		{
 			ps.setString(1, computer.getName());
 			LocalDate introducedDate = computer.getIntroduced();
 			if(introducedDate!=null) {
@@ -273,7 +271,8 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			} else {
 				ps.setTimestamp(3,null);
 			}
-			Long id =computer.getCompany().getId();
+			
+			Long id =(computer.getCompany()==null) ? null :computer.getCompany().getId();
 			if(id!=null) {
 				ps.setLong(4, id);
 			} else {

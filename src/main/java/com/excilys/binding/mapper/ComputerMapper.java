@@ -50,9 +50,9 @@ public class ComputerMapper {
 		}
 
 		Company company = new Company();
-		Long id =convertStringToId(computerDTO.getCompanyId());
-		company.setId(id);
+		company.setId(convertStringToId(computerDTO.getCompanyId()));
 		company.setName(computerDTO.getCompanyName());
+		computer.setCompany(company);
 
 		return computer;
 	}
