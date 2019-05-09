@@ -335,8 +335,6 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	
 	public Field getField(String choice) {
 		switch(choice) {
-		case "id":
-			return Field.ID;
 		case "name":
 			return Field.NAME;
 		case "intro":

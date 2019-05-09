@@ -45,7 +45,7 @@ public class DashboardServlet extends HttpServlet {
 		}
 		
 		String pageParam =request.getParameter("page");
-		String noOfRecordsParam = request.getParameter("noOfRecords");
+		String noOfRecordsParam = request.getParameter("number");
 		String stringToSearch = request.getParameter("search");
 		String fieldParam = request.getParameter("field");
 		String orderParam = request.getParameter("order");
@@ -57,6 +57,17 @@ public class DashboardServlet extends HttpServlet {
 		if(offset<1) offset = CURRENT_PAGE;
 		if(offset>=maximumPage) offset = maximumPage;
 		
+		List<Integer> pages = new ArrayList<Integer>();
+		if(offset<=3) {
+			for(int i=1;i<6;i++) {
+				pages.add(i);
+			}
+		} else {
+			for(int i=offset-2;i<offset+3;i++) {
+				pages.add(i);
+			}
+		}
+		
 		List<ComputerDTO> computers = new ArrayList<ComputerDTO>();
 		String filter = (stringToSearch==null)? "":stringToSearch;
 		String field = (fieldParam==null)? "":fieldParam;
@@ -67,11 +78,15 @@ public class DashboardServlet extends HttpServlet {
 			logger.warn(e.getMessage(), e);
 		}
 		
-		request.setAttribute("limit", limit);
-		request.setAttribute("currentPage", offset);
-		request.setAttribute( "numberOfComputers", numberOfComputers );
 		request.setAttribute( "computers", computers );
+		request.setAttribute("pages", pages);
+		
+		request.setAttribute("limit", limit);
+		request.setAttribute("page", offset);
+		request.setAttribute( "number", numberOfComputers );
 		request.setAttribute("filter",filter);
+		request.setAttribute("field", field);
+		request.setAttribute("order", order);
 		
 		request.getServletContext().getRequestDispatcher("/WEB-INF/jsp/dashboard.jsp")
 		.forward(request, response);

@@ -58,32 +58,95 @@
 							style="vertical-align: top;"> - <a href="#"
 								id="deleteSelected" onclick="$.fn.deleteSelected();"> <i
 									class="fa fa-trash-o fa-lg"></i>
-							</a>
-						</span></th>
-						<th class="th-sm">Computer name   <a
-							title="Order by name ascendant" href="?field=name&order=asc"><i
-								class="fa fa-arrow-down"></i></a> <a
-							title="Order by name descendant" href="?field=name&order=desc"><i
-								class="fa fa-arrow-up"></i></a></th>
-						
-						<th class="th-sm">Introduced date  <a
+								</a>
+							</span>
+						</th>
+						<th class="th-sm">Computer name 
+							<a <c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="name"/>
+ 								<c:param name="order" value="asc"/>
+							</c:url>
+							title="Order by name ascendant" href="${url}">
+							<i class="fa fa-arrow-down"></i></a> 
+							<a <c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="name"/>
+ 								<c:param name="order" value="desc"/>
+							</c:url>
+							title="Order by name descendant" href="${url}">
+							<i class="fa fa-arrow-up"></i></a>
+						</th>
+
+						<th class="th-sm">Introduced date <a
+							<c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="intro"/>
+ 								<c:param name="order" value="asc"/>
+							</c:url> 
 							title="Order by introducted date ascendant"
-							href="?field=intro&order=asc"><i class="fa fa-arrow-down"></i></a> <a
+							href="${url}"><i class="fa fa-arrow-down"></i></a>
+							<a <c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="intro"/>
+ 								<c:param name="order" value="desc"/>
+							</c:url> 
 							title="Order by introducted date descendant"
-							href="?field=intro&order=desc"><i class="fa fa-arrow-up"></i></a></th>
-						
-						<th class="th-sm">Discontinued date  <a
+							href="${url}">
+							<i class="fa fa-arrow-up"></i></a>
+						</th>
+
+						<th class="th-sm">Discontinued date <a
+							<c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="disco"/>
+ 								<c:param name="order" value="asc"/>
+							</c:url>
 							title="Order by discontinued ascendant"
-							href="?field=disco&order=asc"><i class="fa fa-arrow-down"></i></a> <a
-							title="Order by discontinued descendant"
-							href="?field=disco&order=desc"><i class="fa fa-arrow-up"></i></a></th>
+							href="${url}"><i class="fa fa-arrow-down"></i></a>
+							<a <c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="disco"/>
+ 								<c:param name="order" value="desc"/>
+							</c:url> title="Order by discontinued descendant"
+							href="${url}"><i class="fa fa-arrow-up"></i></a>
+						</th>
 
-						<th class="th-sm">Company  <a
-							title="Order by company name ascendant"
-							href="?field=company&order=asc"><i class="fa fa-arrow-down"></i></a>
-							<a title="Order by company name descendant"
-							href="?field=company&order=desc"><i class="fa fa-arrow-up"></i></a></th>
-
+						<th class="th-sm">Company 
+							<a
+							<c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="company"/>
+ 								<c:param name="order" value="asc"/>
+							</c:url>
+							title="Order by company name ascendant" href="${url}">
+							<i class="fa fa-arrow-down"></i></a> 
+							<a
+							<c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="company"/>
+ 								<c:param name="order" value="desc"/>
+							</c:url>
+							title="Order by company name descendant" href="${url}">
+							<i class="fa fa-arrow-up"></i>
+							</a>
+						</th>
 					</tr>
 				</thead>
 				<!-- Browse attribute computers -->
@@ -109,28 +172,62 @@
 		<div class="container text-center">
 			<ul class="pagination">
 				<li><a
-					href="?page=${currentPage - 1}&noOfRecords=${limit}&search=${filter}"
-					aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+					<c:url value="/dashboard" var="url">
+						<c:param name="page" value="${page - 1}"/>
+						<c:param name="number" value="${limit}"/>
+						<c:param name="filter" value="${filter}"/>
+ 						<c:param name="field" value="${field}"/>
+ 						<c:param name="order" value="${order}"/>
+					</c:url> href="${url}" aria-label="Previous"> 
+					<span aria-hidden="true">&laquo;</span>
 				</a></li>
-				<li><a href="?page=1&noOfRecords=${limit}&search=${filter}">1</a></li>
-				<li><a href="?page=2&noOfRecords=${limit}&search=${filter}">2</a></li>
-				<li><a href="?page=3&noOfRecords=${limit}&search=${filter}">3</a></li>
-				<li><a href="?page=4&noOfRecords=${limit}&search=${filter}">4</a></li>
-				<li><a href="?page=5&noOfRecords=${limit}&search=${filter}">5</a></li>
+				<c:forEach var="currentPage" items="${pages}">
+					<li ${page==currentPage?"class='activated'":""}><a <c:url value="/dashboard" var="url">
+								<c:param name="page" value="${currentPage}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="${field}"/>
+ 								<c:param name="order" value="${order}"/>
+							</c:url> href="${url}" >${currentPage}</a></li>
+				</c:forEach>
 				<li><a
-					href="?page=${currentPage + 1}&noOfRecords=${limit}&search=${filter}"
-					aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+					<c:url value="/dashboard" var="url">
+						<c:param name="page" value="${page + 1}"/>
+						<c:param name="number" value="${limit}"/>
+						<c:param name="filter" value="${filter}"/>
+ 						<c:param name="field" value="${field}"/>
+ 						<c:param name="order" value="${order}"/>
+					</c:url> href="${url}" aria-label="Next"> 
+					<span aria-hidden="true">&raquo;</span>
 				</a></li>
 			</ul>
 
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
+				<a class="btn btn-default" 
+					<c:url value="/dashboard" var="url">
+						<c:param name="page" value="${page}"/>
+						<c:param name="number" value="10"/>
+						<c:param name="filter" value="${filter}"/>
+ 						<c:param name="field" value="${field}"/>
+ 						<c:param name="order" value="${order}"/>
+					</c:url> href="${url}">10</a> 
 				<a class="btn btn-default"
-					href="?page=${currentPage}&noOfRecords=10&search=${filter}">10</a>
+					<c:url value="/dashboard" var="url">
+						<c:param name="page" value="${page}"/>
+						<c:param name="number" value="50"/>
+						<c:param name="filter" value="${filter}"/>
+ 						<c:param name="field" value="${field}"/>
+ 						<c:param name="order" value="${order}"/>
+					</c:url> href="${url}">50</a> 
 				<a class="btn btn-default"
-					href="?page=${currentPage}&noOfRecords=50&search=${filter}">50</a>
-				<a class="btn btn-default"
-					href="?page=${currentPage}&noOfRecords=100&search=${filter}">100</a>
+					<c:url value="/dashboard" var="url">
+						<c:param name="page" value="${page}"/>
+						<c:param name="number" value="100"/>
+						<c:param name="filter" value="${filter}"/>
+ 						<c:param name="field" value="${field}"/>
+ 						<c:param name="order" value="${order}"/>
+					</c:url> href="${url}">100</a>
 			</div>
 		</div>
 
