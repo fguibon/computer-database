@@ -40,9 +40,11 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	private static final String UPDATE= 
 			"UPDATE company SET name= ? WHERE id= ? ;";
 	
-	private static final String DELETE=
+	private static final String DELETE_COMPANY=
 			"DELETE FROM company WHERE id= ? ;";
 	
+	private static final String DELETE_COMPUTER_WHERE=
+			"DELETE FROM computer where company_id = ? ;";
 	
 	private static final String SELECT_ALL_PAGED =
 			"SELECT id,name FROM company "
@@ -169,19 +171,25 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	}
 
 	/**
-	 * Deletes a company record
+	 * Deletes a company record and all computers associated
 	 * @throws DatabaseException 
 	 * 
 	 */
 	@Override
-	public boolean delete(Long id) throws DatabaseException {
-		try (Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(DELETE);){
-			ps.setLong(1, id);
-			return ps.executeUpdate()>0;
+	public void delete(Long id) throws DatabaseException {
+		try (Connection connection = JDBCManager.getInstance().getConnection()){
+			
+			connection.setAutoCommit(false);
+			PreparedStatement deleteComputersStmt = connection.prepareStatement(DELETE_COMPUTER_WHERE);
+			PreparedStatement deleteCompanyStmt = connection.prepareStatement(DELETE_COMPANY);
+			deleteComputersStmt.setLong(1,id);
+			deleteCompanyStmt.setLong(1,id);
+			deleteComputersStmt.execute();
+			deleteCompanyStmt.execute();	
+			connection.commit();
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseException(DELETE);
+			throw new DatabaseException(DELETE_COMPUTER_WHERE);
 		} 
 	}
 	
