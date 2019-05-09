@@ -80,7 +80,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 * @return a List of companies
 	 * @throws DatabaseException 
 	 */
-	@Override
+
 	public List<Company> findAll() throws DatabaseException {
 		
 		List<Company> companies = new ArrayList<Company>();

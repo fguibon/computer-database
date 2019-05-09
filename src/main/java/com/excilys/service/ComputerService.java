@@ -1,8 +1,10 @@
 package com.excilys.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.ComputerMapper;
@@ -12,6 +14,7 @@ import com.excilys.exceptions.MappingException;
 import com.excilys.exceptions.ValidationException;
 import com.excilys.model.Computer;
 import com.excilys.persistence.dao.ComputerDAO;
+import com.excilys.servlet.DashboardServlet;
 import com.excilys.validator.Validator;
 
 public class ComputerService {
@@ -22,6 +25,7 @@ public class ComputerService {
 	private ComputerDAO computerDAO = ComputerDAO.getInstance();
 	private ComputerMapper computerMapper = ComputerMapper.getInstance();
 	Validator computerValidator = Validator.getInstance();
+	private static final Logger logger = LogManager.getLogger(ComputerService.class);
 	
 	private ComputerService() {}
 	
@@ -37,18 +41,9 @@ public class ComputerService {
 		return created;
 	}
 	
-	public List<ComputerDTO> getComputers() throws DatabaseException {
-		List<Computer> computers = computerDAO.findAll();
-		List<ComputerDTO> computersDTO = new ArrayList<ComputerDTO>();
-		computersDTO = (List<ComputerDTO>)computers.stream().map(s -> computerMapper.modelToDto(s))
-.collect(Collectors.toList());
-		
-		return computersDTO;
-	}
-	
-	public List<ComputerDTO> getComputers(int limit, int currentPage, String filter) throws DatabaseException {
-		List<Computer> computers = computerDAO.findAllPaged(filter, limit, currentPage);
-		
+	public List<ComputerDTO> getComputers(int limit, int currentPage, String filter, String field, String order) throws DatabaseException {
+		List<Computer> computers = computerDAO.findAllPaged(filter, field, order, limit, currentPage);
+		logger.info(computers);
 		List<ComputerDTO> computersDTO = (List<ComputerDTO>)computers
 		.stream().map(s -> computerMapper.modelToDto(s))
 		.collect(Collectors.toList());

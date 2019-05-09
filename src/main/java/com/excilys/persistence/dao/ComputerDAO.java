@@ -26,6 +26,10 @@ import com.excilys.persistence.jdbc.JDBCManager;
  */
 public class ComputerDAO extends DataAccessObject<Computer>{
 
+	private static enum Field { ID,NAME,INTRODUCED,DISCONTINUED,COMPANY_ID}
+	
+	private static enum Order {ASC, DESC}
+	
 	private static final Logger logger = 
 			LogManager.getLogger(ComputerDAO.class);
 
@@ -41,9 +45,11 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	private static final String SELECT_ALL = 
 			"SELECT * FROM computer;";
 
-	private static final String SELECT_ALL_PAGED =
+	private static final String SELECT_ORDER_BY =
 			"SELECT id,name,introduced,discontinued,company_id FROM computer "
-					+ "WHERE UPPER(name) LIKE UPPER(?) LIMIT ? OFFSET ? ; ";
+					+ "WHERE UPPER(name) LIKE UPPER(?) ORDER BY ";
+	
+	private static final String PAGED=	" LIMIT ? OFFSET ? ; ";
 
 	private static final String UPDATE= 
 			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=?"
@@ -113,7 +119,6 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	 * @return a List of computers
 	 * @throws Exception 
 	 */
-	@Override
 	public List<Computer> findAll() throws DatabaseException {
 		List<Computer> computers = new ArrayList<Computer>();
 
@@ -160,17 +165,19 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	 * @return
 	 * @throws Exception 
 	 */
-	public List<Computer> findAllPaged(String filter, int limit, int currentPage ) throws DatabaseException {
+	public List<Computer> findAllPaged(String filter, String field, String order, 
+			int limit, int currentPage ) throws DatabaseException {
 		List<Computer> computers = new ArrayList<Computer>();
 		int offset = ((currentPage-1) * limit);
-
+		boolean isAscending = ( getOrder(order).toString().compareToIgnoreCase("ASC")==0)? true : false;
 		try ( 
-				Connection connection = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = connection.prepareStatement(SELECT_ALL_PAGED);)
+			Connection connection = JDBCManager.getInstance().getConnection();
+			PreparedStatement ps = connection.prepareStatement(getMyTableQuerySQL(field, isAscending));)
 		{
 			ps.setString(1, "%" +filter +"%");
 			ps.setInt(2,limit);
 			ps.setInt(3, offset);
+			System.out.println(ps);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				Computer computer = new Computer();
@@ -200,7 +207,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			rs.close();
 		} catch(SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseException(SELECT_ALL_PAGED);
+			throw new DatabaseException(SELECT_ORDER_BY);
 		}
 		return computers;
 	}
@@ -216,7 +223,8 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 		Computer computer = null;
 
 		try (Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(SELECT_ONE);){
+			PreparedStatement ps = conn.prepareStatement(SELECT_ONE);)
+		{
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
@@ -324,5 +332,36 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 		}
 		return number;
 	}
+	
+	public Field getField(String choice) {
+		switch(choice) {
+		case "name":
+			return Field.NAME;
+		case "intro":
+			return Field.INTRODUCED;
+		case "disco":
+			return Field.DISCONTINUED;
+		case "company":
+			return Field.COMPANY_ID;
+		default:
+			return Field.ID;
+		}
+	}
+	
+	public Order getOrder(String choice) {
+		switch(choice) {
+			case "asc":
+				return Order.ASC;
+			case "desc":
+				return Order.DESC;
+			default:
+				return Order.ASC;
+		}
+	}
+	
+	 public String getMyTableQuerySQL( String fieldParam, boolean isAscending )
+	 {
+	     return SELECT_ORDER_BY + getField(fieldParam).toString()+ ( isAscending ? " ASC " : " DESC " ) + PAGED;
+	 }
 
 }

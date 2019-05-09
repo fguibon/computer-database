@@ -17,6 +17,10 @@ footer .pagination {
     margin:10px 0px;
 }
 
+footer .pagination li .activated {
+	color:#blue;
+}
+
 footer .btn-group {
     margin:10px 10px;
 }
