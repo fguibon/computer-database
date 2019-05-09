@@ -16,9 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.excilys.binding.dto.ComputerDTO;
+import com.excilys.controller.ComputerController;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.exceptions.InvalidArgumentsException;
-import com.excilys.service.ComputerService;
+import com.excilys.model.Page;
 
 
 public class DashboardServlet extends HttpServlet {
@@ -26,7 +27,7 @@ public class DashboardServlet extends HttpServlet {
 	private final int LIMIT=10;
 	private final int CURRENT_PAGE=1;
 
-	private final ComputerService computerService = ComputerService.getInstance();
+	private ComputerController computerController = ComputerController.getInstance();
 	private static final Logger logger = LogManager.getLogger(DashboardServlet.class);
 	
 	private static final long serialVersionUID = 1L;
@@ -35,11 +36,11 @@ public class DashboardServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 
 			throws ServletException, IOException {
-		int offset =CURRENT_PAGE;
+		int offset = CURRENT_PAGE;
 		int limit = LIMIT;
 		int numberOfComputers=0;
 		try {
-			numberOfComputers = computerService.count();
+			numberOfComputers = computerController.count();
 		} catch (DatabaseException e) {
 			logger.warn(e.getMessage(), e);
 		}
@@ -56,6 +57,7 @@ public class DashboardServlet extends HttpServlet {
 		if(pageParam != null && !pageParam.isEmpty()) offset = Integer.parseInt(pageParam);
 		if(offset<1) offset = CURRENT_PAGE;
 		if(offset>=maximumPage) offset = maximumPage;
+		Page page = new Page(offset,limit);
 		
 		List<Integer> pages = new ArrayList<Integer>();
 		if(offset<=3) {
@@ -73,7 +75,7 @@ public class DashboardServlet extends HttpServlet {
 		String field = (fieldParam==null)? "":fieldParam;
 		String order = (orderParam==null)? "":orderParam;
 		try {
-			computers = computerService.getComputers(limit, offset,filter,field,order);
+			computers = computerController.getComputers(page,filter,field,order);
 		} catch (DatabaseException e) {
 			logger.warn(e.getMessage(), e);
 		}
@@ -112,7 +114,7 @@ public class DashboardServlet extends HttpServlet {
 		
 		computersToDelete.stream().forEach(id -> {
 			try {
-				computerService.delete(id);
+				computerController.delete(id);
 			} catch (DatabaseException e) {
 				logger.warn("Invalid id");
 			}

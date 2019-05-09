@@ -5,7 +5,9 @@ import java.util.List;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
+import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exceptions.DatabaseException;
+import com.excilys.model.Computer;
 import com.excilys.model.Page;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
@@ -85,12 +87,18 @@ public class CLIController {
 	public void listComputers() throws DatabaseException {
 		currentPage =1;
 		boolean ok=true;
-		List<ComputerDTO> computers = new ArrayList<ComputerDTO>();
+		page.setCurrentPage(currentPage);
+		page.setEntriesPerPage(LIMIT);
+		List<ComputerDTO> computersDTO = new ArrayList<ComputerDTO>();
+		List<Computer> computers = new ArrayList<Computer>();
 		while(ok) {
-			computers = this.computerService.getComputers(this.LIMIT,currentPage,"","","");
+			computers = this.computerService.findAll(page,"","","");
+			for(Computer c:computers) {
+				computersDTO.add(ComputerMapper.getInstance().modelToDto(c));
+			}
 			if(computers.isEmpty())	ok=false;
 			page.setCurrentPage(currentPage++);
-			this.view.displayComputers(computers,page);
+			this.view.displayComputers(computersDTO,page);
 		}
 		
 	}
@@ -117,7 +125,7 @@ public class CLIController {
 	public void showComputerDetail() throws DatabaseException {
 		ComputerDTO computer = null;
 		Long id = this.view.queryId();
-		if(id!=null) computer = this.computerService.findById(id);
+		if(id!=null) computer = ComputerMapper.getInstance().modelToDto(this.computerService.findById(id));
 		if(computer!=null)	this.view.displayComputer(computer);
 	}
 	
@@ -130,9 +138,7 @@ public class CLIController {
 		ComputerDTO computer =null;
 		computer = this.queryComputerToCreate();
 		if(computer!=null) {
-			if(this.computerService.createComputer(computer)) {
-				view.notifySuccess();
-			}
+			this.computerService.createComputer(ComputerMapper.getInstance().dtoToModel(computer));
 		}
 	}
 	
@@ -144,7 +150,7 @@ public class CLIController {
 	public void updateComputer() throws Exception {
 		ComputerDTO computer = this.queryComputerToUpdate();
 		if(computer!=null) {
-			if(this.computerService.update(computer)) view.notifySuccess();
+			if(this.computerService.update(ComputerMapper.getInstance().dtoToModel(computer))) view.notifySuccess();
 		}
 	}
 	
@@ -156,7 +162,7 @@ public class CLIController {
 		Long id = null;
 		id = this.queryComputerToDelete();
 		if(id!=null) {
-			if(this.computerService.delete(id)) view.notifySuccess();	
+			this.computerService.delete(id);	
 		}
 	}
 	

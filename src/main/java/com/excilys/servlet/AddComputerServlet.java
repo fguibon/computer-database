@@ -14,15 +14,15 @@ import org.apache.logging.log4j.Logger;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
+import com.excilys.controller.ComputerController;
 import com.excilys.service.CompanyService;
-import com.excilys.service.ComputerService;
 import com.excilys.validator.Validator;
 
 public class AddComputerServlet extends HttpServlet {
 
 
 	private static final long serialVersionUID = 1L;
-	private final ComputerService computerService = ComputerService.getInstance();
+	private final ComputerController computerController = ComputerController.getInstance();
 	private final CompanyService companyService = CompanyService.getInstance();
 	private static final Logger logger = LogManager.getLogger(DashboardServlet.class);
 	
@@ -61,7 +61,7 @@ public class AddComputerServlet extends HttpServlet {
 		}
 		
 		try {
-			computerService.createComputer(computer);
+			computerController.createComputer(computer);
 		} catch (Exception e) {
 			logger.warn(e.getMessage(), e);
 		} 

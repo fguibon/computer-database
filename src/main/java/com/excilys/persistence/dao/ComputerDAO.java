@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
+import com.excilys.model.Page;
 import com.excilys.persistence.jdbc.JDBCManager;
 
 /**
@@ -49,7 +50,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			"SELECT id,name,introduced,discontinued,company_id FROM computer "
 					+ "WHERE UPPER(name) LIKE UPPER(?) ORDER BY ";
 	
-	private static final String PAGED=	" LIMIT ? OFFSET ? ; ";
+	private static final String PAGED=" LIMIT ? OFFSET ? ; ";
 
 	private static final String UPDATE= 
 			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=?"
@@ -165,17 +166,17 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	 * @return
 	 * @throws Exception 
 	 */
-	public List<Computer> findAllPaged(String filter, String field, String order, 
-			int limit, int currentPage ) throws DatabaseException {
+	public List<Computer> findAllPaged(Page page, String filter, String field, 
+			String order) throws DatabaseException {
 		List<Computer> computers = new ArrayList<Computer>();
-		int offset = ((currentPage-1) * limit);
+		int offset = ((page.getCurrentPage()-1) * page.getEntriesPerPage());
 		boolean isAscending = ( getOrder(order).toString().compareToIgnoreCase("ASC")==0)? true : false;
 		try ( 
 			Connection connection = JDBCManager.getInstance().getConnection();
 			PreparedStatement ps = connection.prepareStatement(getMyTableQuerySQL(field, isAscending));)
 		{
 			ps.setString(1, "%" +filter +"%");
-			ps.setInt(2,limit);
+			ps.setInt(2,page.getEntriesPerPage());
 			ps.setInt(3, offset);
 			System.out.println(ps);
 			ResultSet rs = ps.executeQuery();
@@ -302,12 +303,12 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	 * @throws Exception 
 	 */
 	@Override
-	public boolean delete(Long id) throws DatabaseException {
+	public void delete(Long id) throws DatabaseException {
 
 		try (Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(DELETE);){
 			ps.setLong(1, id);
-			return ps.executeUpdate()>0;
+			ps.executeUpdate();
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
 			throw new DatabaseException(DELETE);

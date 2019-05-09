@@ -1,30 +1,22 @@
 package com.excilys.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.excilys.binding.dto.ComputerDTO;
-import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.exceptions.DateParseException;
 import com.excilys.exceptions.MappingException;
 import com.excilys.exceptions.ValidationException;
 import com.excilys.model.Computer;
+import com.excilys.model.Page;
 import com.excilys.persistence.dao.ComputerDAO;
-import com.excilys.servlet.DashboardServlet;
-import com.excilys.validator.Validator;
 
 public class ComputerService {
 
 	private static ComputerService instance = null;
 	
-	
 	private ComputerDAO computerDAO = ComputerDAO.getInstance();
-	private ComputerMapper computerMapper = ComputerMapper.getInstance();
-	Validator computerValidator = Validator.getInstance();
 	private static final Logger logger = LogManager.getLogger(ComputerService.class);
 	
 	private ComputerService() {}
@@ -34,38 +26,28 @@ public class ComputerService {
 	}
 	
 	
-	public boolean createComputer(ComputerDTO computerDTO) throws ValidationException, DateParseException, MappingException, DatabaseException  {
-		computerValidator.validateComputerToCreate(computerDTO);
-		Computer computer = computerMapper.dtoToModel(computerDTO);
+	public boolean createComputer(Computer computer) throws ValidationException, DateParseException, MappingException, DatabaseException  {
 		boolean created = computerDAO.create(computer);
 		return created;
 	}
 	
-	public List<ComputerDTO> getComputers(int limit, int currentPage, String filter, String field, String order) throws DatabaseException {
-		List<Computer> computers = computerDAO.findAllPaged(filter, field, order, limit, currentPage);
-		logger.info(computers);
-		List<ComputerDTO> computersDTO = (List<ComputerDTO>)computers
-		.stream().map(s -> computerMapper.modelToDto(s))
-		.collect(Collectors.toList());
-		return computersDTO;
+	public List<Computer> findAll(Page page,String filter, String field, String order) throws DatabaseException {
+		List<Computer> computers = computerDAO.findAllPaged(page,filter, field, order);
+		return computers;
 	}
 	
-	public ComputerDTO findById(Long id) throws DatabaseException  {
+	public Computer findById(Long id) throws DatabaseException  {
 		Computer computer = computerDAO.findById(id);
-
-		ComputerDTO computerDTO = computerMapper.modelToDto(computer);
-		return computerDTO;
+		return computer;
 	}
 	
-	public boolean update(ComputerDTO computerDTO) throws DatabaseException, ValidationException, DateParseException, MappingException  {
-		computerValidator.validateComputerToUpdate(computerDTO);
-		boolean updated = computerDAO.update(computerMapper.dtoToModel(computerDTO));
+	public boolean update(Computer computer) throws DatabaseException, DateParseException, MappingException  {
+		boolean updated = computerDAO.update(computer);
 		return updated;
 	}
 	
-	public boolean delete(Long id) throws DatabaseException  {
-		boolean deleted = computerDAO.delete(id);
-		return deleted;
+	public void delete(Long id) throws DatabaseException  {
+		computerDAO.delete(id);
 	}
 	
 	public int count() throws DatabaseException {
