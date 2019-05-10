@@ -5,8 +5,10 @@ import java.util.List;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
+import com.excilys.binding.mapper.CompanyMapper;
 import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exceptions.DatabaseException;
+import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
 import com.excilys.model.Sorting;
@@ -112,12 +114,16 @@ public class CLIController {
 	public void listCompanies() {
 		currentPage =1;
 		boolean ok=true;
-		List<CompanyDTO> companies = new ArrayList<CompanyDTO>();
+		List<CompanyDTO> companiesDTO = new ArrayList<CompanyDTO>();
+		List<Company> companies = new ArrayList<Company>();
 		while(ok) {
-			companies = this.companyService.getCompanies(page.getEntriesPerPage(), currentPage);
-			if(companies.isEmpty()) ok=false;
+			companies = this.companyService.getCompanies();
+			for(Company c :companies) {
+				companiesDTO.add(CompanyMapper.getInstance().modelToDto(c));
+			}
+			if(companiesDTO.isEmpty()) ok=false;
 			page.setCurrentPage(currentPage++);
-			this.view.displayCompanies(companies,page);
+			this.view.displayCompanies(companiesDTO,page);
 		}
 	}
 	

@@ -106,14 +106,14 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 * @return
 	 * @throws DatabaseException 
 	 */
-	public List<Company> findAllPaged(int limit, int currentPage) 
+	public List<Company> findAllPaged(Page page) 
 			throws DatabaseException {
 		
 		List<Company> companies = new ArrayList<Company>();
 		try (Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(SELECT_ALL_PAGED);){
-			int offset = ((currentPage-1) * limit);
-			ps.setInt(1,limit);
+			int offset = ((page.getCurrentPage()-1) * page.getEntriesPerPage());
+			ps.setInt(1,page.getEntriesPerPage());
 			ps.setInt(2, offset);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
@@ -123,7 +123,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 		} catch(SQLException e) {
 			logger.error(e.getMessage(),e);
 			throw new DatabaseException("Cannot find companies with these parameters : " 
-			+new Page(limit,currentPage).toString());
+			+page.toString());
 		}
 		return companies;
 	}
