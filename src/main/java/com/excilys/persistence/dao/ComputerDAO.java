@@ -18,6 +18,7 @@ import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
+import com.excilys.model.Sorting;
 import com.excilys.persistence.jdbc.JDBCManager;
 
 /**
@@ -166,14 +167,13 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	 * @return
 	 * @throws Exception 
 	 */
-	public List<Computer> findAllPaged(Page page, String filter, String field, 
-			String order) throws DatabaseException {
+	public List<Computer> findAllPaged(Page page, String filter, Sorting sorting) throws DatabaseException {
 		List<Computer> computers = new ArrayList<Computer>();
 		int offset = ((page.getCurrentPage()-1) * page.getEntriesPerPage());
-		boolean isAscending = ( getOrder(order).toString().compareToIgnoreCase("ASC")==0)? true : false;
+		boolean isAscending = ( getOrder(sorting.getOrder()).toString().compareToIgnoreCase("ASC")==0)? true : false;
 		try ( 
 			Connection connection = JDBCManager.getInstance().getConnection();
-			PreparedStatement ps = connection.prepareStatement(getMyTableQuerySQL(field, isAscending));)
+			PreparedStatement ps = connection.prepareStatement(getMyTableQuerySQL(sorting.getField(), isAscending));)
 		{
 			ps.setString(1, "%" +filter +"%");
 			ps.setInt(2,page.getEntriesPerPage());
@@ -360,9 +360,9 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 		}
 	}
 	
-	 public String getMyTableQuerySQL( String fieldParam, boolean isAscending )
-	 {
-	     return SELECT_ORDER_BY + getField(fieldParam).toString()+ ( isAscending ? " ASC " : " DESC " ) + PAGED;
-	 }
+	public String getMyTableQuerySQL( String fieldParam, boolean isAscending ){
+		return SELECT_ORDER_BY + getField(fieldParam).toString()+ 
+				( isAscending ? " ASC " : " DESC " ) + PAGED;
+	}
 
 }

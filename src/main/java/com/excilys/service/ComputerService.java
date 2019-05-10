@@ -5,11 +5,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.excilys.exceptions.DatabaseException;
-import com.excilys.exceptions.DateParseException;
-import com.excilys.exceptions.MappingException;
-import com.excilys.exceptions.ValidationException;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
+import com.excilys.model.Sorting;
 import com.excilys.persistence.dao.ComputerDAO;
 
 public class ComputerService {
@@ -26,13 +24,13 @@ public class ComputerService {
 	}
 	
 	
-	public boolean createComputer(Computer computer) throws ValidationException, DateParseException, MappingException, DatabaseException  {
+	public boolean createComputer(Computer computer) throws DatabaseException  {
 		boolean created = computerDAO.create(computer);
 		return created;
 	}
 	
-	public List<Computer> findAll(Page page,String filter, String field, String order) throws DatabaseException {
-		List<Computer> computers = computerDAO.findAllPaged(page,filter, field, order);
+	public List<Computer> findAll(Page page,String filter, Sorting sorting) throws DatabaseException {
+		List<Computer> computers = computerDAO.findAllPaged(page,filter,sorting);
 		return computers;
 	}
 	
@@ -41,7 +39,7 @@ public class ComputerService {
 		return computer;
 	}
 	
-	public boolean update(Computer computer) throws DatabaseException, DateParseException, MappingException  {
+	public boolean update(Computer computer) throws DatabaseException {
 		boolean updated = computerDAO.update(computer);
 		return updated;
 	}

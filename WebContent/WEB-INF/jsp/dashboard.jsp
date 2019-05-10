@@ -28,7 +28,7 @@
 					<form id="searchForm" action="dashboard" method="GET"
 						class="form-inline">
 
-						<input type="search" id="searchbox" name="search"
+						<input type="search" id="searchbox" name="filter"
 							class="form-control" placeholder="Search name" value="${filter}" />
 						<input type="submit" id="searchsubmit" value="Filter by name"
 							class="btn btn-primary" />
@@ -182,7 +182,7 @@
 					<span aria-hidden="true">&laquo;</span>
 				</a></li>
 				<c:forEach var="currentPage" items="${pages}">
-					<li ${page==currentPage?"class='activated'":""}><a <c:url value="/dashboard" var="url">
+					<li><a <c:url value="/dashboard" var="url">
 								<c:param name="page" value="${currentPage}"/>
 								<c:param name="number" value="${limit}"/>
 								<c:param name="filter" value="${filter}"/>

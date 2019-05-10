@@ -20,6 +20,7 @@ import com.excilys.controller.ComputerController;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.exceptions.InvalidArgumentsException;
 import com.excilys.model.Page;
+import com.excilys.model.Sorting;
 
 
 public class DashboardServlet extends HttpServlet {
@@ -32,7 +33,7 @@ public class DashboardServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 
-	
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 
 			throws ServletException, IOException {
@@ -47,7 +48,7 @@ public class DashboardServlet extends HttpServlet {
 		
 		String pageParam =request.getParameter("page");
 		String noOfRecordsParam = request.getParameter("number");
-		String stringToSearch = request.getParameter("search");
+		String stringToSearch = request.getParameter("filter");
 		String fieldParam = request.getParameter("field");
 		String orderParam = request.getParameter("order");
 		 
@@ -57,7 +58,6 @@ public class DashboardServlet extends HttpServlet {
 		if(pageParam != null && !pageParam.isEmpty()) offset = Integer.parseInt(pageParam);
 		if(offset<1) offset = CURRENT_PAGE;
 		if(offset>=maximumPage) offset = maximumPage;
-		Page page = new Page(offset,limit);
 		
 		List<Integer> pages = new ArrayList<Integer>();
 		if(offset<=3) {
@@ -74,8 +74,10 @@ public class DashboardServlet extends HttpServlet {
 		String filter = (stringToSearch==null)? "":stringToSearch;
 		String field = (fieldParam==null)? "":fieldParam;
 		String order = (orderParam==null)? "":orderParam;
+		Page page = new Page(offset,limit);
+		Sorting sorting = new Sorting(field,order);
 		try {
-			computers = computerController.getComputers(page,filter,field,order);
+			computers = computerController.getComputers(page,filter,sorting);
 		} catch (DatabaseException e) {
 			logger.warn(e.getMessage(), e);
 		}
@@ -95,6 +97,7 @@ public class DashboardServlet extends HttpServlet {
 
 	}
 
+	@Override
 	public  void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException  {
 		String computersSelection = request.getParameter("selection");

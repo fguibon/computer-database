@@ -9,6 +9,7 @@ import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
+import com.excilys.model.Sorting;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 import com.excilys.view.CLIView;
@@ -22,6 +23,7 @@ public class CLIController {
 	
 	private static CLIController instance = null;
 	private Page page;
+	private Sorting sorting;
 	private CLIView view;
 	private CompanyService companyService;
 	private ComputerService computerService;
@@ -29,6 +31,7 @@ public class CLIController {
 	
 	private CLIController(CompanyService companyService, ComputerService computerService){
 		page = new Page(LIMIT,CURRENT_PAGE);
+		sorting = new Sorting("id","asc");
 		view = new CLIView(System.in);
 		this.companyService = companyService;
 		this.computerService = computerService;
@@ -92,7 +95,7 @@ public class CLIController {
 		List<ComputerDTO> computersDTO = new ArrayList<ComputerDTO>();
 		List<Computer> computers = new ArrayList<Computer>();
 		while(ok) {
-			computers = this.computerService.findAll(page,"","","");
+			computers = this.computerService.findAll(page,"",sorting);
 			for(Computer c:computers) {
 				computersDTO.add(ComputerMapper.getInstance().modelToDto(c));
 			}

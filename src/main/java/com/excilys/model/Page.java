@@ -5,9 +5,9 @@ public class Page {
 	private int currentPage;
 	private int entriesPerPage;
 	
-	public Page(int entriesPerPage, int currentPage) {
-		this.setCurrentPage(currentPage);
-		this.setEntriesPerPage(entriesPerPage);
+	public Page(int currentPage, int entriesPerPage) {
+		this.currentPage = currentPage;
+		this.entriesPerPage = entriesPerPage;
 	}
 
 	/**

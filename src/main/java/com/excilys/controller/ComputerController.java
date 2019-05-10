@@ -14,6 +14,7 @@ import com.excilys.exceptions.MappingException;
 import com.excilys.exceptions.ValidationException;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
+import com.excilys.model.Sorting;
 import com.excilys.service.ComputerService;
 import com.excilys.validator.Validator;
 
@@ -22,7 +23,7 @@ public class ComputerController {
 	private static ComputerController instance = null;
 	private ComputerService computerService = ComputerService.getInstance();
 	private ComputerMapper computerMapper = ComputerMapper.getInstance();
-	Validator computerValidator = Validator.getInstance();
+	private Validator computerValidator = Validator.getInstance();
 	
 	private static final Logger logger = LogManager.getLogger(ComputerController.class);
 	
@@ -40,9 +41,8 @@ private ComputerController() {}
 		return created;
 	}
 	
-	public List<ComputerDTO> getComputers(Page page, String filter, String field, String order) throws DatabaseException {
-		List<Computer> computers = computerService.findAll(page,filter, field, order);
-		logger.info(computers);
+	public List<ComputerDTO> getComputers(Page page, String filter, Sorting sorting) throws DatabaseException {
+		List<Computer> computers = computerService.findAll(page,filter, sorting);
 		List<ComputerDTO> computersDTO = (List<ComputerDTO>)computers
 		.stream().map(s -> computerMapper.modelToDto(s))
 		.collect(Collectors.toList());
@@ -51,7 +51,6 @@ private ComputerController() {}
 	
 	public ComputerDTO findById(Long id) throws DatabaseException  {
 		Computer computer = computerService.findById(id);
-
 		ComputerDTO computerDTO = computerMapper.modelToDto(computer);
 		return computerDTO;
 	}

@@ -23,14 +23,14 @@ public class EditComputerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private ComputerController computerController = ComputerController.getInstance();
-	private final CompanyService companyService = CompanyService.getInstance();
+	private CompanyService companyService = CompanyService.getInstance();
 	private static final Logger logger = LogManager.getLogger(DashboardServlet.class);
 
 	Validator validator = Validator.getInstance();
 
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
-
-			throws ServletException, IOException {
+				throws ServletException, IOException {
 
 		String idParam = request.getParameter("id");
 
@@ -52,6 +52,7 @@ public class EditComputerServlet extends HttpServlet {
 		.forward(request, response);
 	}
 
+	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException{
 
