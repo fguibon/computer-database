@@ -1,7 +1,6 @@
 package com.excilys.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -26,15 +25,14 @@ public class AddComputerServlet extends HttpServlet {
 	private final CompanyController companyController = CompanyController.getInstance();
 	private static final Logger logger = LogManager.getLogger(DashboardServlet.class);
 	
-	Validator validator = Validator.getInstance();
+	private static Validator validator = Validator.getInstance();
 	
-	
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 
 			throws ServletException, IOException {
 		
-		List<CompanyDTO> companies = new ArrayList<CompanyDTO>();
-		companies = companyController.getCompanies();
+		List<CompanyDTO> companies =  companyController.getCompanies();
 		
 		request.setAttribute("companies", companies);
 		
@@ -43,6 +41,7 @@ public class AddComputerServlet extends HttpServlet {
 
 	}
 
+	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException  {
 		

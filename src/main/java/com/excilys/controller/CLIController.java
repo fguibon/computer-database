@@ -8,6 +8,8 @@ import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.CompanyMapper;
 import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exceptions.DatabaseException;
+import com.excilys.exceptions.DateParseException;
+import com.excilys.exceptions.MappingException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
@@ -18,8 +20,8 @@ import com.excilys.view.CLIView;
 
 public class CLIController {
 
-	private final int LIMIT=10;
-	private final int CURRENT_PAGE=1;
+	private static final int LIMIT=10;
+	private static final int CURRENT_PAGE=1;
 	
 	private int currentPage;
 	
@@ -47,9 +49,11 @@ public class CLIController {
 	
 	/**
 	 * Function calling the display of the starting menu
-	 * @throws Exception 
+	 * @throws DatabaseException 
+	 * @throws DateParseException 
+	 * @throws MappingException 
 	 */
-	public void start() throws Exception {
+	public void start() throws DatabaseException, MappingException, DateParseException {
 		boolean ok = true;
 		while(ok) {
 			int choice =view.menu();
@@ -94,10 +98,10 @@ public class CLIController {
 		boolean ok=true;
 		page.setCurrentPage(currentPage);
 		page.setEntriesPerPage(LIMIT);
-		List<ComputerDTO> computersDTO = new ArrayList<ComputerDTO>();
-		List<Computer> computers = new ArrayList<Computer>();
+		List<ComputerDTO> computersDTO = new ArrayList<>();
+		
 		while(ok) {
-			computers = this.computerService.findAll(page,"",sorting);
+			List<Computer> computers = this.computerService.findAll(page,"",sorting);
 			for(Computer c:computers) {
 				computersDTO.add(ComputerMapper.getInstance().modelToDto(c));
 			}
@@ -114,10 +118,9 @@ public class CLIController {
 	public void listCompanies() {
 		currentPage =1;
 		boolean ok=true;
-		List<CompanyDTO> companiesDTO = new ArrayList<CompanyDTO>();
-		List<Company> companies = new ArrayList<Company>();
+		List<CompanyDTO> companiesDTO = new ArrayList<>();
 		while(ok) {
-			companies = this.companyService.getCompanies();
+			List<Company> companies = this.companyService.getCompanies();
 			for(Company c :companies) {
 				companiesDTO.add(CompanyMapper.getInstance().modelToDto(c));
 			}
@@ -140,10 +143,12 @@ public class CLIController {
 	
 	/**
 	 * option 4
-	 * @throws Exception 
+	 * @throws DateParseException 
+	 * @throws MappingException 
+	 * @throws DatabaseException 
 	 *
 	 */
-	public void createComputer() throws Exception {
+	public void createComputer() throws DatabaseException, MappingException, DateParseException {
 		ComputerDTO computer =null;
 		computer = this.queryComputerToCreate();
 		if(computer!=null) {
@@ -154,13 +159,14 @@ public class CLIController {
 
 	/**
 	 * option 5
-	 * @throws Exception 
+	 * @throws DateParseException 
+	 * @throws MappingException 
+	 * @throws DatabaseException 
 	 */
-	public void updateComputer() throws Exception {
+	public void updateComputer() throws DatabaseException, MappingException, DateParseException {
 		ComputerDTO computer = this.queryComputerToUpdate();
-		if(computer!=null) {
-			if(this.computerService.update(ComputerMapper.getInstance().dtoToModel(computer))) view.notifySuccess();
-		}
+		if(computerService.update(ComputerMapper.getInstance().dtoToModel(computer))) view.notifySuccess();
+
 	}
 	
 	/**

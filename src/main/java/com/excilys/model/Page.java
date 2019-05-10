@@ -1,5 +1,8 @@
 package com.excilys.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Page {
 
 	private int currentPage;
@@ -36,6 +39,20 @@ public class Page {
 	 */
 	public void setEntriesPerPage(int entriesPerPage) {
 		this.entriesPerPage = entriesPerPage;
+	}
+	
+	public List<Integer> getPageList(int offset){
+		List<Integer> pages = new ArrayList<>();
+		if(offset<=3) {
+			for(int i=1;i<6;i++) {
+				pages.add(i);
+			}
+		} else {
+			for(int i=offset-2;i<offset+3;i++) {
+				pages.add(i);
+			}
+		}
+		return pages;
 	}
 
 	@Override

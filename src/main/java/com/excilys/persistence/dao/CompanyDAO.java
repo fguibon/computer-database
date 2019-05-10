@@ -21,7 +21,7 @@ import com.excilys.persistence.jdbc.JDBCManager;
  * @author excilys
  *
  */
-public class CompanyDAO extends DataAccessObject<Company>{
+public class CompanyDAO implements DataAccessObject<Company>{
 
 	private static final Logger logger = 
 			LogManager.getLogger(CompanyDAO.class);
@@ -56,7 +56,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	}
 	
 	public static CompanyDAO getInstance() {
-		return (instance!=null) ? instance : (instance =new CompanyDAO());
+		return (instance!=null) ? instance : (instance = new CompanyDAO());
 	}
 
 
@@ -85,7 +85,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 
 	public List<Company> findAll() throws DatabaseException {
 		
-		List<Company> companies = new ArrayList<Company>();
+		List<Company> companies = new ArrayList<>();
 		try (Connection conn = JDBCManager.getInstance().getConnection();
 				ResultSet rs = conn.createStatement().executeQuery(SELECT_ALL);){
 			while (rs.next()) {
@@ -109,9 +109,11 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	public List<Company> findAllPaged(Page page) 
 			throws DatabaseException {
 		
-		List<Company> companies = new ArrayList<Company>();
-		try (Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(SELECT_ALL_PAGED);){
+		List<Company> companies = new ArrayList<>();
+		try (
+			Connection conn = JDBCManager.getInstance().getConnection();
+			PreparedStatement ps = conn.prepareStatement(SELECT_ALL_PAGED);		
+		){
 			int offset = ((page.getCurrentPage()-1) * page.getEntriesPerPage());
 			ps.setInt(1,page.getEntriesPerPage());
 			ps.setInt(2, offset);
@@ -124,7 +126,7 @@ public class CompanyDAO extends DataAccessObject<Company>{
 			logger.error(e.getMessage(),e);
 			throw new DatabaseException("Cannot find companies with these parameters : " 
 			+page.toString());
-		}
+		} 
 		return companies;
 	}
 
@@ -178,15 +180,21 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	@Override
 	public void delete(Long id) throws DatabaseException {
 		try (Connection connection = JDBCManager.getInstance().getConnection()){
-			
-			connection.setAutoCommit(false);
-			PreparedStatement deleteComputersStmt = connection.prepareStatement(DELETE_COMPUTER_WHERE);
-			PreparedStatement deleteCompanyStmt = connection.prepareStatement(DELETE_COMPANY);
-			deleteComputersStmt.setLong(1,id);
-			deleteCompanyStmt.setLong(1,id);
-			deleteComputersStmt.execute();
-			deleteCompanyStmt.execute();	
-			connection.commit();
+			try(PreparedStatement deleteComputersStmt = connection.prepareStatement(DELETE_COMPUTER_WHERE);
+				PreparedStatement deleteCompanyStmt = connection.prepareStatement(DELETE_COMPANY);) 
+			{
+				connection.setAutoCommit(false);
+				
+				deleteComputersStmt.setLong(1,id);
+				deleteCompanyStmt.setLong(1,id);
+				deleteComputersStmt.execute();
+				deleteCompanyStmt.execute();
+				
+				connection.commit();
+			} catch(Exception e) {
+				logger.error("Could not remove the company of id : "+id);
+				connection.rollback();
+			}		
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
 			throw new DatabaseException(DELETE_COMPUTER_WHERE);

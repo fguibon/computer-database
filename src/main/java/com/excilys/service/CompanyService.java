@@ -26,18 +26,18 @@ public class CompanyService {
 	
 	
 	public List<Company> getCompanies() {
-		List<Company> companies = new ArrayList<Company>();
+		List<Company> companies = new ArrayList<>();
 		try {
 			companies = companyDAO.findAll();
 		} catch (DatabaseException e) {
-			logger.error("Query error : "+ e.getMessage());
+			logger.error(e.getMessage());
 		}
 		return companies;
 	}
 	
 
 	public List<Company> getCompanies(Page page) {
-		List<Company> companies = new ArrayList<Company>();
+		List<Company> companies = new ArrayList<>();
 		try {
 			companies = companyDAO.findAllPaged(page);
 		} catch (DatabaseException e) {

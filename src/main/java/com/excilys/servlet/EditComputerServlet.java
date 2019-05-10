@@ -1,7 +1,6 @@
 package com.excilys.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -22,11 +21,11 @@ import com.excilys.validator.Validator;
 public class EditComputerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private ComputerController computerController = ComputerController.getInstance();
-	private CompanyController companyController = CompanyController.getInstance();
+	private static ComputerController computerController = ComputerController.getInstance();
+	private static CompanyController companyController = CompanyController.getInstance();
 	private static final Logger logger = LogManager.getLogger(DashboardServlet.class);
 
-	Validator validator = Validator.getInstance();
+	private static final Validator validator = Validator.getInstance();
 
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -42,8 +41,7 @@ public class EditComputerServlet extends HttpServlet {
 			logger.warn(e.getMessage(), e);
 		}	
 
-		List<CompanyDTO> companies = new ArrayList<CompanyDTO>();
-		companies = companyController.getCompanies();
+		List<CompanyDTO> companies = companyController.getCompanies();
 
 		request.setAttribute("computer", computer);
 		request.setAttribute("companies", companies);

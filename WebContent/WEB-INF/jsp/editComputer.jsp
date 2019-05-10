@@ -28,6 +28,7 @@
                     <form action="edit-computer" method="POST">
                         <input type="hidden" value="${computer.getId()}" id="id" name="id"/>
                         <fieldset>
+                        	<legend>Computer Data</legend>
                             <div class="form-group">
                                 <label for="computerName">Computer Name</label>
                                 <input type="text" class="form-control" name="computerName" 
@@ -51,7 +52,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="companyId">Company</label>
-                                <select class="form-control" id="companyId" name="companyId">  <!-- TODO select the right one avec if -->
+                                <select class="form-control" id="companyId" name="companyId">
 									<option value="">None</option>
 									<c:forEach items="${companies}" var="company">
 										<option value="${company.getId()}" 

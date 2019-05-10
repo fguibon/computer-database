@@ -1,9 +1,6 @@
 package com.excilys.service;
 
 import java.util.List;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
@@ -15,7 +12,6 @@ public class ComputerService {
 	private static ComputerService instance = null;
 	
 	private ComputerDAO computerDAO = ComputerDAO.getInstance();
-	private static final Logger logger = LogManager.getLogger(ComputerService.class);
 	
 	private ComputerService() {}
 	
@@ -25,23 +21,19 @@ public class ComputerService {
 	
 	
 	public boolean createComputer(Computer computer) throws DatabaseException  {
-		boolean created = computerDAO.create(computer);
-		return created;
+		return computerDAO.create(computer);
 	}
 	
 	public List<Computer> findAll(Page page,String filter, Sorting sorting) throws DatabaseException {
-		List<Computer> computers = computerDAO.findAllPaged(page,filter,sorting);
-		return computers;
+		return computerDAO.findAllPaged(page,filter,sorting);
 	}
 	
 	public Computer findById(Long id) throws DatabaseException  {
-		Computer computer = computerDAO.findById(id);
-		return computer;
+		return computerDAO.findById(id);
 	}
 	
 	public boolean update(Computer computer) throws DatabaseException {
-		boolean updated = computerDAO.update(computer);
-		return updated;
+		return computerDAO.update(computer);
 	}
 	
 	public void delete(Long id) throws DatabaseException  {
@@ -49,7 +41,6 @@ public class ComputerService {
 	}
 	
 	public int count() throws DatabaseException {
-		int count =  computerDAO.count();
-		return count;
+		return computerDAO.count();
 	}
 }

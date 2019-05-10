@@ -37,7 +37,6 @@ public class CLIView {
 				+ "4: Create a computer \r\n"
 				+ "5: Update a computer \r\n"
 				+ "6: Delete a computer ");
-		;
 		int number =0;
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));

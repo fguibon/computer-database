@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.exceptions.DateParseException;
-import com.excilys.exceptions.MappingException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 
@@ -31,7 +30,7 @@ public class ComputerMapper {
 	}
 
 
-	public Computer dtoToModel(ComputerDTO computerDTO) throws MappingException, DateParseException{
+	public Computer dtoToModel(ComputerDTO computerDTO) throws DateParseException{
 		Computer computer = new Computer();
 
 		computer.setId(convertStringToId(computerDTO.getId()));
@@ -92,7 +91,7 @@ public class ComputerMapper {
 	}
 	
 	
-	private Long convertStringToId(String id) throws NumberFormatException {
+	private Long convertStringToId(String id) {
 		return (id == null || "0".equals(id) || id.isEmpty()) ? null : Long.valueOf(id);
 	}
 }
