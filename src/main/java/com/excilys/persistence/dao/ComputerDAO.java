@@ -14,7 +14,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.excilys.exception.DatabaseQueryException;
+import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.persistence.jdbc.JDBCManager;
@@ -26,12 +26,16 @@ import com.excilys.persistence.jdbc.JDBCManager;
  */
 public class ComputerDAO extends DataAccessObject<Computer>{
 
+	private static enum Field { ID,NAME,INTRODUCED,DISCONTINUED,COMPANY_ID}
+	
+	private static enum Order {ASC, DESC}
+	
 	private static final Logger logger = 
 			LogManager.getLogger(ComputerDAO.class);
 
 	private static ComputerDAO instance = null;
 
-	private static final String INSERT =
+	private static final String CREATE =
 			"INSERT INTO computer (name,introduced,discontinued,company_id)"
 					+ " VALUES (?, ?, ?, ?) ;";
 
@@ -41,16 +45,19 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	private static final String SELECT_ALL = 
 			"SELECT * FROM computer;";
 
+	private static final String SELECT_ORDER_BY =
+			"SELECT id,name,introduced,discontinued,company_id FROM computer "
+					+ "WHERE UPPER(name) LIKE UPPER(?) ORDER BY ";
+	
+	private static final String PAGED=	" LIMIT ? OFFSET ? ; ";
+
 	private static final String UPDATE= 
-			"UPDATE computer SET name= ?, introduced = ?, discontinued = ?, company_id = ?"
-					+ " WHERE id= ? ;";
+			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=?"
+					+ " WHERE id=? ;";
 
 	private static final String DELETE=
-			"DELETE FROM computer WHERE id= ? ;";
+			"DELETE FROM computer WHERE id=? ;";
 
-	private static final String SELECT_ALL_PAGED =
-			"SELECT id,name,introduced,discontinued,company_id FROM computer "
-					+ "LIMIT ? OFFSET ? ; ";
 
 	private static final String COUNT = 
 			"SELECT id FROM computer; ";
@@ -68,13 +75,13 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	/**
 	 * Creates a computer
 	 * @return a boolean value to know if it is created
-	 * @throws DatabaseQueryException 
+	 * @throws Exception 
 	 */
 	@Override
-	public boolean create(Computer computer) throws DatabaseQueryException {
+	public boolean create(Computer computer) throws DatabaseException {
 		try(
 				Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(INSERT);
+				PreparedStatement ps = conn.prepareStatement(CREATE);
 				) {
 			ps.setString(1, computer.getName());
 			LocalDate introducedDate = computer.getIntroduced();
@@ -103,17 +110,16 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(INSERT);
+			throw new DatabaseException(CREATE);
 		}
 	}
 
 	/**
 	 * Finds and return all computers in the table
 	 * @return a List of computers
-	 * @throws DatabaseQueryException 
+	 * @throws Exception 
 	 */
-	@Override
-	public List<Computer> findAll() throws DatabaseQueryException {
+	public List<Computer> findAll() throws DatabaseException {
 		List<Computer> computers = new ArrayList<Computer>();
 
 		try(
@@ -147,7 +153,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			}
 		} catch(SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(SELECT_ALL);
+			throw new DatabaseException(SELECT_ALL);
 		}
 		return computers;
 	}
@@ -157,19 +163,22 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	 * @param limit
 	 * @param currentPage
 	 * @return
-	 * @throws DatabaseQueryException 
+	 * @throws Exception 
 	 */
-	public List<Computer> findAllPaged(int limit, int currentPage) throws DatabaseQueryException {
+	public List<Computer> findAllPaged(String filter, String field, String order, 
+			int limit, int currentPage ) throws DatabaseException {
 		List<Computer> computers = new ArrayList<Computer>();
 		int offset = ((currentPage-1) * limit);
-
+		boolean isAscending = ( getOrder(order).toString().compareToIgnoreCase("ASC")==0)? true : false;
 		try ( 
-				Connection connection = JDBCManager.getInstance().getConnection();
-				PreparedStatement statement = connection.prepareStatement(SELECT_ALL_PAGED);)
+			Connection connection = JDBCManager.getInstance().getConnection();
+			PreparedStatement ps = connection.prepareStatement(getMyTableQuerySQL(field, isAscending));)
 		{
-			statement.setInt(1,limit);
-			statement.setInt(2, offset);
-			ResultSet rs = statement.executeQuery();
+			ps.setString(1, "%" +filter +"%");
+			ps.setInt(2,limit);
+			ps.setInt(3, offset);
+			System.out.println(ps);
+			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				Computer computer = new Computer();
 				computer.setId(rs.getLong("id"));
@@ -198,7 +207,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			rs.close();
 		} catch(SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(SELECT_ALL_PAGED);
+			throw new DatabaseException(SELECT_ORDER_BY);
 		}
 		return computers;
 	}
@@ -207,14 +216,15 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	/**
 	 * Find a Computer by its id
 	 * @return a Computer object
-	 * @throws DatabaseQueryException 
+	 * @throws Exception 
 	 */
 	@Override
-	public Computer findById(Long id) throws DatabaseQueryException {
+	public Computer findById(Long id) throws DatabaseException {
 		Computer computer = null;
 
 		try (Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(SELECT_ONE);){
+			PreparedStatement ps = conn.prepareStatement(SELECT_ONE);)
+		{
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
@@ -223,17 +233,13 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 					computer = new Computer();
 					computer.setId(computer_id);
 					computer.setName(rs.getString("name"));
-					Date date =rs.getDate("introduced");
-					LocalDate ldate = null;
-					if(date!=null) {
-						ldate  = date.toLocalDate();
-					}
+					Date introDate =rs.getDate("introduced");
+					LocalDate ldate = (introDate==null)? null:introDate.toLocalDate();
 					computer.setIntroduced(ldate);
-					date = rs.getDate("discontinued");
-					if(date!=null) {
-						ldate  = date.toLocalDate();
-					}
-					computer.setDiscontinued(ldate);
+
+					Date discoDate = rs.getDate("discontinued");
+					LocalDate ldate2 = (discoDate==null)?null:discoDate.toLocalDate();
+					computer.setDiscontinued(ldate2);
 
 					Long company_id =rs.getLong("company_id");
 					if(company_id!=null) {
@@ -244,7 +250,7 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			}	
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(SELECT_ONE);
+			throw new DatabaseException(SELECT_ONE);
 		}
 		return computer;
 	}
@@ -253,13 +259,15 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 	/**
 	 * Updates a Computer information
 	 * @return a Computer object
-	 * @throws DatabaseQueryException 
+	 * @throws Exception 
 	 */
 
 	@Override
-	public boolean update(Computer computer) throws DatabaseQueryException {
-		try(Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(UPDATE);) {
+	public boolean update(Computer computer) throws DatabaseException {
+		try(
+				Connection conn = JDBCManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(UPDATE);) 
+		{
 			ps.setString(1, computer.getName());
 			LocalDate introducedDate = computer.getIntroduced();
 			if(introducedDate!=null) {
@@ -273,7 +281,8 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			} else {
 				ps.setTimestamp(3,null);
 			}
-			Long id =computer.getCompany().getId();
+
+			Long id =(computer.getCompany()==null) ? null :computer.getCompany().getId();
 			if(id!=null) {
 				ps.setLong(4, id);
 			} else {
@@ -283,17 +292,17 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(UPDATE);
+			throw new DatabaseException(UPDATE);
 		}
 	}
 
 	/**
 	 * Deletes a computer from the database
-	 * @return 
-	 * @throws DatabaseQueryException 
+	 * @return  
+	 * @throws Exception 
 	 */
 	@Override
-	public boolean delete(Long id) throws DatabaseQueryException {
+	public boolean delete(Long id) throws DatabaseException {
 
 		try (Connection conn = JDBCManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(DELETE);){
@@ -301,11 +310,16 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(DELETE);
+			throw new DatabaseException(DELETE);
 		}
 	}
 
-	public int count() throws DatabaseQueryException {
+	/**
+	 * Get the computers total count
+	 * @return
+	 * @throws DatabaseException
+	 */
+	public int count() throws DatabaseException {
 		int number = 0;
 		try (Connection conn = JDBCManager.getInstance().getConnection();
 				ResultSet rs = conn.createStatement().executeQuery(COUNT);){
@@ -314,11 +328,40 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			}
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
-			throw new DatabaseQueryException(COUNT);
+			throw new DatabaseException(COUNT);
 		}
 		return number;
 	}
-
-
+	
+	public Field getField(String choice) {
+		switch(choice) {
+		case "name":
+			return Field.NAME;
+		case "intro":
+			return Field.INTRODUCED;
+		case "disco":
+			return Field.DISCONTINUED;
+		case "company":
+			return Field.COMPANY_ID;
+		default:
+			return Field.ID;
+		}
+	}
+	
+	public Order getOrder(String choice) {
+		switch(choice) {
+			case "asc":
+				return Order.ASC;
+			case "desc":
+				return Order.DESC;
+			default:
+				return Order.ASC;
+		}
+	}
+	
+	 public String getMyTableQuerySQL( String fieldParam, boolean isAscending )
+	 {
+	     return SELECT_ORDER_BY + getField(fieldParam).toString()+ ( isAscending ? " ASC " : " DESC " ) + PAGED;
+	 }
 
 }

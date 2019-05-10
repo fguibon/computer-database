@@ -6,61 +6,90 @@
 	<groupId>com.excilys</groupId>
 	<artifactId>computer-database</artifactId>
 	<version>1.0</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
-	<name>slf4jconfig-log4j</name>
+	<name>cdb</name>
 	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<mysqlVersion>8.0.15</mysqlVersion>
+		<log4jVersion>2.7</log4jVersion>
+		<junitVersion>4.12</junitVersion>
+		<mockitoVersion>1.9.5</mockitoVersion>
+		<h2Version>1.4.197</h2Version>
+		<jstlVersion>1.2</jstlVersion>
+		<seleniumVersion>3.141.59</seleniumVersion>
+		<servletApiVersion>4.0.1</servletApiVersion>
+		<hikariVersion>3.3.1</hikariVersion>
+
+		<mavenCompilerVersion>3.7.0</mavenCompilerVersion>
+		<mavenWarVersion>3.2.1</mavenWarVersion>
+		<mavenCheckstyleVersion>3.0.0</mavenCheckstyleVersion>
+	</properties>
+
 
 	<dependencies>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.15</version>
+			<version>${mysqlVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
-			<version>2.7</version>
+			<version>${log4jVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>2.7</version>
+			<version>${log4jVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
-			<version>2.7</version>
+			<version>${log4jVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>${junitVersion}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
+			<version>${mockitoVersion}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<version>1.4.197</version>
+			<version>${h2Version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
-			<version>1.2</version>
-			<scope>test</scope>
+			<version>${jstlVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-java</artifactId>
-			<version>3.141.59</version>
+			<artifactId>selenium-chrome-driver</artifactId>
+			<version>${seleniumVersion}</version>
 		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${servletApiVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>${hikariVersion}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -68,16 +97,23 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
+				<version>${mavenCompilerVersion}</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>${mavenWarVersion}</version>
+				<configuration>
+					<warSourceDirectory>WebContent</warSourceDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.0.0</version>
+				<version>${mavenCheckstyleVersion}</version>
 				<configuration>
 					<configLocation>checkstyle/checkstyle.xml</configLocation>
 					<suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>

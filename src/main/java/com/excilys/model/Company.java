@@ -9,12 +9,7 @@ public class Company  {
 	
 	public Company() {}
 	
-	public Company(Long id, String name) {
-		this.id=id;
-		this.name=name;
-	}
 	
-
 	/**
 	 * @return the id
 	 */
@@ -41,6 +36,31 @@ public class Company  {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	
+	public static class Builder {
+		private Long id;
+		private String name;
+
+		public Builder() {}
+
+		public Builder setId(Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder setName(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Company build() {
+			Company company = new Company();
+			company.setId(this.id);
+			company.setName(this.name);
+			return company;
+		}	
 	}
 
 	@Override

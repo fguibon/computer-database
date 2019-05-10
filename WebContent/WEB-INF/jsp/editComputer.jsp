@@ -21,30 +21,43 @@
             <div class="row">
                 <div class="col-xs-8 col-xs-offset-2 box">
                     <div class="label label-default pull-right">
-                        id: 0
+                        id: ${computer.getId()}
                     </div>
                     <h1>Edit Computer</h1>
 
-                    <form action="editComputer" method="POST">
-                        <input type="hidden" value="0" id="id"/> <!-- TODO: Change this value with the computer id -->
+                    <form action="edit-computer" method="POST">
+                        <input type="hidden" value="${computer.getId()}" id="id" name="id"/>
                         <fieldset>
                             <div class="form-group">
-                                <label for="computerName">Computer name</label>
-                                <input type="text" class="form-control" id="computerName" placeholder="Computer name">
+                                <label for="computerName">Computer Name</label>
+                                <input type="text" class="form-control" name="computerName" 
+                                id="computerName" placeholder="${computer.getName()}"
+                                pattern="^[\w'\-,.0-9][^_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~:[\]]{2,}$"
+								value="${computer.getName()}" required>
                             </div>
                             <div class="form-group">
                                 <label for="introduced">Introduced date</label>
-                                <input type="date" class="form-control" id="introduced" placeholder="Introduced date">
+                                <input type="date" class="form-control" name="introduced" 
+                                id="introduced" placeholder="${computer.getIntroduced()}"
+                                min="1970-12-12" value="${computer.getIntroduced()}"
+								pattern="(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}">
                             </div>
                             <div class="form-group">
                                 <label for="discontinued">Discontinued date</label>
-                                <input type="date" class="form-control" id="discontinued" placeholder="Discontinued date">
+                                <input type="date" class="form-control" name="discontinued" 
+                                id="discontinued" placeholder="${computer.getDiscontinued()}"
+                                min="1970-12-12" value="${computer.getDiscontinued()}"
+								pattern="(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}">
                             </div>
                             <div class="form-group">
                                 <label for="companyId">Company</label>
-                                <select class="form-control" id="companyId" >
-                                    <option value="0">--</option>
-                                </select>
+                                <select class="form-control" id="companyId" name="companyId">  <!-- TODO select the right one avec if -->
+									<option value="">None</option>
+									<c:forEach items="${companies}" var="company">
+										<option value="${company.getId()}" 
+										${computer.getCompanyId()==company.getId()?"selected='selected'":""}>${company.getName()}</option>   
+									</c:forEach>
+								</select>
                             </div>            
                         </fieldset>
                         <div class="actions pull-right">
@@ -57,5 +70,8 @@
             </div>
         </div>
     </section>
+    <script src="static/js/jquery.min.js"></script>
+	<script src="static/js/bootstrap.min.js"></script>
+	<script src="static/js/editComputer.js"></script>
 </body>
 </html>

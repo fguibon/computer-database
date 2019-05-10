@@ -34,26 +34,23 @@ public class CompanyServiceTest {
 
 		MockitoAnnotations.initMocks(this);
 		companies = new ArrayList<Company>();
-		companies.add(new Company(4L, "NASA"));
-		companies.add(new Company(10L, "ESA"));
+		companies.add(new Company.Builder().setId(4L).setName("NASA").build());
+		companies.add(new Company.Builder().setId(10L).setName("ESA").build());
 		
 		companiesDTO = new ArrayList<CompanyDTO>();
-		companiesDTO.add(new CompanyDTO("4", "NASA"));
-		companiesDTO.add(new CompanyDTO("10", "ESA"));
+		companiesDTO.add(new CompanyDTO.Builder().setId("4").setName("NASA").build());
+		companiesDTO.add(new CompanyDTO.Builder().setId("10").setName("ESA").build());
 		
 		when(daoMock.findAll()).thenReturn(companies);
 		
-		service = CompanyService.getInstance(daoMock,mapperMock);
+		service = CompanyService.getInstance();
 	}
 	
 	@Test
 	public void test_getCompanies() {
-		assertEquals(companiesDTO,service.getCompanies());
+		assertEquals("Expected same companies",companiesDTO,service.getCompanies());
 	}
 	
-	@Test
-	public void test_getCompaniesPaged() {
-		fail("Not yet implemented");
-	}
+
 
 }

@@ -1,8 +1,6 @@
 package com.excilys.persistence.dao;
 
-import java.util.List;
-
-import com.excilys.exception.DatabaseQueryException;
+import com.excilys.exceptions.DatabaseException;
 
 public abstract class DataAccessObject<T> {
 	
@@ -10,9 +8,8 @@ public abstract class DataAccessObject<T> {
 		super();
 	}
 	
-	public abstract boolean create(T dto) throws DatabaseQueryException;
-	public abstract List<T> findAll() throws DatabaseQueryException;
-	public abstract T findById(Long id) throws DatabaseQueryException;
-	public abstract boolean update( T dto) throws DatabaseQueryException;
-	public abstract boolean delete(Long id) throws DatabaseQueryException;
+	public abstract boolean create(T dto) throws DatabaseException;
+	public abstract T findById(Long id) throws DatabaseException;
+	public abstract boolean update( T dto) throws DatabaseException;
+	public abstract void delete(Long id) throws DatabaseException;
 }

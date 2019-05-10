@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,8 +15,8 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboard"> Application - Computer Database
-			</a>
+			<a class="navbar-brand" href="dashboard"> Application - Computer
+				Database </a>
 		</div>
 	</header>
 
@@ -25,11 +25,12 @@
 			<h1 id="homeTitle">${numberOfComputers} Computers found</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
-					<form id="searchForm" action="#" method="GET" class="form-inline">
+					<form id="searchForm" action="dashboard" method="GET"
+						class="form-inline">
 
 						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name" /> <input
-							type="submit" id="searchsubmit" value="Filter by name"
+							class="form-control" placeholder="Search name" value="${filter}" />
+						<input type="submit" id="searchsubmit" value="Filter by name"
 							class="btn btn-primary" />
 					</form>
 				</div>
@@ -41,12 +42,12 @@
 			</div>
 		</div>
 
-		<form id="deleteForm" action="#" method="POST">
+		<form id="deleteForm" action="dashboard" method="POST">
 			<input type="hidden" name="selection" value="">
 		</form>
 
 		<div class="container" style="margin-top: 10px;">
-			<table class="table table-striped table-bordered">
+			<table id="table" class="table table-striped table-bordered">
 				<thead>
 					<tr>
 						<!-- Variable declarations for passing labels as parameters -->
@@ -57,15 +58,95 @@
 							style="vertical-align: top;"> - <a href="#"
 								id="deleteSelected" onclick="$.fn.deleteSelected();"> <i
 									class="fa fa-trash-o fa-lg"></i>
-							</a>
-						</span></th>
-						<th>Computer name</th>
-						<th>Introduced date</th>
-						<!-- Table header for Discontinued Date -->
-						<th>Discontinued date</th>
-						<!-- Table header for Company -->
-						<th>Company</th>
+								</a>
+							</span>
+						</th>
+						<th class="th-sm">Computer name 
+							<a <c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="name"/>
+ 								<c:param name="order" value="asc"/>
+							</c:url>
+							title="Order by name ascendant" href="${url}">
+							<i class="fa fa-arrow-down"></i></a> 
+							<a <c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="name"/>
+ 								<c:param name="order" value="desc"/>
+							</c:url>
+							title="Order by name descendant" href="${url}">
+							<i class="fa fa-arrow-up"></i></a>
+						</th>
 
+						<th class="th-sm">Introduced date <a
+							<c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="intro"/>
+ 								<c:param name="order" value="asc"/>
+							</c:url> 
+							title="Order by introducted date ascendant"
+							href="${url}"><i class="fa fa-arrow-down"></i></a>
+							<a <c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="intro"/>
+ 								<c:param name="order" value="desc"/>
+							</c:url> 
+							title="Order by introducted date descendant"
+							href="${url}">
+							<i class="fa fa-arrow-up"></i></a>
+						</th>
+
+						<th class="th-sm">Discontinued date <a
+							<c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="disco"/>
+ 								<c:param name="order" value="asc"/>
+							</c:url>
+							title="Order by discontinued ascendant"
+							href="${url}"><i class="fa fa-arrow-down"></i></a>
+							<a <c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="disco"/>
+ 								<c:param name="order" value="desc"/>
+							</c:url> title="Order by discontinued descendant"
+							href="${url}"><i class="fa fa-arrow-up"></i></a>
+						</th>
+
+						<th class="th-sm">Company 
+							<a
+							<c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="company"/>
+ 								<c:param name="order" value="asc"/>
+							</c:url>
+							title="Order by company name ascendant" href="${url}">
+							<i class="fa fa-arrow-down"></i></a> 
+							<a
+							<c:url value="/dashboard" var="url">
+								<c:param name="page" value="${page}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="company"/>
+ 								<c:param name="order" value="desc"/>
+							</c:url>
+							title="Order by company name descendant" href="${url}">
+							<i class="fa fa-arrow-up"></i>
+							</a>
+						</th>
 					</tr>
 				</thead>
 				<!-- Browse attribute computers -->
@@ -74,10 +155,11 @@
 						<tr>
 							<td class="editMode"><input type="checkbox" name="cb"
 								class="cb" value="${computer.getId()}"></td>
-							<td><a href="editComputer" onclick="">${computer.getName()}</a></td>
+							<td><a href="edit-computer?id=${computer.getId()}"
+								onclick="">${computer.getName()}</a></td>
 							<td>${computer.getIntroduced()}</td>
 							<td>${computer.getDiscontinued()}</td>
-							<td>${computer.getCompanyDTO().getName()}</td>
+							<td>${computer.getCompanyName()}</td>
 						</tr>
 					</c:forEach>
 
@@ -89,23 +171,63 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-				<li><a href="?page=${currentPage - 1}&noOfRecords=${limit}" aria-label="Previous"> <span
-						aria-hidden="true">&laquo;</span>
+				<li><a
+					<c:url value="/dashboard" var="url">
+						<c:param name="page" value="${page - 1}"/>
+						<c:param name="number" value="${limit}"/>
+						<c:param name="filter" value="${filter}"/>
+ 						<c:param name="field" value="${field}"/>
+ 						<c:param name="order" value="${order}"/>
+					</c:url> href="${url}" aria-label="Previous"> 
+					<span aria-hidden="true">&laquo;</span>
 				</a></li>
-				<li><a href="?page=1&noOfRecords=${limit}">1</a></li>
-				<li><a href="?page=2&noOfRecords=${limit}">2</a></li>
-				<li><a href="?page=3&noOfRecords=${limit}">3</a></li>
-				<li><a href="?page=4&noOfRecords=${limit}">4</a></li>
-				<li><a href="?page=5&noOfRecords=${limit}">5</a></li>
-				<li><a href="?page=${currentPage + 1}&noOfRecords=${limit}" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+				<c:forEach var="currentPage" items="${pages}">
+					<li ${page==currentPage?"class='activated'":""}><a <c:url value="/dashboard" var="url">
+								<c:param name="page" value="${currentPage}"/>
+								<c:param name="number" value="${limit}"/>
+								<c:param name="filter" value="${filter}"/>
+ 								<c:param name="field" value="${field}"/>
+ 								<c:param name="order" value="${order}"/>
+							</c:url> href="${url}" >${currentPage}</a></li>
+				</c:forEach>
+				<li><a
+					<c:url value="/dashboard" var="url">
+						<c:param name="page" value="${page + 1}"/>
+						<c:param name="number" value="${limit}"/>
+						<c:param name="filter" value="${filter}"/>
+ 						<c:param name="field" value="${field}"/>
+ 						<c:param name="order" value="${order}"/>
+					</c:url> href="${url}" aria-label="Next"> 
+					<span aria-hidden="true">&raquo;</span>
 				</a></li>
 			</ul>
 
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
-				<a class="btn btn-default" href="?page=${currentPage}&noOfRecords=10">10</a>
-				<a class="btn btn-default" href="?page=${currentPage}&noOfRecords=50">50</a>
-				<a class="btn btn-default" href="?page=${currentPage}&noOfRecords=100">100</a>
+				<a class="btn btn-default" 
+					<c:url value="/dashboard" var="url">
+						<c:param name="page" value="${page}"/>
+						<c:param name="number" value="10"/>
+						<c:param name="filter" value="${filter}"/>
+ 						<c:param name="field" value="${field}"/>
+ 						<c:param name="order" value="${order}"/>
+					</c:url> href="${url}">10</a> 
+				<a class="btn btn-default"
+					<c:url value="/dashboard" var="url">
+						<c:param name="page" value="${page}"/>
+						<c:param name="number" value="50"/>
+						<c:param name="filter" value="${filter}"/>
+ 						<c:param name="field" value="${field}"/>
+ 						<c:param name="order" value="${order}"/>
+					</c:url> href="${url}">50</a> 
+				<a class="btn btn-default"
+					<c:url value="/dashboard" var="url">
+						<c:param name="page" value="${page}"/>
+						<c:param name="number" value="100"/>
+						<c:param name="filter" value="${filter}"/>
+ 						<c:param name="field" value="${field}"/>
+ 						<c:param name="order" value="${order}"/>
+					</c:url> href="${url}">100</a>
 			</div>
 		</div>
 

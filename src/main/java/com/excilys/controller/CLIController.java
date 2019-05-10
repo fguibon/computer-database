@@ -5,9 +5,8 @@ import java.util.List;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
-import com.excilys.binding.mapper.CompanyMapper;
+import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Page;
-import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 import com.excilys.view.CLIView;
@@ -35,14 +34,15 @@ public class CLIController {
 	
 	public static CLIController getInstance() {
 		return (instance!=null) ? instance : (instance = new CLIController(
-				CompanyService.getInstance(CompanyDAO.getInstance(), CompanyMapper.getInstance()),ComputerService.getInstance()));
+				CompanyService.getInstance(),ComputerService.getInstance()));
 	}
 	
 	
 	/**
 	 * Function calling the display of the starting menu
+	 * @throws Exception 
 	 */
-	public void start() {
+	public void start() throws Exception {
 		boolean ok = true;
 		while(ok) {
 			int choice =view.menu();
@@ -78,15 +78,16 @@ public class CLIController {
 	
 
 	/**
+	 * @throws DatabaseException  
 	 * option 1
 	 * @throws  
 	 */
-	public void listComputers() {
+	public void listComputers() throws DatabaseException {
 		currentPage =1;
 		boolean ok=true;
 		List<ComputerDTO> computers = new ArrayList<ComputerDTO>();
 		while(ok) {
-			computers = this.computerService.getComputers(this.LIMIT,currentPage);
+			computers = this.computerService.getComputers(this.LIMIT,currentPage,"","","");
 			if(computers.isEmpty())	ok=false;
 			page.setCurrentPage(currentPage++);
 			this.view.displayComputers(computers,page);
@@ -102,7 +103,7 @@ public class CLIController {
 		boolean ok=true;
 		List<CompanyDTO> companies = new ArrayList<CompanyDTO>();
 		while(ok) {
-			companies = this.companyService.getCompanies(page, currentPage);
+			companies = this.companyService.getCompanies(page.getEntriesPerPage(), currentPage);
 			if(companies.isEmpty()) ok=false;
 			page.setCurrentPage(currentPage++);
 			this.view.displayCompanies(companies,page);
@@ -111,8 +112,9 @@ public class CLIController {
 	
 	/** 
 	 * option 3
+	 * @throws DatabaseException 
 	 */
-	public void showComputerDetail() {
+	public void showComputerDetail() throws DatabaseException {
 		ComputerDTO computer = null;
 		Long id = this.view.queryId();
 		if(id!=null) computer = this.computerService.findById(id);
@@ -121,8 +123,10 @@ public class CLIController {
 	
 	/**
 	 * option 4
+	 * @throws Exception 
+	 *
 	 */
-	public void createComputer() {
+	public void createComputer() throws Exception {
 		ComputerDTO computer =null;
 		computer = this.queryComputerToCreate();
 		if(computer!=null) {
@@ -135,8 +139,9 @@ public class CLIController {
 
 	/**
 	 * option 5
+	 * @throws Exception 
 	 */
-	public void updateComputer() {
+	public void updateComputer() throws Exception {
 		ComputerDTO computer = this.queryComputerToUpdate();
 		if(computer!=null) {
 			if(this.computerService.update(computer)) view.notifySuccess();
@@ -145,8 +150,9 @@ public class CLIController {
 	
 	/**
 	 * option 6
+	 * @throws DatabaseException 
 	 */
-	public void deleteComputer() {
+	public void deleteComputer() throws DatabaseException {
 		Long id = null;
 		id = this.queryComputerToDelete();
 		if(id!=null) {
@@ -167,8 +173,7 @@ public class CLIController {
 			computer.setName(name);
 			computer.setIntroduced(view.queryDate());
 			computer.setDiscontinued(view.queryDate());
-			computer.setCompanyDTO(new CompanyDTO());
-			computer.getCompanyDTO().setId(Long.toString(view.queryId()));
+			computer.setCompanyId(Long.toString(view.queryId()));
 		} 
 		return computer;
 	}
@@ -179,13 +184,12 @@ public class CLIController {
 	 */
 	public ComputerDTO queryComputerToUpdate() {
 		ComputerDTO computer = new ComputerDTO();
-		computer.setCompanyDTO(new CompanyDTO());
 		
 		computer.setId(Long.toString(view.queryId()));
 		computer.setName(view.queryName());
 		computer.setIntroduced(view.queryDate());
 		computer.setDiscontinued(view.queryDate());
-		computer.getCompanyDTO().setId(Long.toString(view.queryId()));
+		computer.setCompanyId(Long.toString(view.queryId()));
 
 		return computer;
 	}

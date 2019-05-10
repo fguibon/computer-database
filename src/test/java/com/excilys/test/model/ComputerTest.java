@@ -11,47 +11,51 @@ import com.excilys.model.Computer;
 
 public class ComputerTest {
 
+	Company companyTest = new Company.Builder().setId(6L).setName("Intel").build();
+	Company companyTest2 = new Company.Builder().setId(10L).setName("Intel").build();
+	Computer computerTest = new Computer.Builder().setId(42L).setName("Latitude")
+			.setIntroduced(LocalDate.of(2014, 2, 5)).setDiscontinued(LocalDate.of(2014, 2, 3))
+		.setCompany(companyTest).build();
+	
 	@Test
 	public void comparisonEqualValues() {
-		Computer computer = new Computer(42L,"Latitude",
-				LocalDate.of(2014, 2, 5),LocalDate.of(2014, 2, 3), 
-				new Company(6L,"Intel"));
-		Computer computer2 = new Computer(42L,"Latitude",
-				LocalDate.of(2014, 2, 5),LocalDate.of(2014, 2, 3), 
-				new Company(6L,"Intel"));
-		assertEquals(computer2, computer);
+		Computer computer = new Computer.Builder().setId(42L).setName("Latitude")
+				.setIntroduced(LocalDate.of(2014, 2, 5)).setDiscontinued(LocalDate.of(2014, 2, 3))
+			.setCompany(companyTest).build();
+		Computer computer2 = new Computer.Builder().setId(42L).setName("Latitude")
+				.setIntroduced(LocalDate.of(2014, 2, 5)).setDiscontinued(LocalDate.of(2014, 2, 3))
+			.setCompany(companyTest).build();
+		assertEquals("Expected same computers",computer2, computer);
 		
 	}
 	
 	@Test
 	public void comparisonDifferentIds() {
-		Computer computer =  new Computer(42L,null, null, null, null);
-		Computer computer2 = new Computer(50L,null, null, null, null);
-		assertNotEquals(computer2, computer);
+		Computer computer =  new Computer.Builder().setId(42L).build();
+		Computer computer2 = new Computer.Builder().setId(50L).build();
+		assertNotEquals("Expected different computers",computer2, computer);
 	}
 	
 	@Test
 	public void comparisonDifferentNames() {
-		Computer computer = new Computer(50L,"Latitude", null, null, null);
-		Computer computer2 = new Computer(50L,"Lattitude", null, null, null);
-		assertNotEquals(computer2, computer);
+		Computer computer = new Computer.Builder().setId(50L).setName("Latitude").build();
+		Computer computer2 = new Computer.Builder().setId(50L).setName("Lattitude").build();
+		assertNotEquals("Expected different computers",computer2, computer);
 	}
 	
 	
 	@Test
 	public void comparisonDifferentCompanies() {
-		Computer computer = new Computer(50L,"Latitude", null, null, new Company(80L,"Intel"));
-		Computer computer2 = new Computer(50L,"Lattitude", null, null, new Company(6L,"Intel"));
-		assertNotEquals(computer2, computer);
+		Computer computer = new Computer.Builder().setId(50L).setName("Latitude").setCompany(companyTest).build();
+		Computer computer2 = new Computer.Builder().setId(50L).setName("Latitude").setCompany(companyTest2).build();
+		assertNotEquals("Expected different computers",computer2, computer);
 	}
 	
 	
 	@Test
 	public void comparisonNullReference() {
 		Computer computer = null;
-		Computer computer2 = new Computer(42L,"Latitude",
-				LocalDate.of(2014, 2, 5),LocalDate.of(2014, 2, 3), 
-				new Company(6L,"Intel"));
+		Computer computer2 = computerTest;
 		assertNotEquals(computer2, computer);
 	}
 	
