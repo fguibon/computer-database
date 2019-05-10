@@ -28,9 +28,9 @@ import com.excilys.persistence.jdbc.JDBCManager;
  */
 public class ComputerDAO extends DataAccessObject<Computer>{
 
-	private static enum Field { ID,NAME,INTRODUCED,DISCONTINUED,COMPANY_ID}
+	private static enum Field { ID,NAME,INTRODUCED,DISCONTINUED,COMPANY_ID};
 	
-	private static enum Order {ASC, DESC}
+	private static enum Order {ASC, DESC};
 	
 	private static final Logger logger = 
 			LogManager.getLogger(ComputerDAO.class);
@@ -229,25 +229,23 @@ public class ComputerDAO extends DataAccessObject<Computer>{
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
-				Long computer_id = rs.getLong("id");
-				if(id!=null) {
-					computer = new Computer();
-					computer.setId(computer_id);
-					computer.setName(rs.getString("name"));
-					Date introDate =rs.getDate("introduced");
-					LocalDate ldate = (introDate==null)? null:introDate.toLocalDate();
-					computer.setIntroduced(ldate);
+				Long computerId = rs.getLong("id");
+				computer = new Computer();
+				computer.setId(computerId);
+				computer.setName(rs.getString("name"));
+				Date introDate =rs.getDate("introduced");
+				LocalDate ldate = (introDate==null)? null:introDate.toLocalDate();
+				computer.setIntroduced(ldate);
 
-					Date discoDate = rs.getDate("discontinued");
-					LocalDate ldate2 = (discoDate==null)?null:discoDate.toLocalDate();
-					computer.setDiscontinued(ldate2);
+				Date discoDate = rs.getDate("discontinued");
+				LocalDate ldate2 = (discoDate==null)?null:discoDate.toLocalDate();
+				computer.setDiscontinued(ldate2);
 
-					Long company_id =rs.getLong("company_id");
-					if(company_id!=null) {
-						Company cp =CompanyDAO.getInstance().findById(company_id);
-						computer.setCompany(cp);
-					}
-				}		
+				Long company_id =rs.getLong("company_id");
+				if(company_id!=null) {
+					Company cp =CompanyDAO.getInstance().findById(company_id);
+					computer.setCompany(cp);
+				}			
 			}	
 		} catch (SQLException e) {
 			logger.error("Query error : "+ e.getMessage());
