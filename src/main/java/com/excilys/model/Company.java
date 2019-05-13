@@ -43,7 +43,6 @@ public class Company  {
 		private Long id;
 		private String name;
 
-		public Builder() {}
 
 		public Builder setId(Long id) {
 			this.id = id;

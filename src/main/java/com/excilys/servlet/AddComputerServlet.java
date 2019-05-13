@@ -1,7 +1,6 @@
 package com.excilys.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -14,27 +13,26 @@ import org.apache.logging.log4j.Logger;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
-import com.excilys.service.CompanyService;
-import com.excilys.service.ComputerService;
+import com.excilys.controller.CompanyController;
+import com.excilys.controller.ComputerController;
 import com.excilys.validator.Validator;
 
 public class AddComputerServlet extends HttpServlet {
 
 
 	private static final long serialVersionUID = 1L;
-	private final ComputerService computerService = ComputerService.getInstance();
-	private final CompanyService companyService = CompanyService.getInstance();
+	private final ComputerController computerController = ComputerController.getInstance();
+	private final CompanyController companyController = CompanyController.getInstance();
 	private static final Logger logger = LogManager.getLogger(DashboardServlet.class);
 	
-	Validator validator = Validator.getInstance();
+	private static Validator validator = Validator.getInstance();
 	
-	
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 
 			throws ServletException, IOException {
 		
-		List<CompanyDTO> companies = new ArrayList<CompanyDTO>();
-		companies = companyService.getCompanies();
+		List<CompanyDTO> companies =  companyController.getCompanies();
 		
 		request.setAttribute("companies", companies);
 		
@@ -43,6 +41,7 @@ public class AddComputerServlet extends HttpServlet {
 
 	}
 
+	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException  {
 		
@@ -61,7 +60,7 @@ public class AddComputerServlet extends HttpServlet {
 		}
 		
 		try {
-			computerService.createComputer(computer);
+			computerController.createComputer(computer);
 		} catch (Exception e) {
 			logger.warn(e.getMessage(), e);
 		} 

@@ -11,8 +11,6 @@ public class ComputerDTO {
 	private String companyId;
 	private String companyName;
 
-	public ComputerDTO() {}
-
 
 	/**
 	 * @return the id
@@ -97,7 +95,6 @@ public class ComputerDTO {
 		private String companyId;
 		private String companyName;
 
-		public Builder() {}
 
 		public Builder setId(String id) {
 			this.id = id;

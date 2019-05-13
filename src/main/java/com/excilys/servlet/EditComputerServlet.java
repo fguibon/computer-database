@@ -1,7 +1,6 @@
 package com.excilys.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -14,36 +13,35 @@ import org.apache.logging.log4j.Logger;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
+import com.excilys.controller.CompanyController;
+import com.excilys.controller.ComputerController;
 import com.excilys.exceptions.DatabaseException;
-import com.excilys.service.CompanyService;
-import com.excilys.service.ComputerService;
 import com.excilys.validator.Validator;
 
 public class EditComputerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private final ComputerService computerService = ComputerService.getInstance();
-	private final CompanyService companyService = CompanyService.getInstance();
+	private static ComputerController computerController = ComputerController.getInstance();
+	private static CompanyController companyController = CompanyController.getInstance();
 	private static final Logger logger = LogManager.getLogger(DashboardServlet.class);
 
-	Validator validator = Validator.getInstance();
+	private static final Validator validator = Validator.getInstance();
 
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
-
-			throws ServletException, IOException {
+				throws ServletException, IOException {
 
 		String idParam = request.getParameter("id");
 
 		ComputerDTO computer =new ComputerDTO();
 		Long id =(idParam == null || "0".equals(idParam) || idParam.isEmpty()) ? null : Long.valueOf(idParam);
 		try {
-			computer = computerService.findById(id);
+			computer = computerController.findById(id);
 		} catch (DatabaseException e) {
 			logger.warn(e.getMessage(), e);
 		}	
 
-		List<CompanyDTO> companies = new ArrayList<CompanyDTO>();
-		companies = companyService.getCompanies();
+		List<CompanyDTO> companies = companyController.getCompanies();
 
 		request.setAttribute("computer", computer);
 		request.setAttribute("companies", companies);
@@ -52,6 +50,7 @@ public class EditComputerServlet extends HttpServlet {
 		.forward(request, response);
 	}
 
+	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException{
 
@@ -71,7 +70,7 @@ public class EditComputerServlet extends HttpServlet {
 		}
 
 		try {
-			computerService.update(computer);
+			computerController.updateComputer(computer);
 		} catch (Exception e) {
 			logger.warn(e.getMessage(), e);
 		} 
