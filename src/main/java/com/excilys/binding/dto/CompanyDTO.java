@@ -7,8 +7,6 @@ public class CompanyDTO {
 	private String id;
 	private String name;
 	
-	public CompanyDTO() {}
-
 
 	/**
 	 * @return the id

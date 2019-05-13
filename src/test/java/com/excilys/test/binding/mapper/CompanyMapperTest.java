@@ -11,6 +11,7 @@ import com.excilys.model.Company;
 
 public class CompanyMapperTest {
 
+	
 	@Test
 	public void modelToDTO_ValidData() {
 		Company company = new Company.Builder().setId(3L).setName("John").build();
@@ -18,8 +19,6 @@ public class CompanyMapperTest {
 		assertEquals("Expected same company",companyDTO, CompanyMapper.getInstance().modelToDto(company));
 	}
 
-	
-	
 	
 	public void DTOToModel_SameData() throws MappingException {
 		Company company = new Company.Builder().setId(20L).setName("Franck").build();

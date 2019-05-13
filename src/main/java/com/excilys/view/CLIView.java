@@ -16,7 +16,7 @@ import com.excilys.model.Page;
 public class CLIView {
 	
 	InputStream in;
-	private static final Logger logger = LogManager.getLogger(CLIView.class);
+	private static final Logger LOGGER = LogManager.getLogger(CLIView.class);
 	
 	public CLIView (InputStream in) {
 		this.in = in;
@@ -27,7 +27,7 @@ public class CLIView {
 	 * @return an int
 	 * */
 	public int menu()  {
-		logger.info(
+		LOGGER.info(
 				"-----MENU-----\r\n"
 				+ "Enter a number \r\n"
 				+ "0: Quit \r\n"
@@ -52,10 +52,9 @@ public class CLIView {
 	 * List all companies
 	 * @param companies
 	 */
-	public void displayCompanies(List<CompanyDTO> companies, Page page) {
-		logger.info("Page number : "+page.getCurrentPage());
+	public void displayCompanies(List<CompanyDTO> companies) {
 		for(CompanyDTO c:companies) {
-			if(c!=null) logger.info(c);
+			if(c!=null) LOGGER.info(c);
 		}
 	}
 	
@@ -65,9 +64,9 @@ public class CLIView {
 	 * @param page 
 	 */
 	public void displayComputers(List<ComputerDTO> computers, Page page) {
-		logger.info("Page number : "+page.getCurrentPage());
+		LOGGER.info("Page number : "+page.getCurrentPage());
 		for(ComputerDTO c:computers) {
-			if(c!=null) logger.info(c);
+			if(c!=null) LOGGER.info(c);
 		}
 	}
 	
@@ -76,7 +75,7 @@ public class CLIView {
 	 * @param computers
 	 */
 	public void displayComputer(ComputerDTO computer) {
-		if(computer!=null) logger.info(computer);
+		if(computer!=null) LOGGER.info(computer);
 	}
 	
 	
@@ -87,7 +86,7 @@ public class CLIView {
 	 */
 	public Long queryId() {
 			
-		logger.info("Enter the id: ");
+		LOGGER.info("Enter the id: ");
 		String ans ="";
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -108,7 +107,7 @@ public class CLIView {
 	public String queryName() {
 		
 		String name="";
-		logger.info("Enter the name: ");
+		LOGGER.info("Enter the name: ");
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(in));){	
 			name = br.readLine();
 		} catch (IOException e) {
@@ -130,11 +129,11 @@ public class CLIView {
 		String day="";
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			logger.info("Enter the year: ");
+			LOGGER.info("Enter the year: ");
 			year = br.readLine();
-			logger.info("Enter the month : ");
+			LOGGER.info("Enter the month : ");
 			month = br.readLine();
-			logger.info("Enter the day: ");
+			LOGGER.info("Enter the day: ");
 			day = br.readLine();
 		} catch (IOException e) {
 			this.notifyProblem();
@@ -145,31 +144,31 @@ public class CLIView {
 	}
 	
 	public void notifyProblem() {
-		logger.warn("Invalid entry try again!");
+		LOGGER.warn("Invalid entry try again!");
 	}
 	
 	public void notifySuccess() {
-		logger.info("Success!");
+		LOGGER.info("Success!");
 	}
 	
 	public void notifyInvalidNumber() {
-		logger.warn("Invalid number please enter one between 1 and 6.");	
+		LOGGER.warn("Invalid number please enter one between 1 and 6.");	
 	}
 	
 	public void notifyInvalidId() {
-		logger.warn("Invalid id try another!");
+		LOGGER.warn("Invalid id try another!");
 	}
 	
 	public void notifyInvalidName() {
-		logger.warn("Invalid name try again!");
+		LOGGER.warn("Invalid name try again!");
 	}
 	
 	public void notifyInvalidDate() {
-		logger.warn("Invalid date try another!");
+		LOGGER.warn("Invalid date try another!");
 	}
 	
 	public void bye() {
-		logger.info("Bye!");
+		LOGGER.info("Bye!");
 	}
 	
 }

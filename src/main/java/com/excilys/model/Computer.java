@@ -12,8 +12,6 @@ public class Computer {
 	private LocalDate discontinuedDate;
 	private Company company;
 	
-	public Computer() {	}
-	
 
 	/**
 	 * @return the id

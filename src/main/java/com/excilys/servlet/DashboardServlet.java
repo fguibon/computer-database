@@ -15,6 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.controller.ComputerController;
 import com.excilys.exceptions.DatabaseException;
@@ -27,11 +30,19 @@ public class DashboardServlet extends HttpServlet {
 	private static final int LIMIT=10;
 	private static final int CURRENT_PAGE=1;
 
-	private static ComputerController computerController = ComputerController.getInstance();
-	private static final Logger logger = LogManager.getLogger(DashboardServlet.class);
+	private ComputerController computerController;
+	private static final Logger LOGGER = LogManager.getLogger(DashboardServlet.class.getName());
 	
 	private static final long serialVersionUID = 1L;
 
+
+	@Override
+	public void init() throws ServletException {
+		WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+		this.computerController = wac.getBean(ComputerController.class);
+	}
+	
+	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 
@@ -44,7 +55,7 @@ public class DashboardServlet extends HttpServlet {
 		try {
 			numberOfComputers = computerController.count();
 		} catch (DatabaseException e) {
-			logger.warn(e.getMessage(), e);
+			LOGGER.warn(e.getMessage(), e);
 		}
 		
 		String pageParam =request.getParameter("page");
@@ -71,7 +82,7 @@ public class DashboardServlet extends HttpServlet {
 		try {
 			computers = computerController.getComputers(page,filter,sorting);
 		} catch (DatabaseException e) {
-			logger.warn(e.getMessage(), e);
+			LOGGER.warn(e.getMessage(), e);
 		}
 		
 		request.setAttribute( "computers", computers );
@@ -83,7 +94,7 @@ public class DashboardServlet extends HttpServlet {
 		request.setAttribute("filter",filter);
 		request.setAttribute("field", field);
 		request.setAttribute("order", order);
-		logger.info("nb comp:"+ numberOfComputers);
+		LOGGER.info("nb comp:"+ numberOfComputers);
 		
 		request.getServletContext().getRequestDispatcher("/WEB-INF/jsp/dashboard.jsp")
 		.forward(request, response);
@@ -104,14 +115,14 @@ public class DashboardServlet extends HttpServlet {
 	                computersToDelete = Arrays.stream(computers).map(Long::valueOf).collect(Collectors.toList());
 	            }
 		} catch(NumberFormatException e) {
-			logger.error("Could not format the ids");
+			LOGGER.error("Could not format the ids");
 		}
 		
 		computersToDelete.stream().forEach(id -> {
 			try {
 				computerController.delete(id);
 			} catch (DatabaseException e) {
-				logger.warn("Invalid id");
+				LOGGER.warn("Invalid id");
 			}
 		});
 

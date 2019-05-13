@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
@@ -18,18 +20,29 @@ import com.excilys.controller.ComputerController;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.validator.Validator;
 
+
 public class EditComputerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private static ComputerController computerController = ComputerController.getInstance();
-	private static CompanyController companyController = CompanyController.getInstance();
-	private static final Logger logger = LogManager.getLogger(DashboardServlet.class);
+	private ComputerController computerController;
+	private CompanyController companyController;
+	private Validator validator;
 
-	private static final Validator validator = Validator.getInstance();
+	private static final Logger LOGGER = LogManager.getLogger(DashboardServlet.class);
+
+
+	@Override
+	public void init() throws ServletException {
+		WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+		this.companyController = wac.getBean( CompanyController.class);
+		this.computerController = wac.getBean( ComputerController.class);
+		this.validator = wac.getBean( Validator.class);
+	}
+
 
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
-				throws ServletException, IOException {
+			throws ServletException, IOException {
 
 		String idParam = request.getParameter("id");
 
@@ -38,7 +51,7 @@ public class EditComputerServlet extends HttpServlet {
 		try {
 			computer = computerController.findById(id);
 		} catch (DatabaseException e) {
-			logger.warn(e.getMessage(), e);
+			LOGGER.warn(e.getMessage(), e);
 		}	
 
 		List<CompanyDTO> companies = companyController.getCompanies();
@@ -66,15 +79,15 @@ public class EditComputerServlet extends HttpServlet {
 		try {
 			validator.validateComputerToUpdate(computer);
 		} catch (Exception e) {
-			logger.warn(e.getMessage(), e);
+			LOGGER.warn(e.getMessage(), e);
 		}
 
 		try {
 			computerController.updateComputer(computer);
 		} catch (Exception e) {
-			logger.warn(e.getMessage(), e);
+			LOGGER.warn(e.getMessage(), e);
 		} 
-		
+
 		response.sendRedirect("dashboard");
 
 	}

@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="ALL" name="cdb" packages="">
+<Configuration status="warn" name="cdb" packages="">
+	<Properties>
+        <Property name="basePath">/home/excilys/Documents/computer-database</Property>
+    </Properties>
+	
 	<Appenders>
         <Console name="stdout" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %p %m%n"/>
         </Console>
 
-	<File name="fout" fileName="cdb.log" append="true">
+	<File name="fout" fileName="${basePath}/cdb.log" append="true">
         <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %p %m%n"/>
     	</File>
 
@@ -13,9 +17,12 @@
 
 <Loggers>
 
-<Root level="ALL">
-	<AppenderRef ref="stdout"/>
-	<AppenderRef ref="fout"/>
-</Root>	
+	<Root level="warn">
+		<AppenderRef ref="stdout"/>
+		<AppenderRef ref="fout"/>
+	</Root>	
+	<Root level="debug" additivity="false">
+          <AppenderRef ref="stdout" />
+    </Root>
 </Loggers>
 </Configuration>

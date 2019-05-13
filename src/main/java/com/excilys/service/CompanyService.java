@@ -4,25 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.model.Page;
 import com.excilys.persistence.dao.CompanyDAO;
 
+@Component
 public class CompanyService {
 	
-	private static CompanyService instance =null ;
-	private static final Logger logger = LogManager.getLogger(CompanyService.class);
+	private static final Logger LOGGER = LogManager.getLogger(CompanyService.class);
 	
-	private CompanyDAO companyDAO = CompanyDAO.getInstance(); 
-	private CompanyService() {
-	}
+	private CompanyDAO companyDAO;
 	
-	
-	public static CompanyService getInstance() {
-		return (instance!=null) ? instance : (instance = new CompanyService());
-	}
+	public CompanyService(CompanyDAO companyDAO) {
+		this.companyDAO = companyDAO;
+	}	
 	
 	
 	public List<Company> getCompanies() {
@@ -30,7 +28,7 @@ public class CompanyService {
 		try {
 			companies = companyDAO.findAll();
 		} catch (DatabaseException e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 		return companies;
 	}
@@ -41,7 +39,7 @@ public class CompanyService {
 		try {
 			companies = companyDAO.findAllPaged(page);
 		} catch (DatabaseException e) {
-			logger.error("Query error : "+ e.getMessage());
+			LOGGER.error("Query error : "+ e.getMessage());
 		}
 		return companies;
 	}
@@ -51,7 +49,7 @@ public class CompanyService {
 		try {
 			company = companyDAO.findById(id);
 		} catch (DatabaseException e) {
-			logger.error("Query error : "+ e.getMessage());
+			LOGGER.error("Query error : "+ e.getMessage());
 		}
 		return company;
 	}
