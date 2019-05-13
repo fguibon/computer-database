@@ -67,8 +67,11 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	 */
 	@Override
 	public boolean create(Company company) throws DatabaseException {
-		try (Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(INSERT);){
+		try (
+			Connection conn = JDBCManager.getInstance().getConnection();
+			PreparedStatement ps = conn.prepareStatement(INSERT);
+			)
+		{
 			ps.setString(1, company.getName());
 			return ps.executeUpdate()>0;	
 		} catch (SQLException e) {
@@ -86,8 +89,11 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	public List<Company> findAll() throws DatabaseException {
 		
 		List<Company> companies = new ArrayList<>();
-		try (Connection conn = JDBCManager.getInstance().getConnection();
-				ResultSet rs = conn.createStatement().executeQuery(SELECT_ALL);){
+		try (
+			Connection conn = JDBCManager.getInstance().getConnection();
+			ResultSet rs = conn.createStatement().executeQuery(SELECT_ALL);
+			)
+		{
 			while (rs.next()) {
 				companies.add( new Company.Builder().setId(rs.getLong("id"))
 						.setName(rs.getString("name")).build());
@@ -111,17 +117,20 @@ public class CompanyDAO implements DataAccessObject<Company>{
 		
 		List<Company> companies = new ArrayList<>();
 		try (
-			Connection conn = JDBCManager.getInstance().getConnection();
-			PreparedStatement ps = conn.prepareStatement(SELECT_ALL_PAGED);		
-		){
+			Connection connection = JDBCManager.getInstance().getConnection();
+			PreparedStatement ps = connection.prepareStatement(SELECT_ALL_PAGED);	
+			)
+		{
 			int offset = ((page.getCurrentPage()-1) * page.getEntriesPerPage());
 			ps.setInt(1,page.getEntriesPerPage());
 			ps.setInt(2, offset);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
+			
+			try(ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
 				companies.add( new Company.Builder().setId(rs.getLong("id"))
 						.setName(rs.getString("name")).build());
-			}
+				}
+			} 
 		} catch(SQLException e) {
 			logger.error(e.getMessage(),e);
 			throw new DatabaseException("Cannot find companies with these parameters : " 
@@ -139,14 +148,18 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	@Override
 	public Company findById(Long id) throws DatabaseException {
 		Company company = new Company();
-		try (Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(SELECT_ONE);){
+		try (
+			Connection conn = JDBCManager.getInstance().getConnection();
+			PreparedStatement ps = conn.prepareStatement(SELECT_ONE);	
+			)
+		{
 			ps.setLong(1, id);
-			ResultSet rs = ps.executeQuery();
-			while(rs.next()) {
-				company.setId(rs.getLong("id"));
-				company.setName(rs.getString("name"));
-			}
+			try(ResultSet rs = ps.executeQuery()) {
+				while(rs.next()) {
+					company.setId(rs.getLong("id"));
+					company.setName(rs.getString("name"));
+				}
+			}	
 		} catch (SQLException e) {
 			logger.error(e.getMessage(), e);
 			throw new DatabaseException("Cannot find the id provided : "+ id);
@@ -161,8 +174,11 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	 */
 	@Override
 	public boolean update(Company company) throws DatabaseException {
-		try(Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(UPDATE);) {
+		try(
+			Connection conn = JDBCManager.getInstance().getConnection();
+			PreparedStatement ps = conn.prepareStatement(UPDATE);
+			) 
+		{
 			ps.setString(1, company.getName());
 			ps.setLong(2, company.getId());
 			return ps.executeUpdate()>0;
@@ -179,9 +195,14 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	 */
 	@Override
 	public void delete(Long id) throws DatabaseException {
-		try (Connection connection = JDBCManager.getInstance().getConnection()){
-			try(PreparedStatement deleteComputersStmt = connection.prepareStatement(DELETE_COMPUTER_WHERE);
-				PreparedStatement deleteCompanyStmt = connection.prepareStatement(DELETE_COMPANY);) 
+		try (
+			Connection connection = JDBCManager.getInstance().getConnection();
+			)
+		{
+			try(
+				PreparedStatement deleteComputersStmt = connection.prepareStatement(DELETE_COMPUTER_WHERE);
+				PreparedStatement deleteCompanyStmt = connection.prepareStatement(DELETE_COMPANY);
+				) 
 			{
 				connection.setAutoCommit(false);
 				
@@ -191,7 +212,7 @@ public class CompanyDAO implements DataAccessObject<Company>{
 				deleteCompanyStmt.execute();
 				
 				connection.commit();
-			} catch(Exception e) {
+			} catch(SQLException e) {
 				logger.error("Could not remove the company of id : "+id);
 				connection.rollback();
 			}		

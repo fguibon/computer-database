@@ -29,9 +29,9 @@ import com.excilys.persistence.jdbc.JDBCManager;
 public class ComputerDAO implements DataAccessObject<Computer>{
 
 	private enum Field { ID,NAME,INTRODUCED,DISCONTINUED,COMPANY_ID}
-	
+
 	private enum Order {ASC, DESC}
-	
+
 	private static final Logger logger = 
 			LogManager.getLogger(ComputerDAO.class);
 
@@ -50,7 +50,7 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	private static final String SELECT_ORDER_BY =
 			"SELECT id,name,introduced,discontinued,company_id FROM computer "
 					+ "WHERE UPPER(name) LIKE UPPER(?) ORDER BY ";
-	
+
 	private static final String PAGED=" LIMIT ? OFFSET ? ; ";
 
 	private static final String UPDATE= 
@@ -82,9 +82,10 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	@Override
 	public boolean create(Computer computer) throws DatabaseException {
 		try(
-				Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(CREATE);
-				) {
+				Connection connection = JDBCManager.getInstance().getConnection();
+				PreparedStatement ps = connection.prepareStatement(CREATE);
+				) 
+		{
 			ps.setString(1, computer.getName());
 			LocalDate introducedDate = computer.getIntroduced();
 			if(introducedDate!=null) {
@@ -125,9 +126,10 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 		List<Computer> computers = new ArrayList<>();
 
 		try(
-			Connection conn = JDBCManager.getInstance().getConnection();
-			ResultSet rs = conn.createStatement().executeQuery(SELECT_ALL);
-		) {
+				Connection conn = JDBCManager.getInstance().getConnection();
+				ResultSet rs = conn.createStatement().executeQuery(SELECT_ALL);
+				) 
+		{
 			while (rs.next()) {
 				Computer computer = new Computer();
 				computer.setId(rs.getLong(Field.ID.toString()));
@@ -168,43 +170,45 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 * @throws Exception 
 	 */
 	public List<Computer> findAllPaged(Page page, String filter, Sorting sorting) throws DatabaseException {
-		List<Computer> computers = new ArrayList<>();
-		int offset = ((page.getCurrentPage()-1) * page.getEntriesPerPage());
+		List<Computer> computers = new ArrayList<>();	
 		boolean isAscending = ( getOrder(sorting.getOrder()).toString().compareToIgnoreCase("ASC")==0);
+
 		try ( 
-			Connection connection = JDBCManager.getInstance().getConnection();
-			PreparedStatement ps = connection.prepareStatement(getMyTableQuerySQL(sorting.getField(), isAscending));)
+				Connection connection = JDBCManager.getInstance().getConnection();
+				PreparedStatement ps = connection.prepareStatement(getMyTableQuerySQL(sorting.getField(), isAscending));
+				)
 		{
+			int offset = ((page.getCurrentPage()-1) * page.getEntriesPerPage());
 			ps.setString(1, "%" +filter +"%");
 			ps.setInt(2,page.getEntriesPerPage());
 			ps.setInt(3, offset);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				Computer computer = new Computer();
-				computer.setId(rs.getLong(Field.ID.toString()));
-				computer.setName(rs.getString(Field.NAME.toString()));
+			try (ResultSet rs = ps.executeQuery()){
+				while (rs.next()) {
+					Computer computer = new Computer();
+					computer.setId(rs.getLong(Field.ID.toString()));
+					computer.setName(rs.getString(Field.NAME.toString()));
 
-				Date date =rs.getDate(Field.INTRODUCED.toString());
-				LocalDate ldate = null;
-				if(date!=null) {
-					ldate  = date.toLocalDate();
-				}
-				computer.setIntroduced(ldate);
+					Date date =rs.getDate(Field.INTRODUCED.toString());
+					LocalDate ldate = null;
+					if(date!=null) {
+						ldate  = date.toLocalDate();
+					}
+					computer.setIntroduced(ldate);
 
-				Date date2 = rs.getDate(Field.DISCONTINUED.toString());
-				LocalDate ldate2 = null;
-				if(date2!=null) {
-					ldate2  = date2.toLocalDate();
-				}
-				computer.setDiscontinued(ldate2);
-				Long companyId =rs.getLong(Field.COMPANY_ID.toString());
-				if(companyId!=null) {
-					Company company =CompanyDAO.getInstance().findById(companyId);
-					computer.setCompany(company);
-				}
-				computers.add(computer);
+					Date date2 = rs.getDate(Field.DISCONTINUED.toString());
+					LocalDate ldate2 = null;
+					if(date2!=null) {
+						ldate2  = date2.toLocalDate();
+					}
+					computer.setDiscontinued(ldate2);
+					Long companyId =rs.getLong(Field.COMPANY_ID.toString());
+					if(companyId!=null) {
+						Company company =CompanyDAO.getInstance().findById(companyId);
+						computer.setCompany(company);
+					}
+					computers.add(computer);
+				}	
 			}
-			rs.close();
 		} catch(SQLException e) {
 			logger.error(e.getMessage());
 			throw new DatabaseException(SELECT_ORDER_BY);
@@ -222,30 +226,34 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	public Computer findById(Long id) throws DatabaseException {
 		Computer computer = null;
 
-		try (Connection conn = JDBCManager.getInstance().getConnection();
-			PreparedStatement ps = conn.prepareStatement(SELECT_ONE);)
+		try (
+				Connection conn = JDBCManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(SELECT_ONE);
+				)
 		{
 			ps.setLong(1, id);
-			ResultSet rs = ps.executeQuery();
-			while(rs.next()) {
-				Long computerId = rs.getLong("id");
-				computer = new Computer();
-				computer.setId(computerId);
-				computer.setName(rs.getString("name"));
-				Date introDate =rs.getDate("introduced");
-				LocalDate ldate = (introDate==null)? null:introDate.toLocalDate();
-				computer.setIntroduced(ldate);
+			try (ResultSet rs = ps.executeQuery()){
+				while(rs.next()) {
+					Long computerId = rs.getLong("id");
+					computer = new Computer();
+					computer.setId(computerId);
+					computer.setName(rs.getString("name"));
+					Date introDate =rs.getDate("introduced");
+					LocalDate ldate = (introDate==null)? null:introDate.toLocalDate();
+					computer.setIntroduced(ldate);
 
-				Date discoDate = rs.getDate("discontinued");
-				LocalDate ldate2 = (discoDate==null)?null:discoDate.toLocalDate();
-				computer.setDiscontinued(ldate2);
+					Date discoDate = rs.getDate("discontinued");
+					LocalDate ldate2 = (discoDate==null)?null:discoDate.toLocalDate();
+					computer.setDiscontinued(ldate2);
 
-				Long companyId =rs.getLong("company_id");
-				if(companyId!=null) {
-					Company cp =CompanyDAO.getInstance().findById(companyId);
-					computer.setCompany(cp);
-				}			
-			}	
+					Long companyId =rs.getLong("company_id");
+					if(companyId!=null) {
+						Company cp =CompanyDAO.getInstance().findById(companyId);
+						computer.setCompany(cp);
+					}			
+				}
+			}
+
 		} catch (SQLException e) {
 			logger.error(e.getMessage());
 			throw new DatabaseException(SELECT_ONE);
@@ -264,7 +272,8 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	public boolean update(Computer computer) throws DatabaseException {
 		try(
 				Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(UPDATE);) 
+				PreparedStatement ps = conn.prepareStatement(UPDATE);
+				) 
 		{
 			ps.setString(1, computer.getName());
 			LocalDate introducedDate = computer.getIntroduced();
@@ -302,8 +311,11 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	@Override
 	public void delete(Long id) throws DatabaseException {
 
-		try (Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(DELETE);){
+		try (
+				Connection conn = JDBCManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(DELETE);
+				)
+		{
 			ps.setLong(1, id);
 			ps.executeUpdate();
 		} catch (SQLException e) {
@@ -319,9 +331,11 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 */
 	public int count() throws DatabaseException {
 		int number = 0;
-		try (Connection conn = JDBCManager.getInstance().getConnection();
-			ResultSet rs = conn.createStatement().executeQuery(COUNT);
-		){
+		try (
+				Connection conn = JDBCManager.getInstance().getConnection();
+				ResultSet rs = conn.createStatement().executeQuery(COUNT);
+				)
+		{
 			while (rs.next()) {
 				number++;
 			}
@@ -331,7 +345,8 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 		}
 		return number;
 	}
-	
+
+
 	public Field getField(String choice) {
 		switch(choice) {
 		case "name":
@@ -346,18 +361,18 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 			return Field.ID;
 		}
 	}
-	
+
 	public Order getOrder(String choice) {
 		switch(choice) {
-			case "asc":
-				return Order.ASC;
-			case "desc":
-				return Order.DESC;
-			default:
-				return Order.ASC;
+		case "asc":
+			return Order.ASC;
+		case "desc":
+			return Order.DESC;
+		default:
+			return Order.ASC;
 		}
 	}
-	
+
 	public String getMyTableQuerySQL( String fieldParam, boolean isAscending ){
 		return SELECT_ORDER_BY + getField(fieldParam).toString()+ 
 				( isAscending ? " ASC " : " DESC " ) + PAGED;

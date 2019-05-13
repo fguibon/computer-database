@@ -83,6 +83,7 @@ public class DashboardServlet extends HttpServlet {
 		request.setAttribute("filter",filter);
 		request.setAttribute("field", field);
 		request.setAttribute("order", order);
+		logger.info("nb comp:"+ numberOfComputers);
 		
 		request.getServletContext().getRequestDispatcher("/WEB-INF/jsp/dashboard.jsp")
 		.forward(request, response);
