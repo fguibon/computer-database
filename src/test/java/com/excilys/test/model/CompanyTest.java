@@ -3,11 +3,9 @@ package com.excilys.test.model;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-
 import com.excilys.model.Company;
 
 public class CompanyTest {
-
 	
 	Company companyTest = new Company.Builder().setId(6L).setName("Intel").build();
 	

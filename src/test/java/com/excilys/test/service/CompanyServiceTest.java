@@ -8,49 +8,51 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import com.excilys.binding.dto.CompanyDTO;
-import com.excilys.binding.mapper.CompanyMapper;
 import com.excilys.model.Company;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.service.CompanyService;
+import com.excilys.test.config.TestConfig;
 
+@ActiveProfiles("test")
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = TestConfig.class)
 public class CompanyServiceTest {
 
-	CompanyService service;
 	List<Company> companies;
-	List<CompanyDTO> companiesDTO;
+	Company companyTest;
 	
-	@Mock
+	@Autowired
 	CompanyDAO daoMock;
-
-	@Mock
-	CompanyMapper mapperMock;
+	
+	@Autowired
+	CompanyService service;
 	
 	@Before
 	public void setUp() throws Exception {
-
-		MockitoAnnotations.initMocks(this);
+		
 		companies = new ArrayList<Company>();
 		companies.add(new Company.Builder().setId(4L).setName("NASA").build());
-		companies.add(new Company.Builder().setId(10L).setName("ESA").build());
-		
-		companiesDTO = new ArrayList<CompanyDTO>();
-		companiesDTO.add(new CompanyDTO.Builder().setId("4").setName("NASA").build());
-		companiesDTO.add(new CompanyDTO.Builder().setId("10").setName("ESA").build());
-		
+		companies.add(new Company.Builder().setId(10L).setName("ESA").build());	
+		companyTest = new Company.Builder().setId(1L).setName("MacBook Pro 15.4 inch").build();
 		when(daoMock.findAll()).thenReturn(companies);
-		
-		service = CompanyService.getInstance();
+		when(daoMock.findById(1L)).thenReturn(companyTest);
 	}
 	
 	@Test
-	public void test_getCompanies() {
-		assertEquals("Expected same companies",companiesDTO,service.getCompanies());
+	public void getCompaniesTest() {
+		assertEquals("Expected same companies",companies,service.getCompanies());
 	}
 	
+	@Test
+	public void findbyIdTest() {
+		assertEquals("Expected same companies",companyTest,service.findById(1L));
+	}	
 
 
 }

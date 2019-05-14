@@ -11,7 +11,7 @@ import com.excilys.controller.CLIController;
 
 public class MainApp {
 
-	private static Logger LOGGER = 
+	private static final Logger LOGGER = 
 			LogManager.getLogger(MainApp.class);
 	
 	public static void main(String[] args) {
@@ -25,7 +25,7 @@ public class MainApp {
 		} catch (Exception e) {
 			LOGGER.error("Failed to start app : "+ e.getMessage());
 		}
-		
+		context.close();
 		
 	}
 
