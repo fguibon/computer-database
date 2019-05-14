@@ -13,14 +13,12 @@ import com.excilys.persistence.dao.ComputerDAO;
 @Component
 public class ComputerService {
 
-	private ComputerDAO computerDAO;
-	
+	private ComputerDAO computerDAO;	
 	
 	public ComputerService(ComputerDAO computerDAO) {
 		this.computerDAO = computerDAO;
 	}
-	
-	
+		
 	public boolean createComputer(Computer computer) throws DatabaseException  {
 		return computerDAO.create(computer);
 	}

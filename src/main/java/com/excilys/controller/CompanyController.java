@@ -28,7 +28,6 @@ public class CompanyController {
 		return companies
 		.stream().map(s -> companyMapper.modelToDto(s))
 		.collect(Collectors.toList());
-
 	}
 	
 

@@ -85,13 +85,13 @@ public class DashboardServlet extends HttpServlet {
 			LOGGER.warn(e.getMessage(), e);
 		}
 		
-		request.setAttribute( "computers", computers );
+		request.setAttribute( "computers", computers);
 		request.setAttribute("pages", pages);
 		
 		request.setAttribute("limit", limit);
 		request.setAttribute("page", offset);
-		request.setAttribute( "number", numberOfComputers );
-		request.setAttribute("filter",filter);
+		request.setAttribute("number", numberOfComputers);
+		request.setAttribute("filter", filter);
 		request.setAttribute("field", field);
 		request.setAttribute("order", order);
 		LOGGER.info("nb comp:"+ numberOfComputers);

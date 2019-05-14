@@ -94,7 +94,7 @@ public class Validator {
 		boolean valid= false;
 		if (isValidDate(introducedDate) && isValidDate(discontinuedDate)){
 			if(!introducedDate.isEmpty() && introducedDate!=null && !discontinuedDate.isEmpty() && discontinuedDate!=null) {
-				valid =(discontinuedDate.compareTo(introducedDate)>=0)? true : false;
+				valid =(discontinuedDate.compareTo(introducedDate)>=0);
 			} else {
 				valid =true;
 			}

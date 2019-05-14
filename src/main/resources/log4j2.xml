@@ -1,28 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" name="cdb" packages="">
+<Configuration status="INFO">
 	<Properties>
-        <Property name="basePath">/home/excilys/Documents/computer-database</Property>
+        <Property name="basePath">Documents/computer-database</Property>
     </Properties>
-	
-	<Appenders>
-        <Console name="stdout" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %p %m%n"/>
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
         </Console>
-
-	<File name="fout" fileName="${basePath}/cdb.log" append="true">
-        <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %p %m%n"/>
-    	</File>
-
+        <File name="file" fileName="${basePath}/cdb.log" immediateFlush="false" append="false">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
     </Appenders>
-
-<Loggers>
-
-	<Root level="warn">
-		<AppenderRef ref="stdout"/>
-		<AppenderRef ref="fout"/>
-	</Root>	
-	<Root level="debug" additivity="false">
-          <AppenderRef ref="stdout" />
-    </Root>
-</Loggers>
+    <Loggers>
+        <Root level="debug">
+            <AppenderRef ref="console" />
+            <AppenderRef ref="file"/>
+        </Root>
+    </Loggers>
 </Configuration>

@@ -28,9 +28,10 @@ import com.excilys.test.config.TestConfig;
 @ContextConfiguration(classes = TestConfig.class)
 public class ComputerServiceTest {
 
-	List<Computer> computers = new ArrayList<Computer>();
+	List<Computer> computers;
 	Computer computerTest;
 	Company companyTest;
+	Company companyTestModified;
 	Page page;
 	Sorting sorting;
 	
@@ -44,17 +45,27 @@ public class ComputerServiceTest {
 	public void setUp() throws Exception {
 		page = new Page(1, 1);
 		sorting = new Sorting("","");
+		computers = new ArrayList<Computer>();
 		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
+		companyTestModified = new Company.Builder().setId(1L).setName("Apple").build();
 		computerTest = new Computer.Builder().setId(1L)
 				.setName("MacBook Pro 15.4 inch").setCompany(companyTest).build();
 		computers.add(computerTest);
 		
+		Mockito.when(daoMock.create(computerTest)).thenReturn(true);
 		Mockito.when(daoMock.findById(1L)).thenReturn(computerTest);
 		Mockito.when(daoMock.findAllPaged(page,"",sorting)).thenReturn(computers);
+		Mockito.when(daoMock.update(computerTest)).thenReturn(true);
+		Mockito.when(daoMock.count()).thenReturn(10);
 	}
 	
 	@Test
-	public void getComputersTest() throws DatabaseException {
+	public void createComputerTest() throws DatabaseException {
+		assertTrue(computerService.createComputer(computerTest));
+	}
+	
+	@Test
+	public void finAllTest() throws DatabaseException {
 		assertEquals("Expected same computers",computers,computerService.findAll(page, "", sorting));
 	}
 	
@@ -62,6 +73,11 @@ public class ComputerServiceTest {
 	public void findbyIdTest() throws DatabaseException {
 		assertEquals("Expected same computers",computerTest,computerService.findById(1L));
 	}
-
+	
+	@Test
+	public void updateTest() throws DatabaseException {
+		computerTest.setCompany(companyTestModified);
+		assertTrue(computerService.update(computerTest));
+	}
 
 }
