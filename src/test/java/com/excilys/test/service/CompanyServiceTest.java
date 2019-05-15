@@ -1,6 +1,6 @@
 package com.excilys.test.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -25,21 +25,23 @@ import com.excilys.test.config.TestConfig;
 @ContextConfiguration(classes = TestConfig.class)
 public class CompanyServiceTest {
 
-	List<Company> companies;
-	Company companyTest;
-	Page page;
+	private List<Company> companies;
+	private Company companyTest;
+	private Page page;
 	
 	@Autowired
-	CompanyDAO daoMock;
+	private CompanyDAO daoMock;
 	
-	@Autowired
-	CompanyService service;
+	private CompanyService service;
 	
 	@Before
 	public void setUp() throws Exception {
 		
+		service = new CompanyService(daoMock);
+		
 		companies = new ArrayList<Company>();
 		page = new Page(1, 1);
+		
 		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
 		companies.add(companyTest);	
 	

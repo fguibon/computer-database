@@ -80,7 +80,7 @@ public class DashboardServlet extends HttpServlet {
 		
 		List<ComputerDTO> computers = new ArrayList<>();
 		try {
-			computers = computerController.getComputers(page,filter,sorting);
+			computers = computerController.findAll(page,filter,sorting);
 		} catch (DatabaseException e) {
 			LOGGER.warn(e.getMessage(), e);
 		}

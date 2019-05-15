@@ -1,9 +1,10 @@
 package com.excilys.test.binding.mapper;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,23 +26,23 @@ import com.excilys.test.config.TestConfig;
 @ContextConfiguration(classes = TestConfig.class)
 public class ComputerMapperTest {
 	
-	@Autowired
 	private ComputerMapper computerMapper;
 	
-	@Autowired
-	CompanyDAO daoMock;
+	private Computer computer;
+	private Company company;
+	private ComputerDTO computerDTO;
+	private String companyId = "4";
+	private String sDate = "2014-04-05";
+	private LocalDate lDate = LocalDate.of(2014, 4, 5);
 	
-	Computer computer;
-	Company company;
-	ComputerDTO computerDTO;
-	String companyId = "4";
-	String sDate = "2014-04-05";
-	LocalDate lDate = LocalDate.of(2014, 4, 5);
-		
+	@Autowired
+	private CompanyDAO daoMock;	
 
 	@Before
 	public void setUp() throws Exception {
 
+		computerMapper = new ComputerMapper();
+		
 		company = new Company.Builder().setId(4L).setName("NASA").build();
 		computer = new Computer.Builder().setId(9L).setName("Coucou")
 				.setIntroduced(lDate).setDiscontinued(LocalDate.of(2015, 3, 2))

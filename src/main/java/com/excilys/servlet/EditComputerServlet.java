@@ -83,7 +83,7 @@ public class EditComputerServlet extends HttpServlet {
 		}
 
 		try {
-			computerController.updateComputer(computer);
+			computerController.update(computer);
 		} catch (Exception e) {
 			LOGGER.warn(e.getMessage(), e);
 		} 

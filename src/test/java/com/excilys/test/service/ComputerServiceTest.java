@@ -1,6 +1,8 @@
 package com.excilys.test.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,26 +30,26 @@ import com.excilys.test.config.TestConfig;
 @ContextConfiguration(classes = TestConfig.class)
 public class ComputerServiceTest {
 
-	List<Computer> computers;
-	Computer computerTest;
-	Company companyTest;
-	Company companyTestModified;
-	Page page;
-	Sorting sorting;
+	private ComputerService computerService;
+	private List<Computer> computers;
+	private Computer computerTest;
+	private Company companyTest;
+	private Page page;
+	private Sorting sorting;
+	
 	
 	@Autowired
-	ComputerService computerService;
+	private ComputerDAO daoMock;
 	
-	@Autowired
-	ComputerDAO daoMock;
 	
 	@Before
 	public void setUp() throws Exception {
+		
+		computerService = new ComputerService(daoMock);
 		page = new Page(1, 1);
 		sorting = new Sorting("","");
 		computers = new ArrayList<Computer>();
 		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
-		companyTestModified = new Company.Builder().setId(1L).setName("Apple").build();
 		computerTest = new Computer.Builder().setId(1L)
 				.setName("MacBook Pro 15.4 inch").setCompany(companyTest).build();
 		computers.add(computerTest);
@@ -56,6 +58,9 @@ public class ComputerServiceTest {
 		Mockito.when(daoMock.findById(1L)).thenReturn(computerTest);
 		Mockito.when(daoMock.findAllPaged(page,"",sorting)).thenReturn(computers);
 		Mockito.when(daoMock.update(computerTest)).thenReturn(true);
+		Mockito.when(daoMock.count()).thenReturn(10);
+		
+		Mockito.doThrow(DatabaseException.class).when(daoMock).delete(1L);
 		Mockito.when(daoMock.count()).thenReturn(10);
 	}
 	
@@ -76,8 +81,18 @@ public class ComputerServiceTest {
 	
 	@Test
 	public void updateTest() throws DatabaseException {
-		computerTest.setCompany(companyTestModified);
+		computerTest.setName("Mc Book");
 		assertTrue(computerService.update(computerTest));
+	}
+	
+	@Test(expected = DatabaseException.class)
+	public void deleteExpectExceptionTest() throws Exception {
+		computerService.delete(1L);
+	}
+	
+	@Test
+	public void countTest() throws DatabaseException {
+		assertSame(10,computerService.count());
 	}
 
 }

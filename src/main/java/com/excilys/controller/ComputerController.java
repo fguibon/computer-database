@@ -39,7 +39,7 @@ public class ComputerController {
 
 	}
 	
-	public List<ComputerDTO> getComputers(Page page, String filter, Sorting sorting) throws DatabaseException {
+	public List<ComputerDTO> findAll(Page page, String filter, Sorting sorting) throws DatabaseException {
 		List<Computer> computers = computerService.findAll(page,filter, sorting);
 		return computers
 		.stream().map(s -> computerMapper.modelToDto(s))
@@ -53,7 +53,7 @@ public class ComputerController {
 
 	}
 	
-	public boolean updateComputer(ComputerDTO computerDTO) throws DatabaseException, ValidationException, DateParseException, MappingException  {
+	public boolean update(ComputerDTO computerDTO) throws DatabaseException, ValidationException, DateParseException, MappingException  {
 		computerValidator.validateComputerToUpdate(computerDTO);
 		return computerService.update(computerMapper.dtoToModel(computerDTO));
 

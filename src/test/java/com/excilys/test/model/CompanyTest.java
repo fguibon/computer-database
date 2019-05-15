@@ -32,7 +32,7 @@ public class CompanyTest {
 	}
 	
 	@Test
-	public void comparisonReferenceNulle() {
+	public void comparisonNullReference() {
 		Company company = null;
 		Company company2 = companyTest;
 		assertNotEquals("Expected different companies",company2, company);
