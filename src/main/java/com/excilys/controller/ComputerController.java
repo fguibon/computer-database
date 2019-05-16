@@ -32,7 +32,7 @@ public class ComputerController {
 	}
 	
 	
-	public boolean createComputer(ComputerDTO computerDTO) throws ValidationException, DateParseException, MappingException, DatabaseException  {
+	public int createComputer(ComputerDTO computerDTO) throws ValidationException, DateParseException, MappingException, DatabaseException  {
 		computerValidator.validateComputerToCreate(computerDTO);
 		Computer computer = computerMapper.dtoToModel(computerDTO);
 		return computerService.createComputer(computer);
@@ -53,14 +53,14 @@ public class ComputerController {
 
 	}
 	
-	public boolean update(ComputerDTO computerDTO) throws DatabaseException, ValidationException, DateParseException, MappingException  {
+	public int update(ComputerDTO computerDTO) throws DatabaseException, ValidationException, DateParseException, MappingException  {
 		computerValidator.validateComputerToUpdate(computerDTO);
 		return computerService.update(computerMapper.dtoToModel(computerDTO));
 
 	}
 	
-	public void delete(Long id) throws DatabaseException  {
-		computerService.delete(id);
+	public int delete(Long id) throws DatabaseException  {
+		return computerService.delete(id);
 	}
 	
 	public int count() throws DatabaseException {

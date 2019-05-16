@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -43,6 +44,9 @@ public class ComputerDAOTest {
 	private HikariDataSource dataSource;
 	
 	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	
+	@Autowired
 	private CompanyDAO companyDAOMock;
 	
 	private List<Computer> computers;
@@ -56,7 +60,7 @@ public class ComputerDAOTest {
 	public void setUp() throws Exception {
 		executer.reload();
 		
-		computerDAO = new ComputerDAO(dataSource, companyDAOMock);
+		computerDAO = new ComputerDAO(dataSource, jdbcTemplate, companyDAOMock);
 		
 		computers = new ArrayList<Computer>();
 		page = new Page(1, 10);
@@ -81,20 +85,18 @@ public class ComputerDAOTest {
 		computers.add(new Computer.Builder().setId(9L).setName("Apple IIGS").build());
 		computers.add(new Computer.Builder().setId(10L).setName("Apple IIc Plus").build());
 		
-		Mockito.when(companyDAOMock.findById(companyTest.getId())).thenReturn(companyTest);
-		Mockito.when(companyDAOMock.findById(companyTest2.getId())).thenReturn(companyTest2);
-		Mockito.when(companyDAOMock.findById(null)).thenReturn(null);
+		Mockito.when(companyDAOMock.findById(1L)).thenReturn(companyTest);
+		Mockito.when(companyDAOMock.findById(2L)).thenReturn(companyTest2);
+		Mockito.when(companyDAOMock.findById(null)).thenReturn(new Company());
+
 	}
 	
 	@Test
 	public void createComputerTest() throws DatabaseException {
-		Computer computerExpected = computerTest;
-		computerDAO.create(computerExpected);
-		computerExpected.setId(11L);
+		computerDAO.create(computerTest);
+		computerTest.setId(11L);
 		
-		Computer computerActual = computerDAO.findById(11L);
-		
-		assertEquals("Expected same companies",computerExpected, computerActual);
+		assertEquals("Expected same companies",computerTest, computerDAO.findById(11L));
 		
 	}
 	

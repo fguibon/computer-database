@@ -1,7 +1,5 @@
 package com.excilys.test.validator;
 
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,18 +39,21 @@ public class ValidatorTest {
 		Mockito.when(computerMapperMock.castLocalDate("")).thenReturn(null);
 	}
 	
-	@Test
+	@Test(expected = ValidationException.class)
 	public void validateComputerToCreateTest() throws ValidationException, DateParseException {
-		assertTrue(validator.validateComputerToCreate(computerDto));
+		computerDto.setCompanyId("blabla");
+		validator.validateComputerToCreate(computerDto);
 	}
 	
-	@Test
+	@Test(expected = ValidationException.class)
 	public void validateComputerToUpdateTest() throws ValidationException, DateParseException {
-		assertTrue(validator.validateComputerToUpdate(computerDto));
+		computerDto.setCompanyId("blabla");
+		validator.validateComputerToUpdate(computerDto);
 	}
 	
-	@Test
+	@Test(expected = ValidationException.class)
 	public void validateCompany() throws ValidationException {
-		assertTrue(validator.validateCompany(companyDto));
+		companyDto.setId("blabla");
+		validator.validateCompany(companyDto);
 	}
 }

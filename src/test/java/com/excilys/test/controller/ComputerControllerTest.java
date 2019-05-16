@@ -78,10 +78,10 @@ public class ComputerControllerTest {
 		companyDto = new CompanyDTO.Builder().setId("1").setName("Apple Inc.").build();
 		computersDTO.add(computerDto);
 		
-		Mockito.when(computerServiceMock.createComputer(computer)).thenReturn(true);
+		Mockito.when(computerServiceMock.createComputer(computer)).thenReturn(1);
 		Mockito.when(computerServiceMock.findById(1L)).thenReturn(computer);
 		Mockito.when(computerServiceMock.findAll(page,"",sorting)).thenReturn(computers);
-		Mockito.when(computerServiceMock.update(computer)).thenReturn(true);
+		Mockito.when(computerServiceMock.update(computer)).thenReturn(1);
 		Mockito.doThrow(DatabaseException.class).when(computerServiceMock).delete(2L);
 		Mockito.when(computerServiceMock.count()).thenReturn(10);
 		Mockito.when(computerServiceMock.findById(3L)).thenReturn(null);
@@ -89,14 +89,11 @@ public class ComputerControllerTest {
 		Mockito.when(computerMapperMock.dtoToModel(computerDto)).thenReturn(computer);
 		Mockito.when(computerMapperMock.modelToDto(computer)).thenReturn(computerDto);
 		
-		Mockito.when(computerValidatorMock.validateCompany(companyDto)).thenReturn(true);
-		Mockito.when(computerValidatorMock.validateComputerToCreate(computerDto)).thenReturn(true);
-		Mockito.when(computerValidatorMock.validateComputerToUpdate(computerDto)).thenReturn(true);
 	}
 	
 	@Test
 	public void createComputerTest() throws ValidationException, DateParseException, MappingException, DatabaseException {
-		assertTrue(computerController.createComputer(computerDto));
+		assertEquals(1,computerController.createComputer(computerDto));
 	}
 	
 	@Test
@@ -112,7 +109,7 @@ public class ComputerControllerTest {
 	@Test
 	public void updateTest() throws DatabaseException, ValidationException, DateParseException, MappingException {
 		computer.setName("Mc Book");
-		assertTrue(computerController.update(computerMapperMock.modelToDto(computer)));
+		assertEquals(1,computerController.update(computerMapperMock.modelToDto(computer)));
 	}
 	
 	@Test(expected = DatabaseException.class)

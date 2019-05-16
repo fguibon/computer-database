@@ -5,8 +5,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +12,10 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.excilys.exceptions.DatabaseException;
@@ -21,6 +23,7 @@ import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
 import com.excilys.model.Sorting;
+import com.excilys.persistence.rowmapper.ComputerRowMapper;
 import com.zaxxer.hikari.HikariDataSource;
 
 /**
@@ -32,7 +35,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @Component
 public class ComputerDAO implements DataAccessObject<Computer>{
 
-	private enum Field { ID,NAME,INTRODUCED,DISCONTINUED,COMPANY_ID}
+	public enum Field { ID,NAME,INTRODUCED,DISCONTINUED,COMPANY_ID}
 
 	private enum Order {ASC, DESC}
 
@@ -65,15 +68,20 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 
 
 	private static final String COUNT = 
-			"SELECT id FROM computer; ";
+			"SELECT COUNT(id) FROM computer; ";
 
 	@Autowired
 	private HikariDataSource datasource;
 	
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	
 	private CompanyDAO companyDAO;
 	
-	public ComputerDAO(HikariDataSource datasource,CompanyDAO companyDAO) {	
+	
+	public ComputerDAO(HikariDataSource datasource, JdbcTemplate jdbcTemplate, CompanyDAO companyDAO) {	
 		this.datasource = datasource;
+		this.jdbcTemplate = jdbcTemplate;
 		this.companyDAO = companyDAO;
 	}
 
@@ -84,41 +92,17 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 * @throws Exception 
 	 */
 	@Override
-	public boolean create(Computer computer) throws DatabaseException {
-		try(
-				Connection connection = datasource.getConnection();
-				PreparedStatement ps = connection.prepareStatement(CREATE);
-				) 
-		{
-			ps.setString(1, computer.getName());
-			LocalDate introducedDate = computer.getIntroduced();
-			if(introducedDate!=null) {
-				ps.setTimestamp(2,Timestamp.valueOf(introducedDate.atStartOfDay()));
-			} else {
-				ps.setTimestamp(2, null);
-			}
-			LocalDate discontinuedDate =computer.getDiscontinued();
-			if(discontinuedDate!=null) {
-				ps.setTimestamp(3,Timestamp.valueOf(discontinuedDate.atStartOfDay()));
-			} else {
-				ps.setTimestamp(3,null);
-			}
-			Company company = computer.getCompany();
-			if(company!=null) {
-				Long id =company.getId();
-				if(id!=null) {
-					ps.setLong(4, id);
-				} else {
-					ps.setNull(4, Types.BIGINT);
-				}
-			} else {
-				ps.setNull(4, Types.BIGINT);
-			}
-			return ps.executeUpdate()>0;
-		} catch (SQLException e) {
-			LOGGER.error(e.getMessage());
-			throw new DatabaseException(CREATE);
+	public int create(Computer computer) throws DatabaseException {
+		int number = 0;
+		SqlParameterSource params = new BeanPropertySqlParameterSource(computer);
+		try {
+			number = jdbcTemplate.update(CREATE,params);
+		} catch (DataAccessException e) {
+			LOGGER.warn(e.getMessage());
+			throw new DatabaseException("Cannot insert computer : "+computer.toString());
 		}
+		return number;
+				
 	}
 
 	/**
@@ -127,39 +111,12 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 * @throws Exception 
 	 */
 	public List<Computer> findAll() throws DatabaseException {
+		
 		List<Computer> computers = new ArrayList<>();
-
-		try(
-				Connection conn = datasource.getConnection();
-				ResultSet rs = conn.createStatement().executeQuery(SELECT_ALL);
-				) 
-		{
-			while (rs.next()) {
-				Computer computer = new Computer();
-				computer.setId(rs.getLong(Field.ID.toString()));
-				computer.setName(rs.getString("name"));
-
-				Date date =rs.getDate(Field.INTRODUCED.toString());
-				LocalDate ldate = null;
-				if(date!=null) {
-					ldate  = date.toLocalDate();
-				}
-				computer.setIntroduced(ldate);
-
-				Date date2 = rs.getDate(Field.DISCONTINUED.toString());
-				LocalDate ldate2 = null;
-				if(date2!=null) {
-					ldate2  = date2.toLocalDate();
-				}
-				computer.setDiscontinued(ldate2);
-				Long companyId =rs.getLong(Field.COMPANY_ID.toString());
-				if(companyId!=null) {
-					Company company = companyDAO.findById(companyId);
-					computer.setCompany(company);
-				}
-				computers.add(computer);
-			}
-		} catch(SQLException e) {
+		try{
+			ComputerRowMapper rowMapper = new ComputerRowMapper();
+			computers = jdbcTemplate.query(SELECT_ALL,rowMapper);
+		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException(SELECT_ALL);
 		}
@@ -176,44 +133,14 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	public List<Computer> findAllPaged(Page page, String filter, Sorting sorting) throws DatabaseException {
 		List<Computer> computers = new ArrayList<>();	
 		boolean isAscending = ( getOrder(sorting.getOrder()).toString().compareToIgnoreCase("ASC")==0);
-
-		try ( 
-				Connection connection = datasource.getConnection();
-				PreparedStatement ps = connection.prepareStatement(getMyTableQuerySQL(sorting.getField(), isAscending));
-				)
-		{
-			int offset = ((page.getCurrentPage()-1) * page.getEntriesPerPage());
-			ps.setString(1, "%" +filter +"%");
-			ps.setInt(2,page.getEntriesPerPage());
-			ps.setInt(3, offset);
-			try (ResultSet rs = ps.executeQuery()){
-				while (rs.next()) {
-					Computer computer = new Computer();
-					computer.setId(rs.getLong(Field.ID.toString()));
-					computer.setName(rs.getString(Field.NAME.toString()));
-
-					Date date =rs.getDate(Field.INTRODUCED.toString());
-					LocalDate ldate = null;
-					if(date!=null) {
-						ldate  = date.toLocalDate();
-					}
-					computer.setIntroduced(ldate);
-
-					Date date2 = rs.getDate(Field.DISCONTINUED.toString());
-					LocalDate ldate2 = null;
-					if(date2!=null) {
-						ldate2  = date2.toLocalDate();
-					}
-					computer.setDiscontinued(ldate2);
-					Long companyId =rs.getLong(Field.COMPANY_ID.toString());
-					if(companyId!=null) {
-						Company company =companyDAO.findById(companyId);
-						computer.setCompany(company);
-					}
-					computers.add(computer);
-				}	
-			}
-		} catch(SQLException e) {
+		int offset = ((page.getCurrentPage()-1) * page.getEntriesPerPage());
+		String sql = getMyTableQuerySQL(sorting.getField(), isAscending);
+		try {
+			ComputerRowMapper rowMapper = new ComputerRowMapper();
+			
+			computers = jdbcTemplate.query(sql,
+					new Object[] {"%"+filter +"%",page.getEntriesPerPage(),offset},rowMapper);
+		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException(SELECT_ORDER_BY);
 		}
@@ -268,86 +195,51 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 
 	/**
 	 * Updates a Computer information
-	 * @return a Computer object
-	 * @throws Exception 
+	 * @return the number of rows affected 
 	 */
-
 	@Override
-	public boolean update(Computer computer) throws DatabaseException {
-		try(
-				Connection conn = datasource.getConnection();
-				PreparedStatement ps = conn.prepareStatement(UPDATE);
-				) 
-		{
-			ps.setString(1, computer.getName());
-			LocalDate introducedDate = computer.getIntroduced();
-			if(introducedDate!=null) {
-				ps.setTimestamp(2,Timestamp.valueOf(introducedDate.atStartOfDay()));
-			} else {
-				ps.setTimestamp(2, null);
-			}
-			LocalDate discontinuedDate =computer.getDiscontinued();
-			if(discontinuedDate!=null) {
-				ps.setTimestamp(3,Timestamp.valueOf(discontinuedDate.atStartOfDay()));
-			} else {
-				ps.setTimestamp(3,null);
-			}
-
-			Long id =(computer.getCompany()==null) ? null :computer.getCompany().getId();
-			if(id!=null) {
-				ps.setLong(4, id);
-			} else {
-				ps.setNull(4, Types.BIGINT);
-			}
-			ps.setLong(5, computer.getId());
-			return ps.executeUpdate()>0;
-		} catch (SQLException e) {
+	public int update(Computer computer) throws DatabaseException {
+		int number = 0;
+		SqlParameterSource params = new BeanPropertySqlParameterSource(computer);
+		try {
+			number = jdbcTemplate.update(UPDATE,params);
+		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException(UPDATE);
 		}
+		return number;	
 	}
 
 	/**
 	 * Deletes a computer from the database
-	 * @return  
-	 * @throws Exception 
+	 * @return the number of rows affected
 	 */
 	@Override
-	public void delete(Long id) throws DatabaseException {
-
-		try (
-				Connection conn = datasource.getConnection();
-				PreparedStatement ps = conn.prepareStatement(DELETE);
-				)
-		{
-			ps.setLong(1, id);
-			ps.executeUpdate();
-		} catch (SQLException e) {
-			LOGGER.error( e.getMessage());
+	public int delete(Long id) throws DatabaseException {
+		int number = 0;
+		try {
+			number = jdbcTemplate.update(DELETE,id);
+		} catch (DataAccessException e) {
+			LOGGER.error(e.getMessage());
 			throw new DatabaseException(DELETE);
 		}
+		return number;	
 	}
 
 	/**
 	 * Get the computers total count
-	 * @return
-	 * @throws DatabaseException
+	 * @return the total number 
+	 * @throws DatabaseException 
 	 */
-	public int count() throws DatabaseException {
+	public int count() throws DatabaseException  {
 		int number = 0;
-		try (
-				Connection conn = datasource.getConnection();
-				ResultSet rs = conn.createStatement().executeQuery(COUNT);
-				)
-		{
-			while (rs.next()) {
-				number++;
-			}
-		} catch (SQLException e) {
+		try {
+			number = jdbcTemplate.queryForObject(COUNT, Integer.class);
+		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException(COUNT);
 		}
-		return number;
+		 return number;	
 	}
 
 

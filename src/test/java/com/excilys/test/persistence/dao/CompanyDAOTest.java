@@ -3,7 +3,6 @@ package com.excilys.test.persistence.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -37,6 +37,9 @@ public class CompanyDAOTest {
 	@Autowired
 	private HikariDataSource dataSource;
 	
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	
 	private Company companyTest;
 	private List<Company> companies;
 	private Page page;
@@ -45,7 +48,7 @@ public class CompanyDAOTest {
 	public void setUp() throws Exception {
 		executer.reload();
 		
-		companyDAO = new CompanyDAO(dataSource);
+		companyDAO = new CompanyDAO(dataSource, jdbcTemplate);
 		
 		companies = new ArrayList<Company>();
 		page = new Page(1, 5);
@@ -60,7 +63,7 @@ public class CompanyDAOTest {
 	
 	@Test
 	public void createCompanyTest() throws DatabaseException {
-		assertTrue(companyDAO.create(companyTest));
+		assertEquals(1,companyDAO.create(companyTest));
 		companyTest.setId(6L);
 		assertEquals("Expected same companies",companyTest,companyDAO.findById(6L));
 		
