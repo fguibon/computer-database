@@ -1,6 +1,6 @@
 package com.excilys.test.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -8,49 +8,62 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import com.excilys.binding.dto.CompanyDTO;
-import com.excilys.binding.mapper.CompanyMapper;
 import com.excilys.model.Company;
+import com.excilys.model.Page;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.service.CompanyService;
+import com.excilys.test.config.TestConfig;
 
+@ActiveProfiles("test")
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = TestConfig.class)
 public class CompanyServiceTest {
 
-	CompanyService service;
-	List<Company> companies;
-	List<CompanyDTO> companiesDTO;
+	private List<Company> companies;
+	private Company companyTest;
+	private Page page;
 	
-	@Mock
-	CompanyDAO daoMock;
-
-	@Mock
-	CompanyMapper mapperMock;
+	@Autowired
+	private CompanyDAO daoMock;
+	
+	private CompanyService service;
 	
 	@Before
 	public void setUp() throws Exception {
-
-		MockitoAnnotations.initMocks(this);
+		
+		service = new CompanyService(daoMock);
+		
 		companies = new ArrayList<Company>();
-		companies.add(new Company.Builder().setId(4L).setName("NASA").build());
-		companies.add(new Company.Builder().setId(10L).setName("ESA").build());
+		page = new Page(1, 1);
 		
-		companiesDTO = new ArrayList<CompanyDTO>();
-		companiesDTO.add(new CompanyDTO.Builder().setId("4").setName("NASA").build());
-		companiesDTO.add(new CompanyDTO.Builder().setId("10").setName("ESA").build());
-		
+		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
+		companies.add(companyTest);	
+	
 		when(daoMock.findAll()).thenReturn(companies);
-		
-		service = CompanyService.getInstance();
+		when(daoMock.findAllPaged(page)).thenReturn(companies);
+		when(daoMock.findById(1L)).thenReturn(companyTest);
 	}
 	
 	@Test
-	public void test_getCompanies() {
-		assertEquals("Expected same companies",companiesDTO,service.getCompanies());
+	public void findAllTest() {
+		assertEquals("Expected same companies",companies,service.getCompanies());
 	}
 	
+	@Test
+	public void findAllPagedTest() {
+		assertEquals("Expected same companies",companies,service.getCompanies(page));
+	}
+	
+	@Test
+	public void findbyIdTest() {
+		assertEquals("Expected same companies",companyTest,service.findById(1L));
+	}	
 
 
 }

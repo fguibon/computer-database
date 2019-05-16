@@ -3,27 +3,24 @@ package com.excilys.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Component;
+
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.mapper.CompanyMapper;
 import com.excilys.model.Company;
 import com.excilys.model.Page;
 import com.excilys.service.CompanyService;
 
-
+@Component
 public class CompanyController {
 
+	private CompanyService companyService; 
+	private CompanyMapper companyMapper;
 	
-	private static CompanyController instance =null ;
-	private CompanyService companyService = CompanyService.getInstance(); 
-	private CompanyMapper companyMapper = CompanyMapper.getInstance();
-	
-	private CompanyController() {
-	}
-	
-	
-	public static CompanyController getInstance() {
-		return (instance!=null) ? instance : (instance = new CompanyController());
-	}
+	public CompanyController(CompanyService companyService,CompanyMapper companyMapper) {
+		this.companyService = companyService;
+		this.companyMapper = companyMapper;
+	}	
 	
 	
 	public List<CompanyDTO> getCompanies() {
@@ -31,7 +28,6 @@ public class CompanyController {
 		return companies
 		.stream().map(s -> companyMapper.modelToDto(s))
 		.collect(Collectors.toList());
-
 	}
 	
 

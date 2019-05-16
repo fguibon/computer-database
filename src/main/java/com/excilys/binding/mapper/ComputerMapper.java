@@ -7,27 +7,20 @@ import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.exceptions.DateParseException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 
+@Component
 public class ComputerMapper {
-
-	private static ComputerMapper instance=null;
 	
-	private static final Logger logger = 
+	private static final Logger LOGGER = 
 			LogManager.getLogger(ComputerMapper.class);
 
 	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-
-
-	private ComputerMapper() {}
-
-	public static ComputerMapper getInstance() {
-		return (instance!=null) ? instance : (instance = new ComputerMapper());
-	}
 
 
 	public Computer dtoToModel(ComputerDTO computerDTO) throws DateParseException{
@@ -38,13 +31,13 @@ public class ComputerMapper {
 		try {
 			computer.setIntroduced(castLocalDate(computerDTO.getIntroduced()));
 		} catch (DateParseException e1) {
-			logger.error(e1.getMessage(), e1);
+			LOGGER.error(e1.getMessage(), e1);
 			throw new DateParseException("Failed to parse date");
 		}
 		try {
 			computer.setDiscontinued(castLocalDate(computerDTO.getDiscontinued()));
 		} catch (DateParseException e1) {
-			logger.error(e1.getMessage(), e1);
+			LOGGER.error(e1.getMessage(), e1);
 			throw new DateParseException("Failed to parse date");
 		}
 
@@ -75,7 +68,7 @@ public class ComputerMapper {
 		try {
 			return (date==null || date.isEmpty() )? null : LocalDate.parse(date);
 		} catch (Exception e){
-			logger.error("Failed cast to LocalDate :" +e.getMessage());
+			LOGGER.error("Failed cast to LocalDate :" +e.getMessage());
 			throw new DateParseException("Could not parse date : "+date);
 		}
 	}

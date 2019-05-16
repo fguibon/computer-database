@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
@@ -26,16 +27,17 @@ import com.excilys.persistence.jdbc.JDBCManager;
  * @author excilys
  *
  */
+
+@Component
 public class ComputerDAO implements DataAccessObject<Computer>{
 
 	private enum Field { ID,NAME,INTRODUCED,DISCONTINUED,COMPANY_ID}
 
 	private enum Order {ASC, DESC}
 
-	private static final Logger logger = 
+	private static final Logger LOGGER = 
 			LogManager.getLogger(ComputerDAO.class);
 
-	private static ComputerDAO instance = null;
 
 	private static final String CREATE =
 			"INSERT INTO computer (name,introduced,discontinued,company_id)"
@@ -64,14 +66,15 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	private static final String COUNT = 
 			"SELECT id FROM computer; ";
 
-
-	private ComputerDAO() {	
-		super();
+	private JDBCManager datasource;
+	private CompanyDAO companyDAO;
+	
+	public ComputerDAO(JDBCManager datasource,CompanyDAO companyDAO) {	
+		this.datasource = datasource;
+		this.companyDAO = companyDAO;
 	}
 
-	public static ComputerDAO getInstance() {
-		return (instance!=null) ? instance : (instance = new ComputerDAO());
-	}
+
 
 
 	/**
@@ -82,7 +85,7 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	@Override
 	public boolean create(Computer computer) throws DatabaseException {
 		try(
-				Connection connection = JDBCManager.getInstance().getConnection();
+				Connection connection = datasource.getConnection();
 				PreparedStatement ps = connection.prepareStatement(CREATE);
 				) 
 		{
@@ -112,7 +115,7 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 			}
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			throw new DatabaseException(CREATE);
 		}
 	}
@@ -126,7 +129,7 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 		List<Computer> computers = new ArrayList<>();
 
 		try(
-				Connection conn = JDBCManager.getInstance().getConnection();
+				Connection conn = datasource.getConnection();
 				ResultSet rs = conn.createStatement().executeQuery(SELECT_ALL);
 				) 
 		{
@@ -150,13 +153,13 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 				computer.setDiscontinued(ldate2);
 				Long companyId =rs.getLong(Field.COMPANY_ID.toString());
 				if(companyId!=null) {
-					Company company = CompanyDAO.getInstance().findById(companyId);
+					Company company = companyDAO.findById(companyId);
 					computer.setCompany(company);
 				}
 				computers.add(computer);
 			}
 		} catch(SQLException e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			throw new DatabaseException(SELECT_ALL);
 		}
 		return computers;
@@ -174,7 +177,7 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 		boolean isAscending = ( getOrder(sorting.getOrder()).toString().compareToIgnoreCase("ASC")==0);
 
 		try ( 
-				Connection connection = JDBCManager.getInstance().getConnection();
+				Connection connection = datasource.getConnection();
 				PreparedStatement ps = connection.prepareStatement(getMyTableQuerySQL(sorting.getField(), isAscending));
 				)
 		{
@@ -203,14 +206,14 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 					computer.setDiscontinued(ldate2);
 					Long companyId =rs.getLong(Field.COMPANY_ID.toString());
 					if(companyId!=null) {
-						Company company =CompanyDAO.getInstance().findById(companyId);
+						Company company =companyDAO.findById(companyId);
 						computer.setCompany(company);
 					}
 					computers.add(computer);
 				}	
 			}
 		} catch(SQLException e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			throw new DatabaseException(SELECT_ORDER_BY);
 		}
 		return computers;
@@ -227,7 +230,7 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 		Computer computer = null;
 
 		try (
-				Connection conn = JDBCManager.getInstance().getConnection();
+				Connection conn = datasource.getConnection();
 				PreparedStatement ps = conn.prepareStatement(SELECT_ONE);
 				)
 		{
@@ -248,14 +251,14 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 
 					Long companyId =rs.getLong("company_id");
 					if(companyId!=null) {
-						Company cp =CompanyDAO.getInstance().findById(companyId);
+						Company cp =companyDAO.findById(companyId);
 						computer.setCompany(cp);
 					}			
 				}
 			}
 
 		} catch (SQLException e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			throw new DatabaseException(SELECT_ONE);
 		}
 		return computer;
@@ -271,7 +274,7 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	@Override
 	public boolean update(Computer computer) throws DatabaseException {
 		try(
-				Connection conn = JDBCManager.getInstance().getConnection();
+				Connection conn = datasource.getConnection();
 				PreparedStatement ps = conn.prepareStatement(UPDATE);
 				) 
 		{
@@ -298,7 +301,7 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 			ps.setLong(5, computer.getId());
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			throw new DatabaseException(UPDATE);
 		}
 	}
@@ -312,14 +315,14 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	public void delete(Long id) throws DatabaseException {
 
 		try (
-				Connection conn = JDBCManager.getInstance().getConnection();
+				Connection conn = datasource.getConnection();
 				PreparedStatement ps = conn.prepareStatement(DELETE);
 				)
 		{
 			ps.setLong(1, id);
 			ps.executeUpdate();
 		} catch (SQLException e) {
-			logger.error( e.getMessage());
+			LOGGER.error( e.getMessage());
 			throw new DatabaseException(DELETE);
 		}
 	}
@@ -332,7 +335,7 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	public int count() throws DatabaseException {
 		int number = 0;
 		try (
-				Connection conn = JDBCManager.getInstance().getConnection();
+				Connection conn = datasource.getConnection();
 				ResultSet rs = conn.createStatement().executeQuery(COUNT);
 				)
 		{
@@ -340,7 +343,7 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 				number++;
 			}
 		} catch (SQLException e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			throw new DatabaseException(COUNT);
 		}
 		return number;

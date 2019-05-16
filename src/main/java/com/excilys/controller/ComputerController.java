@@ -3,6 +3,8 @@ package com.excilys.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Component;
+
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exceptions.DatabaseException;
@@ -15,17 +17,18 @@ import com.excilys.model.Sorting;
 import com.excilys.service.ComputerService;
 import com.excilys.validator.Validator;
 
+@Component
 public class ComputerController {
 
-	private static ComputerController instance = null;
-	private ComputerService computerService = ComputerService.getInstance();
-	private ComputerMapper computerMapper = ComputerMapper.getInstance();
-	private Validator computerValidator = Validator.getInstance();
+	private ComputerService computerService;
+	private ComputerMapper computerMapper;
+	private Validator computerValidator;
 	
-	private ComputerController() {}
-	
-	public static ComputerController getInstance() {
-		return (instance!=null) ? instance : (instance = new ComputerController());
+	public ComputerController(ComputerService computerService,
+			ComputerMapper computerMapper, Validator computerValidator) {
+		this.computerService = computerService;
+		this.computerMapper = computerMapper;
+		this.computerValidator = computerValidator;
 	}
 	
 	
@@ -36,7 +39,7 @@ public class ComputerController {
 
 	}
 	
-	public List<ComputerDTO> getComputers(Page page, String filter, Sorting sorting) throws DatabaseException {
+	public List<ComputerDTO> findAll(Page page, String filter, Sorting sorting) throws DatabaseException {
 		List<Computer> computers = computerService.findAll(page,filter, sorting);
 		return computers
 		.stream().map(s -> computerMapper.modelToDto(s))
@@ -50,7 +53,7 @@ public class ComputerController {
 
 	}
 	
-	public boolean updateComputer(ComputerDTO computerDTO) throws DatabaseException, ValidationException, DateParseException, MappingException  {
+	public boolean update(ComputerDTO computerDTO) throws DatabaseException, ValidationException, DateParseException, MappingException  {
 		computerValidator.validateComputerToUpdate(computerDTO);
 		return computerService.update(computerMapper.dtoToModel(computerDTO));
 

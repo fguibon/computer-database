@@ -3,75 +3,85 @@ package com.excilys.test.persistence.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import com.excilys.config.AppConfig;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
+import com.excilys.model.Page;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.test.ScriptExecuter;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = AppConfig.class)
 public class CompanyDAOTest {
-
-	CompanyDAO companyDAO;
-	Company companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
+	
+	@Autowired
+	private CompanyDAO companyDAO;
+	
+	@Autowired
+	private ScriptExecuter executer;
+	
+	private Company companyTest;
+	private List<Company> companies;
+	private Page page;
 	
 	@Before
 	public void setUp() throws Exception {
-		ScriptExecuter.getInstance().reload();
-		companyDAO = CompanyDAO.getInstance();
+		executer.reload();
+		
+		companies = new ArrayList<Company>();
+		page = new Page(1, 5);
+		
+		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
+		companies.add(companyTest);
+		companies.add(new Company.Builder().setId(2L).setName("Thinking Machines").build());
+		companies.add(new Company.Builder().setId(3L).setName("RCA").build());
+		companies.add(new Company.Builder().setId(4L).setName("Netronics").build());
+		companies.add(new Company.Builder().setId(5L).setName("Tandy Corporation").build());
 	}
 	
 	@Test
-	public void testCreateCompany_Success() throws DatabaseException {
-		Company companyExpected = companyTest;
-		companyDAO.create(companyExpected);
-		
-		companyExpected.setId(6L);
-		Company companyActual = companyDAO.findById(6L);
-		
-		assertEquals("Expected same companies",companyExpected, companyActual);
+	public void createCompanyTest() throws DatabaseException {
+		assertTrue(companyDAO.create(companyTest));
+		companyTest.setId(6L);
+		assertEquals("Expected same companies",companyTest,companyDAO.findById(6L));
 		
 	}
-	
 
 	@Test
-	public void testFindAll_Success() throws DatabaseException {
-		List<Company> companiesExpected = new ArrayList<Company>();
-		companiesExpected.add(companyTest);
-		companiesExpected.add(new Company.Builder().setId(2L).setName("Thinking Machines").build());
-		companiesExpected.add(new Company.Builder().setId(3L).setName("RCA").build());
-		companiesExpected.add(new Company.Builder().setId(4L).setName("Netronics").build());
-		companiesExpected.add(new Company.Builder().setId(5L).setName("Tandy Corporation").build());
-		
-		List<Company> companiesActual = new ArrayList<Company>();
-		companiesActual = companyDAO.findAll();
-		
-		assertEquals("Expected same company lists",companiesExpected, companiesActual);
+	public void findAllTest() throws DatabaseException {	
+		assertEquals("Expected same company lists",companies, companyDAO.findAll());
 	}
 	
 	@Test
-	public void testFindById_Success() throws DatabaseException {
-		Company companyActual = companyDAO.findById(1L);
-		
-		assertEquals("Expected same companies",companyTest, companyActual);
+	public void findAllPagedTest() throws DatabaseException {	
+		assertEquals("Expected same company lists",companies, companyDAO.findAllPaged(page));
 	}
 	
 	@Test
-	public void testUpdate_Success() throws DatabaseException {
-		Company companyExpected = companyTest;
+	public void findByIdTest() throws DatabaseException {
+		assertEquals("Expected same companies",companyTest, companyDAO.findById(1L));
+	}
+	
+	@Test
+	public void updateTest() throws DatabaseException {
 		companyDAO.update(new Company.Builder().setId(1L).setName("Apple Inc.").build());
-		Company companyActual = companyDAO.findById(1L);
-		
-		assertEquals("Expected same companies",companyExpected, companyActual);
+		assertEquals("Expected same companies",companyTest, companyDAO.findById(1L));
 	}
 	
 	@Test
-	public void testDelete_Success() throws DatabaseException {
+	public void deleteTest() throws DatabaseException {
 		Long id = 4L;
 		assertNotNull("Expected company not null",companyDAO.findById(id));
 		companyDAO.delete(id);

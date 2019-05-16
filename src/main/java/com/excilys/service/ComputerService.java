@@ -1,25 +1,24 @@
 package com.excilys.service;
 
 import java.util.List;
+
+import org.springframework.stereotype.Component;
+
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
 import com.excilys.model.Sorting;
 import com.excilys.persistence.dao.ComputerDAO;
 
+@Component
 public class ComputerService {
 
-	private static ComputerService instance = null;
+	private ComputerDAO computerDAO;	
 	
-	private ComputerDAO computerDAO = ComputerDAO.getInstance();
-	
-	private ComputerService() {}
-	
-	public static ComputerService getInstance() {
-		return (instance!=null) ? instance : (instance = new ComputerService());
+	public ComputerService(ComputerDAO computerDAO) {
+		this.computerDAO = computerDAO;
 	}
-	
-	
+		
 	public boolean createComputer(Computer computer) throws DatabaseException  {
 		return computerDAO.create(computer);
 	}

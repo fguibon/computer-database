@@ -3,6 +3,8 @@ package com.excilys.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.CompanyMapper;
@@ -18,32 +20,32 @@ import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 import com.excilys.view.CLIView;
 
+@Component
 public class CLIController {
 
 	private static final int LIMIT=10;
 	private static final int CURRENT_PAGE=1;
 	
-	private int currentPage;
-	
-	private static CLIController instance = null;
 	private Page page;
 	private Sorting sorting;
 	private CLIView view;
 	private CompanyService companyService;
 	private ComputerService computerService;
+	private ComputerMapper computerMapper;
+	private CompanyMapper companyMapper;
 	
 	
-	private CLIController(CompanyService companyService, ComputerService computerService){
+	public CLIController(CompanyService companyService, 
+			ComputerService computerService,
+			ComputerMapper computerMapper,
+			CompanyMapper companyMapper){
 		page = new Page(LIMIT,CURRENT_PAGE);
 		sorting = new Sorting("id","asc");
 		view = new CLIView(System.in);
 		this.companyService = companyService;
 		this.computerService = computerService;
-	}
-	
-	public static CLIController getInstance() {
-		return (instance!=null) ? instance : (instance = new CLIController(
-				CompanyService.getInstance(),ComputerService.getInstance()));
+		this.computerMapper = computerMapper;
+		this.companyMapper = companyMapper;
 	}
 	
 	
@@ -53,7 +55,7 @@ public class CLIController {
 	 * @throws DateParseException 
 	 * @throws MappingException 
 	 */
-	public void start() throws DatabaseException, MappingException, DateParseException {
+	public void start() throws DatabaseException, DateParseException {
 		boolean ok = true;
 		while(ok) {
 			int choice =view.menu();
@@ -94,40 +96,32 @@ public class CLIController {
 	 * @throws  
 	 */
 	public void listComputers() throws DatabaseException {
-		currentPage =1;
+		int currentPage =1;
 		boolean ok=true;
 		page.setCurrentPage(currentPage);
 		page.setEntriesPerPage(LIMIT);
 		List<ComputerDTO> computersDTO = new ArrayList<>();
-		
+		List<Computer> computers = this.computerService.findAll(page,"",sorting);
 		while(ok) {
-			List<Computer> computers = this.computerService.findAll(page,"",sorting);
 			for(Computer c:computers) {
-				computersDTO.add(ComputerMapper.getInstance().modelToDto(c));
+				computersDTO.add(computerMapper.modelToDto(c));
 			}
 			if(computers.isEmpty())	ok=false;
 			page.setCurrentPage(currentPage++);
 			this.view.displayComputers(computersDTO,page);
 		}
-		
 	}
 	
 	/**
 	 * option 2
 	 */
 	public void listCompanies() {
-		currentPage =1;
-		boolean ok=true;
 		List<CompanyDTO> companiesDTO = new ArrayList<>();
-		while(ok) {
-			List<Company> companies = this.companyService.getCompanies();
-			for(Company c :companies) {
-				companiesDTO.add(CompanyMapper.getInstance().modelToDto(c));
-			}
-			if(companiesDTO.isEmpty()) ok=false;
-			page.setCurrentPage(currentPage++);
-			this.view.displayCompanies(companiesDTO,page);
+		List<Company> companies = this.companyService.getCompanies();
+		for(Company c :companies) {
+			companiesDTO.add(companyMapper.modelToDto(c));
 		}
+		this.view.displayCompanies(companiesDTO);
 	}
 	
 	/** 
@@ -137,7 +131,7 @@ public class CLIController {
 	public void showComputerDetail() throws DatabaseException {
 		ComputerDTO computer = null;
 		Long id = this.view.queryId();
-		if(id!=null) computer = ComputerMapper.getInstance().modelToDto(this.computerService.findById(id));
+		if(id!=null) computer = computerMapper.modelToDto(this.computerService.findById(id));
 		if(computer!=null)	this.view.displayComputer(computer);
 	}
 	
@@ -148,11 +142,11 @@ public class CLIController {
 	 * @throws DatabaseException 
 	 *
 	 */
-	public void createComputer() throws DatabaseException, MappingException, DateParseException {
+	public void createComputer() throws DatabaseException, DateParseException {
 		ComputerDTO computer =null;
 		computer = this.queryComputerToCreate();
 		if(computer!=null) {
-			this.computerService.createComputer(ComputerMapper.getInstance().dtoToModel(computer));
+			this.computerService.createComputer(computerMapper.dtoToModel(computer));
 		}
 	}
 	
@@ -163,9 +157,9 @@ public class CLIController {
 	 * @throws MappingException 
 	 * @throws DatabaseException 
 	 */
-	public void updateComputer() throws DatabaseException, MappingException, DateParseException {
+	public void updateComputer() throws DatabaseException, DateParseException {
 		ComputerDTO computer = this.queryComputerToUpdate();
-		if(computerService.update(ComputerMapper.getInstance().dtoToModel(computer))) view.notifySuccess();
+		if(computerService.update(computerMapper.dtoToModel(computer))) view.notifySuccess();
 
 	}
 	

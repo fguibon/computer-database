@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
@@ -21,11 +23,19 @@ public class AddComputerServlet extends HttpServlet {
 
 
 	private static final long serialVersionUID = 1L;
-	private final ComputerController computerController = ComputerController.getInstance();
-	private final CompanyController companyController = CompanyController.getInstance();
-	private static final Logger logger = LogManager.getLogger(DashboardServlet.class);
+	private ComputerController computerController;
+	private CompanyController companyController;
+	private Validator validator;
+	private static final Logger LOGGER = LogManager.getLogger(DashboardServlet.class);
 	
-	private static Validator validator = Validator.getInstance();
+	@Override
+	public void init() throws ServletException {
+		WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+		this.companyController = wac.getBean(CompanyController.class);
+		this.computerController = wac.getBean(ComputerController.class);
+		this.validator = wac.getBean(Validator.class);
+	}
+	
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -56,13 +66,13 @@ public class AddComputerServlet extends HttpServlet {
 		try {
 			validator.validateComputerToCreate(computer);
 		} catch (Exception e) {
-			logger.warn(e.getMessage(), e);
+			LOGGER.warn(e.getMessage(), e);
 		}
 		
 		try {
 			computerController.createComputer(computer);
 		} catch (Exception e) {
-			logger.warn(e.getMessage(), e);
+			LOGGER.warn(e.getMessage(), e);
 		} 
 		request.getServletContext().getRequestDispatcher("/WEB-INF/jsp/addComputer.jsp")
 		.forward(request, response);
