@@ -3,11 +3,9 @@ package com.excilys.test.model;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-
 import com.excilys.model.Company;
 
 public class CompanyTest {
-
 	
 	Company companyTest = new Company.Builder().setId(6L).setName("Intel").build();
 	
@@ -34,7 +32,7 @@ public class CompanyTest {
 	}
 	
 	@Test
-	public void comparisonReferenceNulle() {
+	public void comparisonNullReference() {
 		Company company = null;
 		Company company2 = companyTest;
 		assertNotEquals("Expected different companies",company2, company);

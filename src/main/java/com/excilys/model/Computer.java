@@ -12,8 +12,6 @@ public class Computer {
 	private LocalDate discontinuedDate;
 	private Company company;
 	
-	public Computer() {	}
-	
 
 	/**
 	 * @return the id
@@ -84,7 +82,6 @@ public class Computer {
 		private LocalDate discontinuedDate;
 		private Company company;
 
-		public Builder() {}
 
 		public Builder setId(Long id) {
 			this.id = id;

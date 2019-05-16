@@ -7,8 +7,6 @@ public class CompanyDTO {
 	private String id;
 	private String name;
 	
-	public CompanyDTO() {}
-
 
 	/**
 	 * @return the id
@@ -42,7 +40,6 @@ public class CompanyDTO {
 		private String id;
 		private String name;
 
-		public Builder() {}
 
 		public Builder setId(String id) {
 			this.id = id;

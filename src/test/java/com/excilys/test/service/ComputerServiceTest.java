@@ -1,14 +1,98 @@
 package com.excilys.test.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import com.excilys.exceptions.DatabaseException;
+import com.excilys.model.Company;
+import com.excilys.model.Computer;
+import com.excilys.model.Page;
+import com.excilys.model.Sorting;
+import com.excilys.persistence.dao.ComputerDAO;
+import com.excilys.service.ComputerService;
+import com.excilys.test.config.TestConfig;
+
+@ActiveProfiles("test")
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = TestConfig.class)
 public class ComputerServiceTest {
 
+	private ComputerService computerService;
+	private List<Computer> computers;
+	private Computer computerTest;
+	private Company companyTest;
+	private Page page;
+	private Sorting sorting;
+	
+	
+	@Autowired
+	private ComputerDAO daoMock;
+	
+	
+	@Before
+	public void setUp() throws Exception {
+		
+		computerService = new ComputerService(daoMock);
+		page = new Page(1, 1);
+		sorting = new Sorting("","");
+		computers = new ArrayList<Computer>();
+		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
+		computerTest = new Computer.Builder().setId(1L)
+				.setName("MacBook Pro 15.4 inch").setCompany(companyTest).build();
+		computers.add(computerTest);
+		
+		Mockito.when(daoMock.create(computerTest)).thenReturn(true);
+		Mockito.when(daoMock.findById(1L)).thenReturn(computerTest);
+		Mockito.when(daoMock.findAllPaged(page,"",sorting)).thenReturn(computers);
+		Mockito.when(daoMock.update(computerTest)).thenReturn(true);
+		Mockito.when(daoMock.count()).thenReturn(10);
+		
+		Mockito.doThrow(DatabaseException.class).when(daoMock).delete(1L);
+		Mockito.when(daoMock.count()).thenReturn(10);
+	}
+	
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void createComputerTest() throws DatabaseException {
+		assertTrue(computerService.createComputer(computerTest));
+	}
+	
+	@Test
+	public void finAllTest() throws DatabaseException {
+		assertEquals("Expected same computers",computers,computerService.findAll(page, "", sorting));
+	}
+	
+	@Test
+	public void findbyIdTest() throws DatabaseException {
+		assertEquals("Expected same computers",computerTest,computerService.findById(1L));
+	}
+	
+	@Test
+	public void updateTest() throws DatabaseException {
+		computerTest.setName("Mc Book");
+		assertTrue(computerService.update(computerTest));
+	}
+	
+	@Test(expected = DatabaseException.class)
+	public void deleteExpectExceptionTest() throws Exception {
+		computerService.delete(1L);
+	}
+	
+	@Test
+	public void countTest() throws DatabaseException {
+		assertSame(10,computerService.count());
 	}
 
 }

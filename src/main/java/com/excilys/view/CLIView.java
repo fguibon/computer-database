@@ -6,6 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.model.Page;
@@ -13,6 +16,7 @@ import com.excilys.model.Page;
 public class CLIView {
 	
 	InputStream in;
+	private static final Logger LOGGER = LogManager.getLogger(CLIView.class);
 	
 	public CLIView (InputStream in) {
 		this.in = in;
@@ -23,7 +27,7 @@ public class CLIView {
 	 * @return an int
 	 * */
 	public int menu()  {
-		System.out.println(
+		LOGGER.info(
 				"-----MENU-----\r\n"
 				+ "Enter a number \r\n"
 				+ "0: Quit \r\n"
@@ -33,10 +37,9 @@ public class CLIView {
 				+ "4: Create a computer \r\n"
 				+ "5: Update a computer \r\n"
 				+ "6: Delete a computer ");
-		;
 		int number =0;
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			String ans = br.readLine();
 			number = Integer.parseInt(ans);
 		} catch(NumberFormatException | IOException e) {
@@ -49,10 +52,9 @@ public class CLIView {
 	 * List all companies
 	 * @param companies
 	 */
-	public void displayCompanies(List<CompanyDTO> companies, Page page) {
-		System.out.println("Page number : "+page.getCurrentPage());
+	public void displayCompanies(List<CompanyDTO> companies) {
 		for(CompanyDTO c:companies) {
-			if(c!=null) System.out.println(c);
+			if(c!=null) LOGGER.info(c);
 		}
 	}
 	
@@ -62,9 +64,9 @@ public class CLIView {
 	 * @param page 
 	 */
 	public void displayComputers(List<ComputerDTO> computers, Page page) {
-		System.out.println("Page number : "+page.getCurrentPage());
+		LOGGER.info("Page number : "+page.getCurrentPage());
 		for(ComputerDTO c:computers) {
-			if(c!=null) System.out.println(c);
+			if(c!=null) LOGGER.info(c);
 		}
 	}
 	
@@ -73,7 +75,7 @@ public class CLIView {
 	 * @param computers
 	 */
 	public void displayComputer(ComputerDTO computer) {
-		if(computer!=null) System.out.println(computer);
+		if(computer!=null) LOGGER.info(computer);
 	}
 	
 	
@@ -84,10 +86,10 @@ public class CLIView {
 	 */
 	public Long queryId() {
 			
-		System.out.println("Enter the id: ");
+		LOGGER.info("Enter the id: ");
 		String ans ="";
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			ans= br.readLine();	
 		} catch (IOException e) {
 			this.notifyProblem();
@@ -105,8 +107,8 @@ public class CLIView {
 	public String queryName() {
 		
 		String name="";
-		System.out.println("Enter the name: ");
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));){	
+		LOGGER.info("Enter the name: ");
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(in));){	
 			name = br.readLine();
 		} catch (IOException e) {
 			this.notifyProblem();
@@ -121,14 +123,17 @@ public class CLIView {
 	 */
 	public String queryDate() {
 			
-		String date="",year ="",month="",day="";
+		String date="";
+		String year ="";
+		String month="";
+		String day="";
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			System.out.println("Enter the year: ");
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			LOGGER.info("Enter the year: ");
 			year = br.readLine();
-			System.out.println("Enter the month : ");
+			LOGGER.info("Enter the month : ");
 			month = br.readLine();
-			System.out.println("Enter the day: ");
+			LOGGER.info("Enter the day: ");
 			day = br.readLine();
 		} catch (IOException e) {
 			this.notifyProblem();
@@ -139,31 +144,31 @@ public class CLIView {
 	}
 	
 	public void notifyProblem() {
-		System.out.println("Invalid entry try again!");
+		LOGGER.warn("Invalid entry try again!");
 	}
 	
 	public void notifySuccess() {
-		System.out.println("Success!");
+		LOGGER.info("Success!");
 	}
 	
 	public void notifyInvalidNumber() {
-		System.out.println("Invalid number please enter one between 1 and 6.");	
+		LOGGER.warn("Invalid number please enter one between 1 and 6.");	
 	}
 	
 	public void notifyInvalidId() {
-		System.out.println("Invalid id try another!");
+		LOGGER.warn("Invalid id try another!");
 	}
 	
 	public void notifyInvalidName() {
-		System.out.println("Invalid name try again!");
+		LOGGER.warn("Invalid name try again!");
 	}
 	
 	public void notifyInvalidDate() {
-		System.out.println("Invalid date try another!");
+		LOGGER.warn("Invalid date try another!");
 	}
 	
 	public void bye() {
-		System.out.println("Bye!");
+		LOGGER.info("Bye!");
 	}
 	
 }

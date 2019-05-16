@@ -3,46 +3,59 @@ package com.excilys.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
+import com.excilys.binding.mapper.CompanyMapper;
+import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exceptions.DatabaseException;
+import com.excilys.exceptions.DateParseException;
+import com.excilys.exceptions.MappingException;
+import com.excilys.model.Company;
+import com.excilys.model.Computer;
 import com.excilys.model.Page;
+import com.excilys.model.Sorting;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 import com.excilys.view.CLIView;
 
+@Component
 public class CLIController {
 
-	private final int LIMIT=10;
-	private final int CURRENT_PAGE=1;
+	private static final int LIMIT=10;
+	private static final int CURRENT_PAGE=1;
 	
-	private int currentPage;
-	
-	private static CLIController instance = null;
 	private Page page;
+	private Sorting sorting;
 	private CLIView view;
 	private CompanyService companyService;
 	private ComputerService computerService;
+	private ComputerMapper computerMapper;
+	private CompanyMapper companyMapper;
 	
 	
-	private CLIController(CompanyService companyService, ComputerService computerService){
+	public CLIController(CompanyService companyService, 
+			ComputerService computerService,
+			ComputerMapper computerMapper,
+			CompanyMapper companyMapper){
 		page = new Page(LIMIT,CURRENT_PAGE);
+		sorting = new Sorting("id","asc");
 		view = new CLIView(System.in);
 		this.companyService = companyService;
 		this.computerService = computerService;
-	}
-	
-	public static CLIController getInstance() {
-		return (instance!=null) ? instance : (instance = new CLIController(
-				CompanyService.getInstance(),ComputerService.getInstance()));
+		this.computerMapper = computerMapper;
+		this.companyMapper = companyMapper;
 	}
 	
 	
 	/**
 	 * Function calling the display of the starting menu
-	 * @throws Exception 
+	 * @throws DatabaseException 
+	 * @throws DateParseException 
+	 * @throws MappingException 
 	 */
-	public void start() throws Exception {
+	public void start() throws DatabaseException, DateParseException {
 		boolean ok = true;
 		while(ok) {
 			int choice =view.menu();
@@ -83,31 +96,32 @@ public class CLIController {
 	 * @throws  
 	 */
 	public void listComputers() throws DatabaseException {
-		currentPage =1;
+		int currentPage =1;
 		boolean ok=true;
-		List<ComputerDTO> computers = new ArrayList<ComputerDTO>();
+		page.setCurrentPage(currentPage);
+		page.setEntriesPerPage(LIMIT);
+		List<ComputerDTO> computersDTO = new ArrayList<>();
+		List<Computer> computers = this.computerService.findAll(page,"",sorting);
 		while(ok) {
-			computers = this.computerService.getComputers(this.LIMIT,currentPage,"","","");
+			for(Computer c:computers) {
+				computersDTO.add(computerMapper.modelToDto(c));
+			}
 			if(computers.isEmpty())	ok=false;
 			page.setCurrentPage(currentPage++);
-			this.view.displayComputers(computers,page);
+			this.view.displayComputers(computersDTO,page);
 		}
-		
 	}
 	
 	/**
 	 * option 2
 	 */
 	public void listCompanies() {
-		currentPage =1;
-		boolean ok=true;
-		List<CompanyDTO> companies = new ArrayList<CompanyDTO>();
-		while(ok) {
-			companies = this.companyService.getCompanies(page.getEntriesPerPage(), currentPage);
-			if(companies.isEmpty()) ok=false;
-			page.setCurrentPage(currentPage++);
-			this.view.displayCompanies(companies,page);
+		List<CompanyDTO> companiesDTO = new ArrayList<>();
+		List<Company> companies = this.companyService.getCompanies();
+		for(Company c :companies) {
+			companiesDTO.add(companyMapper.modelToDto(c));
 		}
+		this.view.displayCompanies(companiesDTO);
 	}
 	
 	/** 
@@ -117,35 +131,36 @@ public class CLIController {
 	public void showComputerDetail() throws DatabaseException {
 		ComputerDTO computer = null;
 		Long id = this.view.queryId();
-		if(id!=null) computer = this.computerService.findById(id);
+		if(id!=null) computer = computerMapper.modelToDto(this.computerService.findById(id));
 		if(computer!=null)	this.view.displayComputer(computer);
 	}
 	
 	/**
 	 * option 4
-	 * @throws Exception 
+	 * @throws DateParseException 
+	 * @throws MappingException 
+	 * @throws DatabaseException 
 	 *
 	 */
-	public void createComputer() throws Exception {
+	public void createComputer() throws DatabaseException, DateParseException {
 		ComputerDTO computer =null;
 		computer = this.queryComputerToCreate();
 		if(computer!=null) {
-			if(this.computerService.createComputer(computer)) {
-				view.notifySuccess();
-			}
+			this.computerService.createComputer(computerMapper.dtoToModel(computer));
 		}
 	}
 	
 
 	/**
 	 * option 5
-	 * @throws Exception 
+	 * @throws DateParseException 
+	 * @throws MappingException 
+	 * @throws DatabaseException 
 	 */
-	public void updateComputer() throws Exception {
+	public void updateComputer() throws DatabaseException, DateParseException {
 		ComputerDTO computer = this.queryComputerToUpdate();
-		if(computer!=null) {
-			if(this.computerService.update(computer)) view.notifySuccess();
-		}
+		if(computerService.update(computerMapper.dtoToModel(computer))) view.notifySuccess();
+
 	}
 	
 	/**
@@ -156,7 +171,7 @@ public class CLIController {
 		Long id = null;
 		id = this.queryComputerToDelete();
 		if(id!=null) {
-			if(this.computerService.delete(id)) view.notifySuccess();	
+			this.computerService.delete(id);	
 		}
 	}
 	

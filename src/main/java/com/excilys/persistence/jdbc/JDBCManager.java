@@ -6,6 +6,7 @@ import java.util.TimeZone;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.excilys.exceptions.DatabaseException;
 import com.zaxxer.hikari.HikariConfig;
@@ -16,35 +17,30 @@ import com.zaxxer.hikari.HikariDataSource;
  * @author excilys
  *
  */
+
+@Component
 public class JDBCManager {
 	
 	static {TimeZone.setDefault(TimeZone.getTimeZone("UTC"));}
-	private static final Logger logger = 
+	private static final Logger LOGGER = 
 			LogManager.getLogger(JDBCManager.class);
-	private static JDBCManager instance = null;
 	
-	private static HikariConfig config;
     private static HikariDataSource dataSource;
 	
 	
 	private JDBCManager() {
-		config = new HikariConfig("/datasource.properties");
+		HikariConfig config = new HikariConfig("/datasource.properties");
 		config.setMaximumPoolSize(5);
 		dataSource = new HikariDataSource(config);
-	}
-	
-	public static JDBCManager getInstance() {
-		return (instance!=null) ? instance : (instance =new JDBCManager());
 	}
 
 
 	public Connection getConnection() throws DatabaseException {
 		try {
-			Connection connection = dataSource.getConnection();
-			return connection;
+			return dataSource.getConnection();
 			
 		} catch (SQLException e){
-			logger.error("Problem with the connexion");
+			LOGGER.error("Problem with the connexion");
 			throw new DatabaseException("Problem with the connexion : "+e.getMessage());
 		}			
 	}

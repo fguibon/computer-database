@@ -22,6 +22,7 @@
 		<seleniumVersion>3.141.59</seleniumVersion>
 		<servletApiVersion>4.0.1</servletApiVersion>
 		<hikariVersion>3.3.1</hikariVersion>
+		<springVersion>5.1.7.RELEASE</springVersion>
 
 		<mavenCompilerVersion>3.7.0</mavenCompilerVersion>
 		<mavenWarVersion>3.2.1</mavenWarVersion>
@@ -88,6 +89,17 @@
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
 			<version>${hikariVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${springVersion}</version>
+		</dependency>
+		<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-test</artifactId>
+    		<version>${springVersion}</version>
+    		<scope>test</scope>
 		</dependency>
 
 	</dependencies>

@@ -6,9 +6,7 @@ public class Company  {
 
 	private Long id;
 	private String name;
-	
-	public Company() {}
-	
+
 	
 	/**
 	 * @return the id
@@ -43,7 +41,6 @@ public class Company  {
 		private Long id;
 		private String name;
 
-		public Builder() {}
 
 		public Builder setId(Long id) {
 			this.id = id;

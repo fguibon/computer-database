@@ -1,7 +1,6 @@
 package com.excilys.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -11,25 +10,38 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
+import com.excilys.controller.CompanyController;
+import com.excilys.controller.ComputerController;
 import com.excilys.exceptions.DatabaseException;
-import com.excilys.service.CompanyService;
-import com.excilys.service.ComputerService;
 import com.excilys.validator.Validator;
+
 
 public class EditComputerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private final ComputerService computerService = ComputerService.getInstance();
-	private final CompanyService companyService = CompanyService.getInstance();
-	private static final Logger logger = LogManager.getLogger(DashboardServlet.class);
+	private ComputerController computerController;
+	private CompanyController companyController;
+	private Validator validator;
 
-	Validator validator = Validator.getInstance();
+	private static final Logger LOGGER = LogManager.getLogger(DashboardServlet.class);
 
+
+	@Override
+	public void init() throws ServletException {
+		WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+		this.companyController = wac.getBean( CompanyController.class);
+		this.computerController = wac.getBean( ComputerController.class);
+		this.validator = wac.getBean( Validator.class);
+	}
+
+
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
-
 			throws ServletException, IOException {
 
 		String idParam = request.getParameter("id");
@@ -37,13 +49,12 @@ public class EditComputerServlet extends HttpServlet {
 		ComputerDTO computer =new ComputerDTO();
 		Long id =(idParam == null || "0".equals(idParam) || idParam.isEmpty()) ? null : Long.valueOf(idParam);
 		try {
-			computer = computerService.findById(id);
+			computer = computerController.findById(id);
 		} catch (DatabaseException e) {
-			logger.warn(e.getMessage(), e);
+			LOGGER.warn(e.getMessage(), e);
 		}	
 
-		List<CompanyDTO> companies = new ArrayList<CompanyDTO>();
-		companies = companyService.getCompanies();
+		List<CompanyDTO> companies = companyController.getCompanies();
 
 		request.setAttribute("computer", computer);
 		request.setAttribute("companies", companies);
@@ -52,6 +63,7 @@ public class EditComputerServlet extends HttpServlet {
 		.forward(request, response);
 	}
 
+	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException{
 
@@ -67,15 +79,15 @@ public class EditComputerServlet extends HttpServlet {
 		try {
 			validator.validateComputerToUpdate(computer);
 		} catch (Exception e) {
-			logger.warn(e.getMessage(), e);
+			LOGGER.warn(e.getMessage(), e);
 		}
 
 		try {
-			computerService.update(computer);
+			computerController.update(computer);
 		} catch (Exception e) {
-			logger.warn(e.getMessage(), e);
+			LOGGER.warn(e.getMessage(), e);
 		} 
-		
+
 		response.sendRedirect("dashboard");
 
 	}

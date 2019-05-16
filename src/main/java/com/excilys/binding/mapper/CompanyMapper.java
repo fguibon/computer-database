@@ -2,23 +2,17 @@ package com.excilys.binding.mapper;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.exceptions.MappingException;
 import com.excilys.model.Company;
 
+@Component
 public class CompanyMapper {
 
-	private static final Logger logger = LogManager.getLogger(ComputerMapper.class);
-	
-	private static CompanyMapper instance = null;
-	
-	private CompanyMapper() {}
-	
-	public static CompanyMapper getInstance() {
-		return (instance!=null) ? instance : (instance =new CompanyMapper());
-	}
-	
+	private static final Logger LOGGER = LogManager.getLogger(ComputerMapper.class);
+		
 	
 	public Company dtoToModel(CompanyDTO companyDTO) throws MappingException {
 		Company company = new Company();
@@ -26,7 +20,7 @@ public class CompanyMapper {
 			company.setId(this.convertStringToId(companyDTO.getId()));
 			company.setName(companyDTO.getName());
 		} catch (NumberFormatException e) {
-			logger.error("Could not transform the dto to model");
+			LOGGER.error("Could not transform the dto to model");
 			throw new MappingException("Failed to transform the dto to model : "+companyDTO);
 		}
 		return company;

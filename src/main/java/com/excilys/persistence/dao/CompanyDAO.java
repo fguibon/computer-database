@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
@@ -21,12 +22,12 @@ import com.excilys.persistence.jdbc.JDBCManager;
  * @author excilys
  *
  */
-public class CompanyDAO extends DataAccessObject<Company>{
 
-	private static final Logger logger = 
+@Component
+public class CompanyDAO implements DataAccessObject<Company>{
+
+	private static final Logger LOGGER = 
 			LogManager.getLogger(CompanyDAO.class);
-	
-	private static CompanyDAO instance = null;
 	
 	private static final String INSERT =
 			"INSERT INTO company (name) VALUES(?);";
@@ -50,15 +51,11 @@ public class CompanyDAO extends DataAccessObject<Company>{
 			"SELECT id,name FROM company "
 			+ " LIMIT ? OFFSET ? ;";
 
+	private JDBCManager datasource;
 	
-	private CompanyDAO() {
-		super();
+	public CompanyDAO(JDBCManager datasource) {
+		this.datasource = datasource;
 	}
-	
-	public static CompanyDAO getInstance() {
-		return (instance!=null) ? instance : (instance =new CompanyDAO());
-	}
-
 
 	/**
 	 * Creates a company
@@ -67,12 +64,15 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public boolean create(Company company) throws DatabaseException {
-		try (Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(INSERT);){
+		try (
+			Connection conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(INSERT);
+			)
+		{
 			ps.setString(1, company.getName());
 			return ps.executeUpdate()>0;	
 		} catch (SQLException e) {
-			logger.error(e.getMessage(),e);
+			LOGGER.error(e.getMessage(),e);
 			throw new DatabaseException("Cannot insert company : "+ company.toString());
 		}
 	}
@@ -85,15 +85,18 @@ public class CompanyDAO extends DataAccessObject<Company>{
 
 	public List<Company> findAll() throws DatabaseException {
 		
-		List<Company> companies = new ArrayList<Company>();
-		try (Connection conn = JDBCManager.getInstance().getConnection();
-				ResultSet rs = conn.createStatement().executeQuery(SELECT_ALL);){
+		List<Company> companies = new ArrayList<>();
+		try (
+			Connection conn = datasource.getConnection();
+			ResultSet rs = conn.createStatement().executeQuery(SELECT_ALL);
+			)
+		{
 			while (rs.next()) {
 				companies.add( new Company.Builder().setId(rs.getLong("id"))
 						.setName(rs.getString("name")).build());
 			}
 		} catch(SQLException e) {
-			logger.error(e.getMessage(),e);
+			LOGGER.error(e.getMessage(),e);
 			throw new DatabaseException("Cannot find companies") ;
 		}
 		return companies;
@@ -106,25 +109,30 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 * @return
 	 * @throws DatabaseException 
 	 */
-	public List<Company> findAllPaged(int limit, int currentPage) 
+	public List<Company> findAllPaged(Page page) 
 			throws DatabaseException {
 		
-		List<Company> companies = new ArrayList<Company>();
-		try (Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(SELECT_ALL_PAGED);){
-			int offset = ((currentPage-1) * limit);
-			ps.setInt(1,limit);
+		List<Company> companies = new ArrayList<>();
+		try (
+			Connection connection = datasource.getConnection();
+			PreparedStatement ps = connection.prepareStatement(SELECT_ALL_PAGED);	
+			)
+		{
+			int offset = ((page.getCurrentPage()-1) * page.getEntriesPerPage());
+			ps.setInt(1,page.getEntriesPerPage());
 			ps.setInt(2, offset);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
+			
+			try(ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
 				companies.add( new Company.Builder().setId(rs.getLong("id"))
 						.setName(rs.getString("name")).build());
-			}
+				}
+			} 
 		} catch(SQLException e) {
-			logger.error(e.getMessage(),e);
+			LOGGER.error(e.getMessage(),e);
 			throw new DatabaseException("Cannot find companies with these parameters : " 
-			+new Page(limit,currentPage).toString());
-		}
+			+page.toString());
+		} 
 		return companies;
 	}
 
@@ -137,16 +145,20 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	@Override
 	public Company findById(Long id) throws DatabaseException {
 		Company company = new Company();
-		try (Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(SELECT_ONE);){
+		try (
+			Connection conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(SELECT_ONE);	
+			)
+		{
 			ps.setLong(1, id);
-			ResultSet rs = ps.executeQuery();
-			while(rs.next()) {
-				company.setId(rs.getLong("id"));
-				company.setName(rs.getString("name"));
-			}
+			try(ResultSet rs = ps.executeQuery()) {
+				while(rs.next()) {
+					company.setId(rs.getLong("id"));
+					company.setName(rs.getString("name"));
+				}
+			}	
 		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			throw new DatabaseException("Cannot find the id provided : "+ id);
 		} 
 		return company;
@@ -159,13 +171,16 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public boolean update(Company company) throws DatabaseException {
-		try(Connection conn = JDBCManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(UPDATE);) {
+		try(
+			Connection conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(UPDATE);
+			) 
+		{
 			ps.setString(1, company.getName());
 			ps.setLong(2, company.getId());
 			return ps.executeUpdate()>0;
 		} catch (SQLException e) {
-			logger.error("Query error : "+ e.getMessage());
+			LOGGER.error("Query error : "+ e.getMessage());
 			throw new DatabaseException(UPDATE);
 		} 
 	}
@@ -177,18 +192,29 @@ public class CompanyDAO extends DataAccessObject<Company>{
 	 */
 	@Override
 	public void delete(Long id) throws DatabaseException {
-		try (Connection connection = JDBCManager.getInstance().getConnection()){
-			
-			connection.setAutoCommit(false);
-			PreparedStatement deleteComputersStmt = connection.prepareStatement(DELETE_COMPUTER_WHERE);
-			PreparedStatement deleteCompanyStmt = connection.prepareStatement(DELETE_COMPANY);
-			deleteComputersStmt.setLong(1,id);
-			deleteCompanyStmt.setLong(1,id);
-			deleteComputersStmt.execute();
-			deleteCompanyStmt.execute();	
-			connection.commit();
+		try (
+			Connection connection = datasource.getConnection();
+			)
+		{
+			try(
+				PreparedStatement deleteComputersStmt = connection.prepareStatement(DELETE_COMPUTER_WHERE);
+				PreparedStatement deleteCompanyStmt = connection.prepareStatement(DELETE_COMPANY);
+				) 
+			{
+				connection.setAutoCommit(false);
+				
+				deleteComputersStmt.setLong(1,id);
+				deleteCompanyStmt.setLong(1,id);
+				deleteComputersStmt.execute();
+				deleteCompanyStmt.execute();
+				
+				connection.commit();
+			} catch(SQLException e) {
+				LOGGER.error("Could not remove the company of id : "+id);
+				connection.rollback();
+			}		
 		} catch (SQLException e) {
-			logger.error("Query error : "+ e.getMessage());
+			LOGGER.error("Query error : "+ e.getMessage());
 			throw new DatabaseException(DELETE_COMPUTER_WHERE);
 		} 
 	}
