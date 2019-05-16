@@ -12,25 +12,30 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.excilys.config.AppConfig;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.model.Page;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.test.ScriptExecuter;
+import com.excilys.test.config.TestConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
+@ActiveProfiles("test")
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = AppConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 public class CompanyDAOTest {
 	
-	@Autowired
 	private CompanyDAO companyDAO;
 	
 	@Autowired
 	private ScriptExecuter executer;
+	
+	@Autowired
+	private HikariDataSource dataSource;
 	
 	private Company companyTest;
 	private List<Company> companies;
@@ -39,6 +44,8 @@ public class CompanyDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		executer.reload();
+		
+		companyDAO = new CompanyDAO(dataSource);
 		
 		companies = new ArrayList<Company>();
 		page = new Page(1, 5);

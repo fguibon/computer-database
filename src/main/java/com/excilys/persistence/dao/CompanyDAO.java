@@ -10,12 +10,13 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.model.Page;
-import com.excilys.persistence.jdbc.JDBCManager;
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * CompanyDAO class : makes requests to the company table
@@ -51,9 +52,10 @@ public class CompanyDAO implements DataAccessObject<Company>{
 			"SELECT id,name FROM company "
 			+ " LIMIT ? OFFSET ? ;";
 
-	private JDBCManager datasource;
+	@Autowired
+	private HikariDataSource datasource;
 	
-	public CompanyDAO(JDBCManager datasource) {
+	public CompanyDAO(HikariDataSource datasource) {
 		this.datasource = datasource;
 	}
 

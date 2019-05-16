@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.excilys.exceptions.DatabaseException;
@@ -20,7 +21,7 @@ import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
 import com.excilys.model.Sorting;
-import com.excilys.persistence.jdbc.JDBCManager;
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * ComputerDAO class : makes requests to the computer table
@@ -66,15 +67,15 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	private static final String COUNT = 
 			"SELECT id FROM computer; ";
 
-	private JDBCManager datasource;
+	@Autowired
+	private HikariDataSource datasource;
+	
 	private CompanyDAO companyDAO;
 	
-	public ComputerDAO(JDBCManager datasource,CompanyDAO companyDAO) {	
+	public ComputerDAO(HikariDataSource datasource,CompanyDAO companyDAO) {	
 		this.datasource = datasource;
 		this.companyDAO = companyDAO;
 	}
-
-
 
 
 	/**

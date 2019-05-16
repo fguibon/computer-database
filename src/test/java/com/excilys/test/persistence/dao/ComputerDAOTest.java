@@ -12,28 +12,38 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.excilys.config.AppConfig;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
 import com.excilys.model.Sorting;
+import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.persistence.dao.ComputerDAO;
 import com.excilys.test.ScriptExecuter;
+import com.excilys.test.config.TestConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
+@ActiveProfiles("test")
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = AppConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 public class ComputerDAOTest {
 
-	@Autowired
 	private ComputerDAO computerDAO;
 	
 	@Autowired
 	private ScriptExecuter executer;
+	
+	@Autowired
+	private HikariDataSource dataSource;
+	
+	@Autowired
+	private CompanyDAO companyDAOMock;
 	
 	private List<Computer> computers;
 	private Company companyTest;
@@ -45,6 +55,8 @@ public class ComputerDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		executer.reload();
+		
+		computerDAO = new ComputerDAO(dataSource, companyDAOMock);
 		
 		computers = new ArrayList<Computer>();
 		page = new Page(1, 10);
@@ -64,10 +76,14 @@ public class ComputerDAOTest {
 				.setCompany(companyTest2).build());
 		computers.add(new Computer.Builder().setId(6L).setName("MacBook Pro")
 				.setIntroduced(LocalDate.of(2006,1,10)).setCompany(companyTest).build());
-		computers.add(new Computer.Builder().setId(7L).setName("Apple IIe").setCompany(new Company()).build());
-		computers.add(new Computer.Builder().setId(8L).setName("Apple IIc").setCompany(new Company()).build());
-		computers.add(new Computer.Builder().setId(9L).setName("Apple IIGS").setCompany(new Company()).build());
-		computers.add(new Computer.Builder().setId(10L).setName("Apple IIc Plus").setCompany(new Company()).build());
+		computers.add(new Computer.Builder().setId(7L).setName("Apple IIe").build());
+		computers.add(new Computer.Builder().setId(8L).setName("Apple IIc").build());
+		computers.add(new Computer.Builder().setId(9L).setName("Apple IIGS").build());
+		computers.add(new Computer.Builder().setId(10L).setName("Apple IIc Plus").build());
+		
+		Mockito.when(companyDAOMock.findById(companyTest.getId())).thenReturn(companyTest);
+		Mockito.when(companyDAOMock.findById(companyTest2.getId())).thenReturn(companyTest2);
+		Mockito.when(companyDAOMock.findById(null)).thenReturn(null);
 	}
 	
 	@Test
