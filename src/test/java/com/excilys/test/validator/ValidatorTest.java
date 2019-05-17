@@ -41,7 +41,7 @@ public class ValidatorTest {
 	
 	@Test(expected = ValidationException.class)
 	public void validateComputerToCreateTest() throws ValidationException, DateParseException {
-		computerDto.setCompanyId("blabla");
+		computerDto.setName("+++++++blabla");
 		validator.validateComputerToCreate(computerDto);
 	}
 	

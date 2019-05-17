@@ -78,6 +78,7 @@ public class ComputerDAOTest {
 
 	}
 	
+	
 	@Test
 	public void createComputerTest() throws DatabaseException {
 		computerDAO.create(computerTest);
@@ -89,7 +90,11 @@ public class ComputerDAOTest {
 	
 	@Test
 	public void findAllTest() throws DatabaseException {
-		assertEquals("List different from  expected",computers, computerDAO.findAll());
+		List<Computer> findAll = computerDAO.findAll();
+		for(int i=0;i<computers.size();i++) {
+			assertEquals(computers.get(i), findAll.get(i));
+		}
+		assertEquals("List different from  expected",computers, findAll);
 	}
 	
 	@Test
@@ -110,10 +115,11 @@ public class ComputerDAOTest {
 	
 	@Test
 	public void deleteTest() throws DatabaseException {
-		Long id = 4L;
+		Long id = 11L;
+		computerDAO.create(computerTest);
 		assertNotNull(computerDAO.findById(id));
 		computerDAO.delete(id);
-		assertNull("Object should be null",computerDAO.findById(id));
+		assertNull("Object should be null",computerDAO.findById(id).getId());
 	}
 	
 	@Test

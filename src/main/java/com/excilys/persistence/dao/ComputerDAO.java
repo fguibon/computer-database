@@ -8,8 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.excilys.exceptions.DatabaseException;
@@ -40,28 +38,26 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 					+ " VALUES (?, ?, ?, ?) ;";
 
 	private static final String SELECT = 
-			"SELECT cpt.id,cpt.name,introduced,discontinued,company_id,cpn.name "
-			+ "FROM computer AS cpt ";
+			"SELECT cpt.id AS computer_id,cpt.name AS computer_name,introduced,discontinued,company_id,cpn.name AS company_name "
+			+ "FROM computer AS cpt LEFT JOIN company AS cpn ON company_id=cpn.id ";
 	
 	private static final String SELECT_ONE = 
-			SELECT + "LEFT JOIN company AS cpn ON cpt.company_id=cpn.id "
-			+ "WHERE cpt.id=?;";
+			SELECT + "WHERE cpt.id=?;";
 
 	private static final String SELECT_ALL = 
-			SELECT + "LEFT JOIN company AS cpn ON cpt.company_id=cpn.id;";
+			SELECT + ";";
 
 	private static final String SELECT_ORDER_BY =
-			SELECT + "LEFT JOIN company AS cpn ON cpt.company_id=cpn.id "
-			+ "WHERE UPPER(cpt.name) LIKE UPPER(?) ORDER BY ";
+			SELECT + "WHERE UPPER(cpt.name) LIKE UPPER(?) ORDER BY ";
 
 	private static final String PAGED=" LIMIT ? OFFSET ? ; ";
 
 	private static final String UPDATE= 
 			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=?"
-					+ " WHERE id=? ;";
+					+ " WHERE id=?;";
 
 	private static final String DELETE=
-			"DELETE FROM computer WHERE id=? ;";
+			"DELETE FROM computer WHERE id=?;";
 
 
 	private static final String COUNT = 
@@ -84,9 +80,10 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	@Override
 	public int create(Computer computer) throws DatabaseException {
 		int number = 0;
-		SqlParameterSource params = new BeanPropertySqlParameterSource(computer);
 		try {
-			number = jdbcTemplate.update(CREATE,params);
+			number = jdbcTemplate.update(CREATE,computer.getName(),
+					computer.getIntroduced(),computer.getDiscontinued(), 
+					computer.getCompany().getId());
 		} catch (DataAccessException e) {
 			LOGGER.warn(e.getMessage());
 			throw new DatabaseException("Cannot insert computer : "+computer.toString());
@@ -146,7 +143,8 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 		Computer computer = new Computer();
 		try {
 			ComputerRowMapper rowMapper = new ComputerRowMapper();
-			computer = jdbcTemplate.query(SELECT_ONE,new Object[] {id}, rowMapper).get(0);
+			List<Computer> computers = jdbcTemplate.query(SELECT_ONE,new Object[] {id}, rowMapper);
+			if(!computers.isEmpty()) computer = computers.get(0);
 		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the computer of id: "+id);
@@ -208,15 +206,15 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	public String getField(String choice) {
 		switch(choice) {
 		case "name":
-			return "cpt."+Field.NAME.toString();
+			return "cpt."+Field.NAME.toString().toLowerCase();
 		case "intro":
-			return ""+Field.INTRODUCED.toString();
+			return ""+Field.INTRODUCED.toString().toLowerCase();
 		case "disco":
-			return ""+Field.DISCONTINUED.toString();
+			return ""+Field.DISCONTINUED.toString().toLowerCase();
 		case "company":
-			return "cpn."+Field.NAME.toString();
+			return "cpn."+Field.NAME.toString().toLowerCase();
 		default:
-			return "cpt."+Field.ID.toString();
+			return "cpt."+Field.ID.toString().toLowerCase();
 		}
 	}
 
