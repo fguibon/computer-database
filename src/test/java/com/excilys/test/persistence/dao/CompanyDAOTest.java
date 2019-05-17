@@ -22,7 +22,6 @@ import com.excilys.model.Page;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.test.ScriptExecuter;
 import com.excilys.test.config.TestConfig;
-import com.zaxxer.hikari.HikariDataSource;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
@@ -35,9 +34,6 @@ public class CompanyDAOTest {
 	private ScriptExecuter executer;
 	
 	@Autowired
-	private HikariDataSource dataSource;
-	
-	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
 	private Company companyTest;
@@ -48,7 +44,7 @@ public class CompanyDAOTest {
 	public void setUp() throws Exception {
 		executer.reload();
 		
-		companyDAO = new CompanyDAO(dataSource, jdbcTemplate);
+		companyDAO = new CompanyDAO(jdbcTemplate);
 		
 		companies = new ArrayList<Company>();
 		page = new Page(1, 5);
@@ -89,14 +85,14 @@ public class CompanyDAOTest {
 		companyDAO.update(new Company.Builder().setId(1L).setName("Apple Inc.").build());
 		assertEquals("Expected same companies",companyTest, companyDAO.findById(1L));
 	}
-	/*
+	
 	@Test
 	public void deleteTest() throws DatabaseException {
-		Long id = 4L;
+		Long id = 2L;
 		assertNotNull("Expected company not null",companyDAO.findById(id));
 		companyDAO.delete(id);
 		assertNull("Expected company null",companyDAO.findById(id).getId());
 		assertNull("Expected company null",companyDAO.findById(id).getName());
-	}*/
+	}
 
 }
