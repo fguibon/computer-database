@@ -1,11 +1,5 @@
 package com.excilys.persistence.dao;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,12 +13,10 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.excilys.exceptions.DatabaseException;
-import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
 import com.excilys.model.Sorting;
 import com.excilys.persistence.rowmapper.ComputerRowMapper;
-import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * ComputerDAO class : makes requests to the computer table
@@ -35,7 +27,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @Component
 public class ComputerDAO implements DataAccessObject<Computer>{
 
-	public enum Field { ID,NAME,INTRODUCED,DISCONTINUED,COMPANY_ID}
+	public enum Field { ID,NAME,INTRODUCED,DISCONTINUED}
 
 	private enum Order {ASC, DESC}
 
@@ -47,15 +39,20 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 			"INSERT INTO computer (name,introduced,discontinued,company_id)"
 					+ " VALUES (?, ?, ?, ?) ;";
 
+	private static final String SELECT = 
+			"SELECT cpt.id,cpt.name,introduced,discontinued,company_id,cpn.name "
+			+ "FROM computer AS cpt ";
+	
 	private static final String SELECT_ONE = 
-			"SELECT id,name,introduced,discontinued,company_id FROM computer WHERE id=?;";
+			SELECT + "LEFT JOIN company AS cpn ON cpt.company_id=cpn.id "
+			+ "WHERE cpt.id=?;";
 
 	private static final String SELECT_ALL = 
-			"SELECT * FROM computer;";
+			SELECT + "LEFT JOIN company AS cpn ON cpt.company_id=cpn.id;";
 
 	private static final String SELECT_ORDER_BY =
-			"SELECT id,name,introduced,discontinued,company_id FROM computer "
-					+ "WHERE UPPER(name) LIKE UPPER(?) ORDER BY ";
+			SELECT + "LEFT JOIN company AS cpn ON cpt.company_id=cpn.id "
+			+ "WHERE UPPER(cpt.name) LIKE UPPER(?) ORDER BY ";
 
 	private static final String PAGED=" LIMIT ? OFFSET ? ; ";
 
@@ -69,20 +66,13 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 
 	private static final String COUNT = 
 			"SELECT COUNT(id) FROM computer; ";
-
-	@Autowired
-	private HikariDataSource datasource;
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	private CompanyDAO companyDAO;
 	
-	
-	public ComputerDAO(HikariDataSource datasource, JdbcTemplate jdbcTemplate, CompanyDAO companyDAO) {	
-		this.datasource = datasource;
+	public ComputerDAO(JdbcTemplate jdbcTemplate) {	
 		this.jdbcTemplate = jdbcTemplate;
-		this.companyDAO = companyDAO;
 	}
 
 
@@ -118,7 +108,7 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 			computers = jdbcTemplate.query(SELECT_ALL,rowMapper);
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage());
-			throw new DatabaseException(SELECT_ALL);
+			throw new DatabaseException("Could not retrieve the list of computers");
 		}
 		return computers;
 	}
@@ -132,17 +122,15 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 */
 	public List<Computer> findAllPaged(Page page, String filter, Sorting sorting) throws DatabaseException {
 		List<Computer> computers = new ArrayList<>();	
-		boolean isAscending = ( getOrder(sorting.getOrder()).toString().compareToIgnoreCase("ASC")==0);
 		int offset = ((page.getCurrentPage()-1) * page.getEntriesPerPage());
-		String sql = getMyTableQuerySQL(sorting.getField(), isAscending);
+		String sql = getSortingQuerySQL(sorting.getField(), sorting.getOrder());
 		try {
 			ComputerRowMapper rowMapper = new ComputerRowMapper();
-			
 			computers = jdbcTemplate.query(sql,
 					new Object[] {"%"+filter +"%",page.getEntriesPerPage(),offset},rowMapper);
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage());
-			throw new DatabaseException(SELECT_ORDER_BY);
+			throw new DatabaseException("Could not retrieve the computers");
 		}
 		return computers;
 	}
@@ -155,39 +143,13 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 */
 	@Override
 	public Computer findById(Long id) throws DatabaseException {
-		Computer computer = null;
-
-		try (
-				Connection conn = datasource.getConnection();
-				PreparedStatement ps = conn.prepareStatement(SELECT_ONE);
-				)
-		{
-			ps.setLong(1, id);
-			try (ResultSet rs = ps.executeQuery()){
-				while(rs.next()) {
-					Long computerId = rs.getLong("id");
-					computer = new Computer();
-					computer.setId(computerId);
-					computer.setName(rs.getString("name"));
-					Date introDate =rs.getDate("introduced");
-					LocalDate ldate = (introDate==null)? null:introDate.toLocalDate();
-					computer.setIntroduced(ldate);
-
-					Date discoDate = rs.getDate("discontinued");
-					LocalDate ldate2 = (discoDate==null)?null:discoDate.toLocalDate();
-					computer.setDiscontinued(ldate2);
-
-					Long companyId =rs.getLong("company_id");
-					if(companyId!=null) {
-						Company cp =companyDAO.findById(companyId);
-						computer.setCompany(cp);
-					}			
-				}
-			}
-
-		} catch (SQLException e) {
+		Computer computer = new Computer();
+		try {
+			ComputerRowMapper rowMapper = new ComputerRowMapper();
+			computer = jdbcTemplate.query(SELECT_ONE,new Object[] {id}, rowMapper).get(0);
+		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage());
-			throw new DatabaseException(SELECT_ONE);
+			throw new DatabaseException("Could not retrieve the computer of id: "+id);
 		}
 		return computer;
 	}
@@ -200,12 +162,12 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	@Override
 	public int update(Computer computer) throws DatabaseException {
 		int number = 0;
-		SqlParameterSource params = new BeanPropertySqlParameterSource(computer);
 		try {
-			number = jdbcTemplate.update(UPDATE,params);
+			number = jdbcTemplate.update(UPDATE,computer.getName(),computer.getIntroduced(),
+					computer.getDiscontinued(),computer.getCompany().getId(), computer.getId());
 		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage());
-			throw new DatabaseException(UPDATE);
+			throw new DatabaseException("Could not update the computer: "+computer.toString());
 		}
 		return number;	
 	}
@@ -221,7 +183,7 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 			number = jdbcTemplate.update(DELETE,id);
 		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage());
-			throw new DatabaseException(DELETE);
+			throw new DatabaseException("Could not delete the computer of id: "+id);
 		}
 		return number;	
 	}
@@ -237,41 +199,43 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 			number = jdbcTemplate.queryForObject(COUNT, Integer.class);
 		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage());
-			throw new DatabaseException(COUNT);
+			throw new DatabaseException("Could not retrieve the total number of computers");
 		}
 		 return number;	
 	}
 
 
-	public Field getField(String choice) {
+	public String getField(String choice) {
 		switch(choice) {
 		case "name":
-			return Field.NAME;
+			return "cpt."+Field.NAME.toString();
 		case "intro":
-			return Field.INTRODUCED;
+			return ""+Field.INTRODUCED.toString();
 		case "disco":
-			return Field.DISCONTINUED;
+			return ""+Field.DISCONTINUED.toString();
 		case "company":
-			return Field.COMPANY_ID;
+			return "cpn."+Field.NAME.toString();
 		default:
-			return Field.ID;
+			return "cpt."+Field.ID.toString();
 		}
 	}
 
-	public Order getOrder(String choice) {
+	public String getOrder(String choice) {
 		switch(choice) {
 		case "asc":
-			return Order.ASC;
+			return Order.ASC.toString();
 		case "desc":
-			return Order.DESC;
+			return Order.DESC.toString();
 		default:
-			return Order.ASC;
+			return Order.ASC.toString();
 		}
 	}
 
-	public String getMyTableQuerySQL( String fieldParam, boolean isAscending ){
-		return SELECT_ORDER_BY + getField(fieldParam).toString()+ 
-				( isAscending ? " ASC " : " DESC " ) + PAGED;
+	public String getSortingQuerySQL( String fieldParam, String orderParam ){
+		String sql = SELECT_ORDER_BY + getField(fieldParam)+ 
+				" " +getOrder(orderParam) + PAGED;
+		LOGGER.debug(sql);
+		return sql;
 	}
 
 }

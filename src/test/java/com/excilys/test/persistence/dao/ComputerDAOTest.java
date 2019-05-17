@@ -12,7 +12,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,11 +23,9 @@ import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
 import com.excilys.model.Sorting;
-import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.persistence.dao.ComputerDAO;
 import com.excilys.test.ScriptExecuter;
 import com.excilys.test.config.TestConfig;
-import com.zaxxer.hikari.HikariDataSource;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
@@ -41,13 +38,7 @@ public class ComputerDAOTest {
 	private ScriptExecuter executer;
 	
 	@Autowired
-	private HikariDataSource dataSource;
-	
-	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	
-	@Autowired
-	private CompanyDAO companyDAOMock;
 	
 	private List<Computer> computers;
 	private Company companyTest;
@@ -60,7 +51,7 @@ public class ComputerDAOTest {
 	public void setUp() throws Exception {
 		executer.reload();
 		
-		computerDAO = new ComputerDAO(dataSource, jdbcTemplate, companyDAOMock);
+		computerDAO = new ComputerDAO(jdbcTemplate);
 		
 		computers = new ArrayList<Computer>();
 		page = new Page(1, 10);
@@ -84,10 +75,6 @@ public class ComputerDAOTest {
 		computers.add(new Computer.Builder().setId(8L).setName("Apple IIc").build());
 		computers.add(new Computer.Builder().setId(9L).setName("Apple IIGS").build());
 		computers.add(new Computer.Builder().setId(10L).setName("Apple IIc Plus").build());
-		
-		Mockito.when(companyDAOMock.findById(1L)).thenReturn(companyTest);
-		Mockito.when(companyDAOMock.findById(2L)).thenReturn(companyTest2);
-		Mockito.when(companyDAOMock.findById(null)).thenReturn(new Company());
 
 	}
 	

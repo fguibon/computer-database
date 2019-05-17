@@ -24,8 +24,8 @@ public class AppConfig {
 	}
 	
 	@Bean
-	public JdbcTemplate jdbcTemplate() {
-		return new JdbcTemplate(mySqlDataSource());
+	public JdbcTemplate jdbcTemplate(HikariDataSource datasource) {
+		return new JdbcTemplate(datasource);
 	}
 	
 }

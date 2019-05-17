@@ -69,17 +69,15 @@ public class Validator {
 	}
 	
 	private void areValidDates(String introducedDate, String discontinuedDate) throws DateParseException, ValidationException {
-		boolean valid= false;
 		isValidDate(introducedDate);
 		isValidDate(discontinuedDate);
+		boolean valid=false;
 		if( introducedDate!=null && discontinuedDate!=null && !introducedDate.isEmpty() && !discontinuedDate.isEmpty()) {
 			valid =(discontinuedDate.compareTo(introducedDate)>=0);
 		} else {
-			valid =false;
+			valid=true;
 		}
-		if(!valid) {
-			throw new DateValidationException("Invalid dates");
-		}
+		if(!valid) throw new DateValidationException("Invalid dates : "+introducedDate+" "+discontinuedDate);
 	}
 	
 	private void isValidDate(String date) throws DateParseException, DateValidationException {
