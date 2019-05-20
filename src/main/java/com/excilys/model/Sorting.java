@@ -4,11 +4,19 @@ public class Sorting {
 
 	private String field;
 	private String order;
+	private String filter;
+	private Page page;
 	
-	public Sorting(String field, String order) {
+	public Sorting() {}
+	
+	public Sorting(String field, String order, String filter, Page page) {
 		this.field=field;
 		this.order=order;
+		this.setFilter(filter);
+		this.setPage(page);
 	}
+
+
 
 
 	/**
@@ -40,8 +48,41 @@ public class Sorting {
 	}
 
 
+	/**
+	 * @return the filter
+	 */
+	public String getFilter() {
+		return filter;
+	}
+
+
+	/**
+	 * @param filter the filter to set
+	 */
+	public void setFilter(String filter) {
+		this.filter = filter;
+	}
+
+
+	/**
+	 * @return the page
+	 */
+	public Page getPage() {
+		return page;
+	}
+
+
+	/**
+	 * @param page the page to set
+	 */
+	public void setPage(Page page) {
+		this.page = page;
+	}
+
+
 	@Override
 	public String toString() {
-		return "Sorting [field=" + field + ", order=" + order + "]";
+		return "Sorting [field=" + field + ", order=" + order + ", filter=" + filter + ", page=" + page + "]";
 	}
+	
 }

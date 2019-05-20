@@ -46,7 +46,7 @@ public class ComputerServiceTest {
 		
 		computerService = new ComputerService(daoMock);
 		page = new Page(1, 1);
-		sorting = new Sorting("","");
+		sorting = new Sorting("","","",page);
 		computers = new ArrayList<Computer>();
 		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
 		computerTest = new Computer.Builder().setId(1L)
@@ -55,7 +55,7 @@ public class ComputerServiceTest {
 		
 		Mockito.when(daoMock.create(computerTest)).thenReturn(1);
 		Mockito.when(daoMock.findById(1L)).thenReturn(computerTest);
-		Mockito.when(daoMock.findAllPaged(page,"",sorting)).thenReturn(computers);
+		Mockito.when(daoMock.findAllPaged(sorting)).thenReturn(computers);
 		Mockito.when(daoMock.update(computerTest)).thenReturn(1);
 		Mockito.when(daoMock.count()).thenReturn(10);
 		
@@ -70,7 +70,7 @@ public class ComputerServiceTest {
 	
 	@Test
 	public void finAllTest() throws DatabaseException {
-		assertEquals("Expected same computers",computers,computerService.findAll(page, "", sorting));
+		assertEquals("Expected same computers",computers,computerService.findAll(sorting));
 	}
 	
 	@Test

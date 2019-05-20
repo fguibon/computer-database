@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Computer;
-import com.excilys.model.Page;
 import com.excilys.model.Sorting;
 import com.excilys.persistence.rowmapper.ComputerRowMapper;
 
@@ -116,14 +116,15 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 * @return
 	 * @throws Exception 
 	 */
-	public List<Computer> findAllPaged(Page page, String filter, Sorting sorting) throws DatabaseException {
+	public List<Computer> findAllPaged(Sorting sorting) throws DatabaseException {
 		List<Computer> computers = new ArrayList<>();	
-		int offset = ((page.getCurrentPage()-1) * page.getEntriesPerPage());
+		int offset = ((sorting.getPage().getCurrentPage()-1) * sorting.getPage().getEntriesPerPage());
 		String sql = getSortingQuerySQL(sorting.getField(), sorting.getOrder());
 		try {
 			ComputerRowMapper rowMapper = new ComputerRowMapper();
 			computers = jdbcTemplate.query(sql,
-					new Object[] {"%"+filter +"%",page.getEntriesPerPage(),offset},rowMapper);
+					new Object[] {"%"+sorting.getFilter() +"%",
+							sorting.getPage().getEntriesPerPage(),offset},rowMapper);
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the computers");

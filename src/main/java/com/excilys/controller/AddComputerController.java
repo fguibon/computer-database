@@ -13,15 +13,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.CompanyMapper;
 import com.excilys.binding.mapper.ComputerMapper;
+import com.excilys.model.Sorting;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 import com.excilys.validator.Validator;
@@ -39,29 +43,24 @@ public class AddComputerController {
 
 
 	@GetMapping("/add-computer")
-	public void displayForm()
-
-			throws ServletException, IOException {
+	public void displayForm(Model model) {
 
 		List<CompanyDTO> companyList = companyService.getCompanies()
 				.stream().map(s -> companyMapper.modelToDto(s))
 				.collect(Collectors.toList());
-		request.setAttribute("companies", companyList);
+		model.addAttribute("companies", companyList);
 
 
 	}
 
 	@PostMapping("/add-computer")
-	public void addComputer(){
+	public void addComputer(Model model,@ModelAttribute("computer") ComputerDTO computer, 
+			RedirectAttributes attributes){
 
-		String nameParam =request.getParameter("computerName");
-		String introducedParam = request.getParameter("introduced");
-		String discontinuedParam = request.getParameter("discontinued");
-		String companyIdParam = request.getParameter("companyId");
 
-		ComputerDTO computer =new ComputerDTO.Builder().setName(nameParam)
-				.setIntroduced(introducedParam).setDiscontinued(discontinuedParam)
-				.setCompanyId(companyIdParam).build();
+		ComputerDTO computerDTO =new ComputerDTO.Builder().setName(computer.getName())
+				.setIntroduced(computer.getIntroduced()).setDiscontinued(computer.getDiscontinued())
+				.setCompanyId(computer.getCompanyId()).build();
 		try {
 			validator.validateComputerToCreate(computer);
 		} catch (Exception e) {
@@ -73,7 +72,13 @@ public class AddComputerController {
 		} catch (Exception e) {
 			LOGGER.warn(e.getMessage(), e);
 		} 
+		attributes.addFlashAttribute("computer", computer);
 
+	}
+	
+	@ModelAttribute("computer")
+	public ComputerDTO getComputer() {
+		return new ComputerDTO();
 	}
 
 }

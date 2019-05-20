@@ -181,22 +181,22 @@
 					</c:url> href="${url}" aria-label="Previous"> 
 					<span aria-hidden="true">&laquo;</span>
 				</a></li>
-				<c:forEach var="currentPage" items="${pages}">
+				<c:forEach var="currentPage" items="${pageList}">
 					<li><a <c:url value="/dashboard" var="url">
 								<c:param name="page" value="${currentPage}"/>
-								<c:param name="number" value="${limit}"/>
+								<c:param name="number" value="${page.entriesPerPage}"/>
 								<c:param name="filter" value="${filter}"/>
- 								<c:param name="field" value="${field}"/>
- 								<c:param name="order" value="${order}"/>
+ 								<c:param name="field" value="${sorting.field}"/>
+ 								<c:param name="order" value="${sorting.order}"/>
 							</c:url> href="${url}" >${currentPage}</a></li>
 				</c:forEach>
 				<li><a
 					<c:url value="/dashboard" var="url">
 						<c:param name="page" value="${page + 1}"/>
-						<c:param name="number" value="${limit}"/>
+						<c:param name="number" value="${page.entriesPerPage}"/>
 						<c:param name="filter" value="${filter}"/>
- 						<c:param name="field" value="${field}"/>
- 						<c:param name="order" value="${order}"/>
+ 						<c:param name="field" value="${sorting.field}"/>
+ 						<c:param name="order" value="${sorting.order}"/>
 					</c:url> href="${url}" aria-label="Next"> 
 					<span aria-hidden="true">&raquo;</span>
 				</a></li>
@@ -206,27 +206,27 @@
 			<div class="btn-group btn-group-sm pull-right" role="group">
 				<a class="btn btn-default" 
 					<c:url value="/dashboard" var="url">
-						<c:param name="page" value="${page}"/>
+						<c:param name="page" value="${page.currentPage}"/>
 						<c:param name="number" value="10"/>
 						<c:param name="filter" value="${filter}"/>
- 						<c:param name="field" value="${field}"/>
- 						<c:param name="order" value="${order}"/>
+ 						<c:param name="field" value="${sorting.field}"/>
+ 						<c:param name="order" value="${sorting.order}"/>
 					</c:url> href="${url}">10</a> 
 				<a class="btn btn-default"
 					<c:url value="/dashboard" var="url">
-						<c:param name="page" value="${page}"/>
+						<c:param name="page" value="${page.currentPage}"/>
 						<c:param name="number" value="50"/>
 						<c:param name="filter" value="${filter}"/>
- 						<c:param name="field" value="${field}"/>
- 						<c:param name="order" value="${order}"/>
+ 						<c:param name="field" value="${sorting.field}"/>
+ 						<c:param name="order" value="${sorting.order}"/>
 					</c:url> href="${url}">50</a> 
 				<a class="btn btn-default"
 					<c:url value="/dashboard" var="url">
-						<c:param name="page" value="${page}"/>
+						<c:param name="page" value="${page.currentPage}"/>
 						<c:param name="number" value="100"/>
 						<c:param name="filter" value="${filter}"/>
- 						<c:param name="field" value="${field}"/>
- 						<c:param name="order" value="${order}"/>
+ 						<c:param name="field" value="${sorting.field}"/>
+ 						<c:param name="order" value="${sorting.order}"/>
 					</c:url> href="${url}">100</a>
 			</div>
 		</div>

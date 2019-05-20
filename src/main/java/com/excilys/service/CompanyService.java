@@ -2,16 +2,17 @@ package com.excilys.service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.model.Page;
 import com.excilys.persistence.dao.CompanyDAO;
 
-@Component
+@Service
 public class CompanyService {
 	
 	private static final Logger LOGGER = LogManager.getLogger(CompanyService.class);

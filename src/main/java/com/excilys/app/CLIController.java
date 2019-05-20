@@ -40,7 +40,7 @@ public class CLIController {
 			ComputerMapper computerMapper,
 			CompanyMapper companyMapper){
 		page = new Page(LIMIT,CURRENT_PAGE);
-		sorting = new Sorting("id","asc");
+		sorting = new Sorting("id","asc","",page);
 		view = new CLIView(System.in);
 		this.companyService = companyService;
 		this.computerService = computerService;
@@ -101,7 +101,7 @@ public class CLIController {
 		page.setCurrentPage(currentPage);
 		page.setEntriesPerPage(LIMIT);
 		List<ComputerDTO> computersDTO = new ArrayList<>();
-		List<Computer> computers = this.computerService.findAll(page,"",sorting);
+		List<Computer> computers = this.computerService.findAll(sorting);
 		while(ok) {
 			for(Computer c:computers) {
 				computersDTO.add(computerMapper.modelToDto(c));

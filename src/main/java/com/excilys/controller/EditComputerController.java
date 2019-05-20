@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,10 +55,10 @@ public class EditComputerController  {
 	}
 
 	@PostMapping("/edit-computer")
-	public void editComputer() {
+	public void editComputer(Model model) {
 
-		String idParam = request.getParameter("id");
-		String nameParam =request.getParameter("computerName");
+		String idParam = model.getParameter("id");
+		String nameParam =model.getParameter("computerName");
 		String introducedParam = request.getParameter("introduced");
 		String discontinuedParam = request.getParameter("discontinued");
 		String companyIdParam = request.getParameter("companyId");
@@ -77,7 +78,7 @@ public class EditComputerController  {
 			LOGGER.warn(e.getMessage(), e);
 		} 
 
-		response.sendRedirect("dashboard");
+		model.sendRedirect("dashboard");
 
 	}
 

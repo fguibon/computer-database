@@ -10,9 +10,13 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.ComputerMapper;
@@ -22,7 +26,8 @@ import com.excilys.model.Page;
 import com.excilys.model.Sorting;
 import com.excilys.service.ComputerService;
 
-@Controller
+@Controller	
+@SessionAttributes("sorting")
 public class DashboardController {
 
 	private static final int LIMIT=10;
@@ -32,9 +37,17 @@ public class DashboardController {
 	private ComputerMapper computerMapper;
 	private static final Logger LOGGER = LogManager.getLogger(DashboardController.class.getName());
 	
+	 ModelAndView dashboardPage = new ModelAndView("dashboard");
 
+	public DashboardController(ComputerService computerService,ComputerMapper computerMapper) {
+		this.computerService = computerService;
+		this.computerMapper = computerMapper;
+	}
+	 
+	 
 	@GetMapping("/dashboard")
-	public String displayComputerList() {
+	public ModelAndView displayComputerList(Model model,
+			  @ModelAttribute("sorting") Sorting sorting) {
 
 		int limit =LIMIT;
 		int offset=CURRENT_PAGE;
@@ -46,16 +59,15 @@ public class DashboardController {
 			LOGGER.warn(e.getMessage(), e);
 		}
 		
-		String pageParam =request.getParameter("page");
-		String noOfRecordsParam = request.getParameter("number");
-		String stringToSearch = request.getParameter("filter");
-		String fieldParam = request.getParameter("field");
-		String orderParam = request.getParameter("order");
+		int pageParam = sorting.getPage().getCurrentPage();
+		int noOfRecordsParam = sorting.getPage().getEntriesPerPage();
+		String stringToSearch = sorting.getFilter();
+		String fieldParam = sorting.getField();
+		String orderParam = sorting.getOrder();
 		 
-		if(noOfRecordsParam !=null && !noOfRecordsParam.isEmpty()) limit = Integer.parseInt(noOfRecordsParam);
+		if(noOfRecordsParam >0) limit = noOfRecordsParam;
+		if(pageParam>0) offset = pageParam;
 		int maximumPage = (int) Math.ceil(numberOfComputers * 1.0 / limit);
-		
-		if(pageParam != null && !pageParam.isEmpty()) offset = Integer.parseInt(pageParam);
 		if(offset<1) offset = CURRENT_PAGE;
 		if(offset>=maximumPage) offset = maximumPage;
 					
@@ -63,13 +75,13 @@ public class DashboardController {
 		String field = (fieldParam==null)? "":fieldParam;
 		String order = (orderParam==null)? "":orderParam;
 		Page page = new Page(offset,limit);
-		Sorting sorting = new Sorting(field,order);
-		List<Integer> pages = page.getPageList(offset);
+		Sorting sortingRequested = new Sorting(field,order,filter,page);
+		List<Integer> pageList = page.getPageList(offset);
 		
 		List<ComputerDTO> computersList = new ArrayList<>();
 		
 		try {
-			List<Computer> computers = computerService.findAll(page,filter, sorting);
+			List<Computer> computers = computerService.findAll(sorting);
 			computersList = computers
 			.stream().map(s -> computerMapper.modelToDto(s))
 			.collect(Collectors.toList());
@@ -77,22 +89,18 @@ public class DashboardController {
 			LOGGER.warn(e.getMessage(), e);
 		}
 		
-		request.setAttribute( "computers", computersList);
-		request.setAttribute("pages", pages);
+		model.addAttribute("number", numberOfComputers);
+		model.addAttribute("computers", computersList);
+		model.addAttribute("pageList", pageList);
 		
-		request.setAttribute("limit", limit);
-		request.setAttribute("page", offset);
-		request.setAttribute("number", numberOfComputers);
-		request.setAttribute("filter", filter);
-		request.setAttribute("field", field);
-		request.setAttribute("order", order);
+		model.addAttribute("sorting", sortingRequested);
 		
-		return("/WEB-INF/jsp/dashboard.jsp");
+		return dashboardPage;
 
 	}
 
 	@PostMapping(value="/dashboard")
-	public String deleteComputers(@RequestParam String selection){
+	public ModelAndView deleteComputers(@RequestParam String selection){
 
 		String[] computers = selection.split(",");
 		
@@ -114,7 +122,12 @@ public class DashboardController {
 				LOGGER.warn("Invalid id");
 			}
 		});
-		return "redirect:/";
+		return dashboardPage;
+	}
+	
+	@ModelAttribute("sorting")
+	public Sorting getSorting() {
+		return new Sorting();
 	}
 	
 }

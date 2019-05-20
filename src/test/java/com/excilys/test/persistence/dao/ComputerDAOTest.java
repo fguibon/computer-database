@@ -55,7 +55,7 @@ public class ComputerDAOTest {
 		
 		computers = new ArrayList<Computer>();
 		page = new Page(1, 10);
-		sorting = new Sorting("","");
+		sorting = new Sorting("","","",page);
 		
 		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
 		companyTest2 = new Company.Builder().setId(2L).setName("Thinking Machines").build();
@@ -99,7 +99,7 @@ public class ComputerDAOTest {
 	
 	@Test
 	public void findAllPagedTest() throws DatabaseException {
-		assertEquals("List different from expected",computers, computerDAO.findAllPaged(page,"",sorting));
+		assertEquals("List different from expected",computers, computerDAO.findAllPaged(sorting));
 	}
 	
 	@Test
