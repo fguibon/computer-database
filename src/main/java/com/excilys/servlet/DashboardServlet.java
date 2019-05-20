@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,18 +20,25 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.excilys.binding.dto.ComputerDTO;
-import com.excilys.controller.ComputerController;
+import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exceptions.DatabaseException;
+import com.excilys.model.Computer;
 import com.excilys.model.Page;
 import com.excilys.model.Sorting;
+import com.excilys.service.ComputerService;
 
-
+@WebServlet(
+	name = "DashboardServlet",
+	description = "Dashboard Servlet",
+	urlPatterns = {"/dashboard","/"}
+	)
 public class DashboardServlet extends HttpServlet {
 
 	private static final int LIMIT=10;
 	private static final int CURRENT_PAGE=1;
 
-	private ComputerController computerController;
+	private ComputerService computerService;
+	private ComputerMapper computerMapper;
 	private static final Logger LOGGER = LogManager.getLogger(DashboardServlet.class.getName());
 	
 	private static final long serialVersionUID = 1L;
@@ -39,7 +47,8 @@ public class DashboardServlet extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-		this.computerController = wac.getBean(ComputerController.class);
+		this.computerService = wac.getBean(ComputerService.class);
+		this.computerMapper = wac.getBean(ComputerMapper.class);
 	}
 	
 	
@@ -53,7 +62,7 @@ public class DashboardServlet extends HttpServlet {
 		int numberOfComputers=0;
 		
 		try {
-			numberOfComputers = computerController.count();
+			numberOfComputers = computerService.count();
 		} catch (DatabaseException e) {
 			LOGGER.warn(e.getMessage(), e);
 		}
@@ -78,14 +87,18 @@ public class DashboardServlet extends HttpServlet {
 		Sorting sorting = new Sorting(field,order);
 		List<Integer> pages = page.getPageList(offset);
 		
-		List<ComputerDTO> computers = new ArrayList<>();
+		List<ComputerDTO> computersList = new ArrayList<>();
+		
 		try {
-			computers = computerController.findAll(page,filter,sorting);
+			List<Computer> computers = computerService.findAll(page,filter, sorting);
+			computersList = computers
+			.stream().map(s -> computerMapper.modelToDto(s))
+			.collect(Collectors.toList());
 		} catch (DatabaseException e) {
 			LOGGER.warn(e.getMessage(), e);
 		}
 		
-		request.setAttribute( "computers", computers);
+		request.setAttribute( "computers", computersList);
 		request.setAttribute("pages", pages);
 		
 		request.setAttribute("limit", limit);
@@ -119,7 +132,7 @@ public class DashboardServlet extends HttpServlet {
 		
 		computersToDelete.stream().forEach(id -> {
 			try {
-				computerController.delete(id);
+				computerService.delete(id);
 			} catch (DatabaseException e) {
 				LOGGER.warn("Invalid id");
 			}
