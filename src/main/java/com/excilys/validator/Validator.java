@@ -1,5 +1,6 @@
 package com.excilys.validator;
 
+import java.time.LocalDate;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
@@ -82,11 +83,14 @@ public class Validator {
 	
 	private void isValidDate(String date) throws DateParseException, DateValidationException {
 		boolean valid= false;
+		
 		if(date== null || date.trim().isEmpty()) {
 			valid = true;
 		}
-		else if (DATE_PATTERN.matcher(date).matches() 
-				&& computerMapper.castLocalDate(date).getYear()>1970) valid = true;
+		else if (DATE_PATTERN.matcher(date).matches()) {
+			LocalDate ldate = computerMapper.castLocalDate(date);
+			if(ldate.getYear()>1970) valid = true;
+		}
 		if(!valid) {
 			throw new DateValidationException("Invalid date :"+date);
 		}	

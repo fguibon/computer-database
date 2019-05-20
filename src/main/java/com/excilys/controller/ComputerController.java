@@ -9,7 +9,6 @@ import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.exceptions.DateParseException;
-import com.excilys.exceptions.MappingException;
 import com.excilys.exceptions.ValidationException;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
@@ -32,7 +31,7 @@ public class ComputerController {
 	}
 	
 	
-	public int createComputer(ComputerDTO computerDTO) throws ValidationException, DateParseException, MappingException, DatabaseException  {
+	public int createComputer(ComputerDTO computerDTO) throws ValidationException, DateParseException, DatabaseException  {
 		computerValidator.validateComputerToCreate(computerDTO);
 		Computer computer = computerMapper.dtoToModel(computerDTO);
 		return computerService.createComputer(computer);
@@ -44,7 +43,6 @@ public class ComputerController {
 		return computers
 		.stream().map(s -> computerMapper.modelToDto(s))
 		.collect(Collectors.toList());
-
 	}
 	
 	public ComputerDTO findById(Long id) throws DatabaseException  {
@@ -53,7 +51,7 @@ public class ComputerController {
 
 	}
 	
-	public int update(ComputerDTO computerDTO) throws DatabaseException, ValidationException, DateParseException, MappingException  {
+	public int update(ComputerDTO computerDTO) throws DatabaseException, ValidationException, DateParseException  {
 		computerValidator.validateComputerToUpdate(computerDTO);
 		return computerService.update(computerMapper.dtoToModel(computerDTO));
 

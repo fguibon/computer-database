@@ -3,6 +3,7 @@ package com.excilys.binding.mapper;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,8 +21,7 @@ public class ComputerMapper {
 	private static final Logger LOGGER = 
 			LogManager.getLogger(ComputerMapper.class);
 
-	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-
+	private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
 	public Computer dtoToModel(ComputerDTO computerDTO) throws DateParseException{
 		Computer computer = new Computer();
@@ -69,15 +69,15 @@ public class ComputerMapper {
 	public LocalDate castLocalDate(String date) throws DateParseException {
 		try {
 			return (date==null || date.isEmpty() )? null : LocalDate.parse(date);
-		} catch (Exception e){
+		} catch (DateTimeParseException e){
 			LOGGER.error("Failed cast to LocalDate :" +e.getMessage());
 			throw new DateParseException("Could not parse date : "+date);
 		}
 	}
 	
 	public String castString(LocalDate ldate)  {
-		return (ldate==null)? null :format.format(Date.from(ldate.atTime(12,00).atZone(ZoneId.systemDefault()).toInstant())) ;
-
+		return (ldate==null)? null :format.format(Date.from(ldate.atTime(12,00)
+				.atZone(ZoneId.systemDefault()).toInstant())) ;
 	}
 	
 	

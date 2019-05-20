@@ -3,7 +3,6 @@ package com.excilys.test.controller;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +117,8 @@ public class ComputerControllerTest {
 	}
 	
 	public void deleteSuccessTest() throws DatabaseException {
-		computerController.delete(3L);
+		int nbOfLines = computerController.delete(3L);
+		assertEquals(1, nbOfLines);
 		assertNull("Expected null", computerController.findById(3L));
 	}
 	

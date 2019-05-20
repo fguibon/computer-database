@@ -28,10 +28,16 @@ public class CompanyMapperTest {
 	public void modelToDtoTest() {
 		assertEquals("Expected same company",companyDTO, companyMapper.modelToDto(company));
 	}
-
+	
 	@Test
 	public void dtoToModelTest() throws MappingException {
 		assertEquals("Expected same company",company, companyMapper.dtoToModel(companyDTO));
+	}
+	
+	@Test(expected = MappingException.class)
+	public void dtoToModelInvalidDataTest() throws MappingException {
+		companyDTO.setId("blabbla");
+		companyMapper.dtoToModel(companyDTO);
 	}
 
 }
