@@ -1,4 +1,4 @@
-package com.excilys.controller;
+package com.excilys.app;
 
 import java.util.ArrayList;
 import java.util.List;

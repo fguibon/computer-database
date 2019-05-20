@@ -1,4 +1,4 @@
-package com.excilys.servlet;
+package com.excilys.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -23,35 +26,20 @@ import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 import com.excilys.validator.Validator;
 
-@WebServlet(
-		name = "AddComputerServlet",
-		description = "Add Computer Servlet to add a computer in database",
-		urlPatterns = {"/add-computer"}
-		)
-public class AddComputerServlet extends HttpServlet {
+@Controller
+public class AddComputerController {
 
 
-	private static final long serialVersionUID = 1L;
 	private ComputerService computerService;
 	private CompanyService companyService;
 	private CompanyMapper companyMapper;
 	private ComputerMapper computerMapper;
 	private Validator validator;
-	private static final Logger LOGGER = LogManager.getLogger(DashboardServlet.class);
-
-	@Override
-	public void init() throws ServletException {
-		WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-		this.companyService = wac.getBean(CompanyService.class);
-		this.computerService = wac.getBean(ComputerService.class);
-		this.companyMapper = wac.getBean(CompanyMapper.class);
-		this.computerMapper = wac.getBean(ComputerMapper.class);
-		this.validator = wac.getBean(Validator.class);
-	}
+	private static final Logger LOGGER = LogManager.getLogger(DashboardController.class);
 
 
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
+	@GetMapping("/add-computer")
+	public void displayForm()
 
 			throws ServletException, IOException {
 
@@ -60,14 +48,11 @@ public class AddComputerServlet extends HttpServlet {
 				.collect(Collectors.toList());
 		request.setAttribute("companies", companyList);
 
-		request.getServletContext().getRequestDispatcher("/WEB-INF/jsp/addComputer.jsp")
-		.forward(request, response);
 
 	}
 
-	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException  {
+	@PostMapping("/add-computer")
+	public void addComputer(){
 
 		String nameParam =request.getParameter("computerName");
 		String introducedParam = request.getParameter("introduced");
@@ -88,8 +73,7 @@ public class AddComputerServlet extends HttpServlet {
 		} catch (Exception e) {
 			LOGGER.warn(e.getMessage(), e);
 		} 
-		request.getServletContext().getRequestDispatcher("/WEB-INF/jsp/addComputer.jsp")
-		.forward(request, response);
+
 	}
 
 }

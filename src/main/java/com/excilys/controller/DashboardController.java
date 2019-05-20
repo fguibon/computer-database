@@ -1,6 +1,5 @@
-package com.excilys.servlet;
+package com.excilys.controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,16 +7,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.ComputerMapper;
@@ -27,35 +22,19 @@ import com.excilys.model.Page;
 import com.excilys.model.Sorting;
 import com.excilys.service.ComputerService;
 
-@WebServlet(
-	name = "DashboardServlet",
-	description = "Dashboard Servlet",
-	urlPatterns = {"/dashboard","/"}
-	)
-public class DashboardServlet extends HttpServlet {
+@Controller
+public class DashboardController {
 
 	private static final int LIMIT=10;
 	private static final int CURRENT_PAGE=1;
 
 	private ComputerService computerService;
 	private ComputerMapper computerMapper;
-	private static final Logger LOGGER = LogManager.getLogger(DashboardServlet.class.getName());
+	private static final Logger LOGGER = LogManager.getLogger(DashboardController.class.getName());
 	
-	private static final long serialVersionUID = 1L;
 
-
-	@Override
-	public void init() throws ServletException {
-		WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-		this.computerService = wac.getBean(ComputerService.class);
-		this.computerMapper = wac.getBean(ComputerMapper.class);
-	}
-	
-	
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-
-			throws ServletException, IOException {
+	@GetMapping("/dashboard")
+	public String displayComputerList() {
 
 		int limit =LIMIT;
 		int offset=CURRENT_PAGE;
@@ -108,16 +87,14 @@ public class DashboardServlet extends HttpServlet {
 		request.setAttribute("field", field);
 		request.setAttribute("order", order);
 		
-		request.getServletContext().getRequestDispatcher("/WEB-INF/jsp/dashboard.jsp")
-		.forward(request, response);
+		return("/WEB-INF/jsp/dashboard.jsp");
 
 	}
 
-	@Override
-	public  void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException  {
-		String computersSelection = request.getParameter("selection");
-		String[] computers = computersSelection.split(",");
+	@PostMapping(value="/dashboard")
+	public String deleteComputers(@RequestParam String selection){
+
+		String[] computers = selection.split(",");
 		
 		List<Long> computersToDelete = new ArrayList<>();
 		try {
@@ -137,9 +114,7 @@ public class DashboardServlet extends HttpServlet {
 				LOGGER.warn("Invalid id");
 			}
 		});
-
-		request.getServletContext().getRequestDispatcher("/WEB-INF/jsp/dashboard.jsp")
-		.forward(request, response);
-		
+		return "redirect:/";
 	}
+	
 }

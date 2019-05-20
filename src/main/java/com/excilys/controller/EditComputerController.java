@@ -1,19 +1,14 @@
-package com.excilys.servlet;
+package com.excilys.controller;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
@@ -24,44 +19,28 @@ import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 import com.excilys.validator.Validator;
 
-@WebServlet(
-		name = "EditComputerServlet",
-		description = "Edit Computer Servlet to edit a computer in database",
-		urlPatterns = {"/edit-computer"}
-		)
-public class EditComputerServlet extends HttpServlet {
+@Controller
+public class EditComputerController  {
 
-	private static final long serialVersionUID = 1L;
+
 	private ComputerService computerService;
 	private CompanyService companyService;
 	private ComputerMapper computerMapper;
 	private CompanyMapper companyMapper;
 	private Validator validator;
 
-	private static final Logger LOGGER = LogManager.getLogger(DashboardServlet.class);
+	private static final Logger LOGGER = LogManager.getLogger(EditComputerController.class);
 
 
-	@Override
-	public void init() throws ServletException {
-		WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-		this.companyService = wac.getBean( CompanyService.class);
-		this.computerService = wac.getBean( ComputerService.class);
-		this.computerMapper = wac.getBean(ComputerMapper.class);
-		this.companyMapper = wac.getBean(CompanyMapper.class);
-		this.validator = wac.getBean( Validator.class);
-	}
 
 
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-
-		String idParam = request.getParameter("id");
+	@GetMapping("/edit-computer")
+	public void displayForm(@RequestParam String id){
 
 		ComputerDTO computer =new ComputerDTO();
-		Long id =(idParam == null || "0".equals(idParam) || idParam.isEmpty()) ? null : Long.valueOf(idParam);
+		Long idParam =(id == null || "0".equals(id) || id.isEmpty()) ? null : Long.valueOf(id);
 		try {
-			computer = computerMapper.modelToDto(computerService.findById(id));
+			computer = computerMapper.modelToDto(computerService.findById(idParam));
 		} catch (DatabaseException e) {
 			LOGGER.warn(e.getMessage(), e);
 		}	
@@ -72,13 +51,10 @@ public class EditComputerServlet extends HttpServlet {
 		request.setAttribute("computer", computer);
 		request.setAttribute("companies", companyList);
 
-		request.getServletContext().getRequestDispatcher("/WEB-INF/jsp/editComputer.jsp")
-		.forward(request, response);
 	}
 
-	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException{
+	@PostMapping("/edit-computer")
+	public void editComputer() {
 
 		String idParam = request.getParameter("id");
 		String nameParam =request.getParameter("computerName");

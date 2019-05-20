@@ -7,7 +7,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.support.AbstractApplicationContext;
 
 import com.excilys.config.AppConfig;
-import com.excilys.controller.CLIController;
 
 public class MainApp {
 
