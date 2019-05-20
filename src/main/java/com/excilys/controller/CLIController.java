@@ -159,7 +159,7 @@ public class CLIController {
 	 */
 	public void updateComputer() throws DatabaseException, DateParseException {
 		ComputerDTO computer = this.queryComputerToUpdate();
-		if(computerService.update(computerMapper.dtoToModel(computer))) view.notifySuccess();
+		if(computerService.update(computerMapper.dtoToModel(computer))==1) view.notifySuccess();
 
 	}
 	

@@ -2,7 +2,6 @@ package com.excilys.test.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,10 +53,10 @@ public class ComputerServiceTest {
 				.setName("MacBook Pro 15.4 inch").setCompany(companyTest).build();
 		computers.add(computerTest);
 		
-		Mockito.when(daoMock.create(computerTest)).thenReturn(true);
+		Mockito.when(daoMock.create(computerTest)).thenReturn(1);
 		Mockito.when(daoMock.findById(1L)).thenReturn(computerTest);
 		Mockito.when(daoMock.findAllPaged(page,"",sorting)).thenReturn(computers);
-		Mockito.when(daoMock.update(computerTest)).thenReturn(true);
+		Mockito.when(daoMock.update(computerTest)).thenReturn(1);
 		Mockito.when(daoMock.count()).thenReturn(10);
 		
 		Mockito.doThrow(DatabaseException.class).when(daoMock).delete(1L);
@@ -66,7 +65,7 @@ public class ComputerServiceTest {
 	
 	@Test
 	public void createComputerTest() throws DatabaseException {
-		assertTrue(computerService.createComputer(computerTest));
+		assertEquals(1,computerService.createComputer(computerTest));
 	}
 	
 	@Test
@@ -82,7 +81,7 @@ public class ComputerServiceTest {
 	@Test
 	public void updateTest() throws DatabaseException {
 		computerTest.setName("Mc Book");
-		assertTrue(computerService.update(computerTest));
+		assertEquals(1,computerService.update(computerTest));
 	}
 	
 	@Test(expected = DatabaseException.class)

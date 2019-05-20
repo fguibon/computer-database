@@ -19,7 +19,7 @@ public class ComputerService {
 		this.computerDAO = computerDAO;
 	}
 		
-	public boolean createComputer(Computer computer) throws DatabaseException  {
+	public int createComputer(Computer computer) throws DatabaseException  {
 		return computerDAO.create(computer);
 	}
 	
@@ -31,12 +31,12 @@ public class ComputerService {
 		return computerDAO.findById(id);
 	}
 	
-	public boolean update(Computer computer) throws DatabaseException {
+	public int update(Computer computer) throws DatabaseException {
 		return computerDAO.update(computer);
 	}
 	
-	public void delete(Long id) throws DatabaseException  {
-		computerDAO.delete(id);
+	public int delete(Long id) throws DatabaseException  {
+		return computerDAO.delete(id);
 	}
 	
 	public int count() throws DatabaseException {

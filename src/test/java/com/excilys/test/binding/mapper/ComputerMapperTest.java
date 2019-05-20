@@ -25,16 +25,16 @@ import com.excilys.test.config.TestConfig;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class ComputerMapperTest {
-	
+
 	private ComputerMapper computerMapper;
-	
+
 	private Computer computer;
 	private Company company;
 	private ComputerDTO computerDTO;
 	private String companyId = "4";
 	private String sDate = "2014-04-05";
 	private LocalDate lDate = LocalDate.of(2014, 4, 5);
-	
+
 	@Autowired
 	private CompanyDAO daoMock;	
 
@@ -42,7 +42,7 @@ public class ComputerMapperTest {
 	public void setUp() throws Exception {
 
 		computerMapper = new ComputerMapper();
-		
+
 		company = new Company.Builder().setId(4L).setName("NASA").build();
 		computer = new Computer.Builder().setId(9L).setName("Coucou")
 				.setIntroduced(lDate).setDiscontinued(LocalDate.of(2015, 3, 2))
@@ -50,19 +50,31 @@ public class ComputerMapperTest {
 		computerDTO = new ComputerDTO.Builder().setId("9").setName("Coucou")
 				.setIntroduced(sDate).setDiscontinued("2015-03-02")
 				.setCompanyId(companyId).setCompanyName("NASA").build();
-		
+
 		when(daoMock.findById(4L)).thenReturn(company);
 	}
 
 
 	@Test
-	public void modelToDtoTest() throws DateParseException {
+	public void modelToDtoTest() {
 		assertEquals("Expected same computer",computerDTO, computerMapper.modelToDto(computer));
 	}
 
 	@Test
-	public void dtoToModelTest() throws Exception {
+	public void dtoToModelTest() throws DateParseException {
 		assertEquals("Expected same computer",computer, computerMapper.dtoToModel(computerDTO));
+	}
+	
+	@Test(expected = DateParseException.class)
+	public void dtoToModelInvalidDateTest() throws DateParseException {
+		computerDTO.setIntroduced("blabla");
+		computerDTO.setDiscontinued("blabla");
+		computerMapper.dtoToModel(computerDTO);
+	}
+
+	@Test
+	public void castLocalDateTest() throws DateParseException {
+		assertEquals("Expected same dates",lDate, computerMapper.castLocalDate(sDate));
 	}
 
 
@@ -70,9 +82,6 @@ public class ComputerMapperTest {
 	public void castStringTest() {
 		assertEquals("Expected same dates",sDate, computerMapper.castString(lDate));
 	}
-	
-	@Test
-	public void castLocalDateTest() throws DateParseException {
-		assertEquals("Expected same dates",lDate, computerMapper.castLocalDate(sDate));
-	}
+
+
 }

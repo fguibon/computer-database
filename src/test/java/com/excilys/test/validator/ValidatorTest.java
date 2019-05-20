@@ -1,6 +1,7 @@
 package com.excilys.test.validator;
 
-import static org.junit.Assert.assertTrue;
+import java.time.LocalDate;
+import java.time.Month;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +28,8 @@ public class ValidatorTest {
 	private Validator validator;
 	private ComputerDTO computerDto;
 	private CompanyDTO companyDto;
+	private String introduced;
+	private String discontinued;
 	
 	@Autowired
 	private ComputerMapper computerMapperMock;
@@ -35,24 +38,81 @@ public class ValidatorTest {
 	@Before
 	public void setUp() throws DateParseException {
 		validator = new Validator(computerMapperMock);
-		computerDto = new ComputerDTO.Builder().setId("1").setName("Mac Book").build();
+		introduced = "2017-05-08";
+		discontinued = "2017-05-10";
+		computerDto = new ComputerDTO.Builder().setId("1").setName("Mac Book")
+				.setIntroduced(introduced).setDiscontinued(discontinued)
+				.setCompanyId("1").setCompanyName("MC").build();
 		companyDto = new CompanyDTO.Builder().setId("1").setName("Apple Inc.").build();
 		
 		Mockito.when(computerMapperMock.castLocalDate("")).thenReturn(null);
+		Mockito.when(computerMapperMock.castLocalDate(introduced))
+		.thenReturn(LocalDate.of(2017, Month.MAY, 8));
+		Mockito.when(computerMapperMock.castLocalDate(discontinued))
+		.thenReturn(LocalDate.of(2017, Month.MAY, 10));
 	}
 	
-	@Test
+	@Test(expected = ValidationException.class)
 	public void validateComputerToCreateTest() throws ValidationException, DateParseException {
-		assertTrue(validator.validateComputerToCreate(computerDto));
+		computerDto.setName("+++++++blabla");
+		validator.validateComputerToCreate(computerDto);
+	}
+	
+	@Test(expected = ValidationException.class)
+	public void validateComputerToCreateDatesReverseTest() throws ValidationException, DateParseException {
+		computerDto.setDiscontinued(introduced);
+		computerDto.setIntroduced(discontinued);
+		validator.validateComputerToCreate(computerDto);
+	}
+	
+	@Test(expected = ValidationException.class)
+	public void validateComputerToCreateDateNotValidTest() throws ValidationException, DateParseException {
+		computerDto.setDiscontinued("blabla");
+		validator.validateComputerToCreate(computerDto);
 	}
 	
 	@Test
+	public void validateComputerToCreateValidDataTest() throws ValidationException, DateParseException {
+		computerDto.setName("blabla");
+		validator.validateComputerToCreate(computerDto);
+	}
+	
+	@Test(expected = ValidationException.class)
 	public void validateComputerToUpdateTest() throws ValidationException, DateParseException {
-		assertTrue(validator.validateComputerToUpdate(computerDto));
+		computerDto.setCompanyId("blabla");
+		validator.validateComputerToUpdate(computerDto);
+	}
+	
+	@Test(expected = ValidationException.class)
+	public void validateComputerToUpdateDatesReverseTest() throws ValidationException, DateParseException {
+		computerDto.setDiscontinued(introduced);
+		computerDto.setIntroduced(discontinued);
+		validator.validateComputerToCreate(computerDto);
+	}
+	
+	@Test(expected = ValidationException.class)
+	public void validateComputerToUpdateDateNotValidTest() throws ValidationException, DateParseException {
+		computerDto.setIntroduced("blabla");
+		validator.validateComputerToCreate(computerDto);
 	}
 	
 	@Test
-	public void validateCompany() throws ValidationException {
-		assertTrue(validator.validateCompany(companyDto));
+	public void validateComputerToUpdateValidDataTest() throws ValidationException, DateParseException {
+		computerDto.setCompanyId("1");
+		validator.validateComputerToUpdate(computerDto);
+	}
+	
+	@Test(expected = ValidationException.class)
+	public void validateCompanyTest() throws ValidationException {
+		companyDto.setId("blabla");
+		validator.validateCompany(companyDto);
+	}
+	
+	@Test
+	public void validateCompanyValidDataTest() throws ValidationException {
+		companyDto.setId("1");
+		validator.validateCompany(companyDto);
+		companyDto.setId("");
+		validator.validateCompany(companyDto);
 	}
 }
