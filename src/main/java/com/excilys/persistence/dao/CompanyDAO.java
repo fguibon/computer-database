@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
-import com.excilys.model.Page;
+import com.excilys.model.Sorting;
 import com.excilys.persistence.rowmapper.CompanyRowMapper;
 
 /**
@@ -67,8 +67,7 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	public int create(Company company) throws DatabaseException {
 		int number = 0;
 		try {
-			 number = jdbcTemplate.update(INSERT,company.getName());
-				
+			 number = jdbcTemplate.update(INSERT,company.getName());	
 		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new DatabaseException("Cannot insert company : "+ company.toString());
@@ -102,18 +101,18 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	 * @return
 	 * @throws DatabaseException 
 	 */
-	public List<Company> findAllPaged(Page page) 
+	public List<Company> findAllPaged(Sorting sorting) 
 			throws DatabaseException {
 		
 		List<Company> companies = new ArrayList<>();
-		int offset = ((page.getCurrentPage()-1) * page.getEntriesPerPage());
+		int offset = ((sorting.getPage()-1) * sorting.getEntriesPerPage());
 		try {
 			CompanyRowMapper rowMapper = new CompanyRowMapper();
 			companies = jdbcTemplate.query(SELECT_ALL_PAGED,
-					new Object[] {page.getEntriesPerPage(),offset},rowMapper);		
+					new Object[] {sorting.getEntriesPerPage(),offset},rowMapper);		
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage(),e);
-			throw new DatabaseException("Cannot find companies with : "+page.toString());
+			throw new DatabaseException("Cannot find companies with : "+sorting.toString());
 		} 
 		return companies;
 	}

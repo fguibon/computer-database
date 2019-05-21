@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
-import com.excilys.model.Page;
+import com.excilys.model.Sorting;
 import com.excilys.persistence.dao.CompanyDAO;
 
 @Service
@@ -35,10 +35,10 @@ public class CompanyService {
 	}
 	
 
-	public List<Company> getCompanies(Page page) {
+	public List<Company> getCompanies(Sorting sorting) {
 		List<Company> companies = new ArrayList<>();
 		try {
-			companies = companyDAO.findAllPaged(page);
+			companies = companyDAO.findAllPaged(sorting);
 		} catch (DatabaseException e) {
 			LOGGER.error("Query error : "+ e.getMessage());
 		}

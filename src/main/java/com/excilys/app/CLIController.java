@@ -14,7 +14,6 @@ import com.excilys.exceptions.DateParseException;
 import com.excilys.exceptions.MappingException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
-import com.excilys.model.Page;
 import com.excilys.model.Sorting;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
@@ -26,7 +25,6 @@ public class CLIController {
 	private static final int LIMIT=10;
 	private static final int CURRENT_PAGE=1;
 	
-	private Page page;
 	private Sorting sorting;
 	private CLIView view;
 	private CompanyService companyService;
@@ -39,8 +37,7 @@ public class CLIController {
 			ComputerService computerService,
 			ComputerMapper computerMapper,
 			CompanyMapper companyMapper){
-		page = new Page(LIMIT,CURRENT_PAGE);
-		sorting = new Sorting("id","asc","",page);
+		sorting = new Sorting(LIMIT,CURRENT_PAGE,"id","asc","");
 		view = new CLIView(System.in);
 		this.companyService = companyService;
 		this.computerService = computerService;
@@ -98,8 +95,8 @@ public class CLIController {
 	public void listComputers() throws DatabaseException {
 		int currentPage =1;
 		boolean ok=true;
-		page.setCurrentPage(currentPage);
-		page.setEntriesPerPage(LIMIT);
+		sorting.setPage(currentPage);
+		sorting.setEntriesPerPage(LIMIT);
 		List<ComputerDTO> computersDTO = new ArrayList<>();
 		List<Computer> computers = this.computerService.findAll(sorting);
 		while(ok) {
@@ -107,8 +104,8 @@ public class CLIController {
 				computersDTO.add(computerMapper.modelToDto(c));
 			}
 			if(computers.isEmpty())	ok=false;
-			page.setCurrentPage(currentPage++);
-			this.view.displayComputers(computersDTO,page);
+			sorting.setPage(currentPage++);
+			this.view.displayComputers(computersDTO,sorting);
 		}
 	}
 	

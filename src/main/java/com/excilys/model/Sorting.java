@@ -1,24 +1,55 @@
 package com.excilys.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Sorting {
 
+	private int page;
+	private int entriesPerPage;
 	private String field;
 	private String order;
 	private String filter;
-	private Page page;
 	
 	public Sorting() {}
 	
-	public Sorting(String field, String order, String filter, Page page) {
+	public Sorting(int page, int entriesPerPage, String field, String order, String filter) {
+		this.page = page;
+		this.entriesPerPage = entriesPerPage;
 		this.field=field;
 		this.order=order;
-		this.setFilter(filter);
-		this.setPage(page);
+		this.filter = filter;
 	}
 
 
+	/**
+	 * @return the page
+	 */
+	public int getPage() {
+		return page;
+	}
 
+	/**
+	 * @param page the page to set
+	 */
+	public void setPage(int page) {
+		this.page = page;
+	}
 
+	/**
+	 * @return the entriesPerPage
+	 */
+	public int getEntriesPerPage() {
+		return entriesPerPage;
+	}
+
+	/**
+	 * @param entriesPerPage the entriesPerPage to set
+	 */
+	public void setEntriesPerPage(int entriesPerPage) {
+		this.entriesPerPage = entriesPerPage;
+	}
+	
 	/**
 	 * @return the field
 	 */
@@ -63,26 +94,30 @@ public class Sorting {
 		this.filter = filter;
 	}
 
-
 	/**
-	 * @return the page
+	 * Return the page list for the ui
+	 * @param offset
+	 * @return
 	 */
-	public Page getPage() {
-		return page;
+	public List<Integer> getPageList(int offset){
+		List<Integer> pages = new ArrayList<>();
+		if(offset<=3) {
+			for(int i=1;i<6;i++) {
+				pages.add(i);
+			}
+		} else {
+			for(int i=offset-2;i<offset+3;i++) {
+				pages.add(i);
+			}
+		}
+		return pages;
 	}
-
-
-	/**
-	 * @param page the page to set
-	 */
-	public void setPage(Page page) {
-		this.page = page;
-	}
-
 
 	@Override
 	public String toString() {
-		return "Sorting [field=" + field + ", order=" + order + ", filter=" + filter + ", page=" + page + "]";
+		return "Sorting [currentPage=" + page + ", entriesPerPage=" + entriesPerPage + ", field=" + field
+				+ ", order=" + order + ", filter=" + filter + "]";
 	}
+
 	
 }

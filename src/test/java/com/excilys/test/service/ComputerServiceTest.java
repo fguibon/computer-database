@@ -18,7 +18,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
-import com.excilys.model.Page;
 import com.excilys.model.Sorting;
 import com.excilys.persistence.dao.ComputerDAO;
 import com.excilys.service.ComputerService;
@@ -33,7 +32,6 @@ public class ComputerServiceTest {
 	private List<Computer> computers;
 	private Computer computerTest;
 	private Company companyTest;
-	private Page page;
 	private Sorting sorting;
 	
 	
@@ -45,8 +43,7 @@ public class ComputerServiceTest {
 	public void setUp() throws Exception {
 		
 		computerService = new ComputerService(daoMock);
-		page = new Page(1, 1);
-		sorting = new Sorting("","","",page);
+		sorting = new Sorting(1, 1,"","","");
 		computers = new ArrayList<Computer>();
 		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
 		computerTest = new Computer.Builder().setId(1L)

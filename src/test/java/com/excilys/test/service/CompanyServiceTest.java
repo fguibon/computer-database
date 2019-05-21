@@ -15,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.excilys.model.Company;
-import com.excilys.model.Page;
+import com.excilys.model.Sorting;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.service.CompanyService;
 import com.excilys.test.config.TestConfig;
@@ -27,7 +27,7 @@ public class CompanyServiceTest {
 
 	private List<Company> companies;
 	private Company companyTest;
-	private Page page;
+	private Sorting sorting;
 	
 	@Autowired
 	private CompanyDAO daoMock;
@@ -40,13 +40,13 @@ public class CompanyServiceTest {
 		service = new CompanyService(daoMock);
 		
 		companies = new ArrayList<Company>();
-		page = new Page(1, 1);
+		sorting = new Sorting(1, 1,"","","");
 		
 		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
 		companies.add(companyTest);	
 	
 		when(daoMock.findAll()).thenReturn(companies);
-		when(daoMock.findAllPaged(page)).thenReturn(companies);
+		when(daoMock.findAllPaged(sorting)).thenReturn(companies);
 		when(daoMock.findById(1L)).thenReturn(companyTest);
 	}
 	
@@ -57,7 +57,7 @@ public class CompanyServiceTest {
 	
 	@Test
 	public void findAllPagedTest() {
-		assertEquals("Expected same companies",companies,service.getCompanies(page));
+		assertEquals("Expected same companies",companies,service.getCompanies(sorting));
 	}
 	
 	@Test

@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
-import com.excilys.model.Page;
+import com.excilys.model.Sorting;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.test.ScriptExecuter;
 import com.excilys.test.config.TestConfig;
@@ -38,7 +38,7 @@ public class CompanyDAOTest {
 	
 	private Company companyTest;
 	private List<Company> companies;
-	private Page page;
+	private Sorting sorting;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -47,7 +47,7 @@ public class CompanyDAOTest {
 		companyDAO = new CompanyDAO(jdbcTemplate);
 		
 		companies = new ArrayList<Company>();
-		page = new Page(1, 5);
+		sorting = new Sorting(1, 5,"","","");
 		
 		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
 		companies.add(companyTest);
@@ -72,7 +72,7 @@ public class CompanyDAOTest {
 	
 	@Test
 	public void findAllPagedTest() throws DatabaseException {	
-		assertEquals("Expected same company lists",companies, companyDAO.findAllPaged(page));
+		assertEquals("Expected same company lists",companies, companyDAO.findAllPaged(sorting));
 	}
 	
 	@Test

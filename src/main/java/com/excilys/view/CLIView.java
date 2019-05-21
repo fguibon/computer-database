@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
-import com.excilys.model.Page;
+import com.excilys.model.Sorting;
 
 public class CLIView {
 	
@@ -63,8 +63,8 @@ public class CLIView {
 	 * @param computers
 	 * @param page 
 	 */
-	public void displayComputers(List<ComputerDTO> computers, Page page) {
-		LOGGER.info("Page number : "+page.getCurrentPage());
+	public void displayComputers(List<ComputerDTO> computers, Sorting sorting) {
+		LOGGER.info("Page number : "+sorting.getPage());
 		for(ComputerDTO c:computers) {
 			if(c!=null) LOGGER.info(c);
 		}
