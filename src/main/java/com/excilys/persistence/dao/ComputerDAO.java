@@ -118,13 +118,13 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 */
 	public List<Computer> findAllPaged(Sorting sorting) throws DatabaseException {
 		List<Computer> computers = new ArrayList<>();	
-		int offset = ((sorting.getPage()-1) * sorting.getEntriesPerPage());
+		int offset = ((sorting.getPage()-1) * sorting.getLimit());
 		String sql = getSortingQuerySQL(sorting.getField(), sorting.getOrder());
 		try {
 			ComputerRowMapper rowMapper = new ComputerRowMapper();
 			computers = jdbcTemplate.query(sql,
 					new Object[] {"%"+sorting.getFilter() +"%",
-							sorting.getEntriesPerPage(),offset},rowMapper);
+							sorting.getLimit(),offset},rowMapper);
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the computers");

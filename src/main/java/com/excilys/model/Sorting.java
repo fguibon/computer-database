@@ -6,16 +6,16 @@ import java.util.List;
 public class Sorting {
 
 	private int page;
-	private int entriesPerPage;
+	private int limit;
 	private String field;
 	private String order;
 	private String filter;
 	
 	public Sorting() {}
 	
-	public Sorting(int page, int entriesPerPage, String field, String order, String filter) {
+	public Sorting(int page, int limit, String field, String order, String filter) {
 		this.page = page;
-		this.entriesPerPage = entriesPerPage;
+		this.limit = limit;
 		this.field=field;
 		this.order=order;
 		this.filter = filter;
@@ -37,17 +37,17 @@ public class Sorting {
 	}
 
 	/**
-	 * @return the entriesPerPage
+	 * @return the limit
 	 */
-	public int getEntriesPerPage() {
-		return entriesPerPage;
+	public int getLimit() {
+		return limit;
 	}
 
 	/**
-	 * @param entriesPerPage the entriesPerPage to set
+	 * @param limit the limit to set
 	 */
-	public void setEntriesPerPage(int entriesPerPage) {
-		this.entriesPerPage = entriesPerPage;
+	public void setLimit(int limit) {
+		this.limit = limit;
 	}
 	
 	/**
@@ -115,7 +115,7 @@ public class Sorting {
 
 	@Override
 	public String toString() {
-		return "Sorting [currentPage=" + page + ", entriesPerPage=" + entriesPerPage + ", field=" + field
+		return "Sorting [currentPage=" + page + ", limit=" + limit + ", field=" + field
 				+ ", order=" + order + ", filter=" + filter + "]";
 	}
 

@@ -96,7 +96,7 @@ public class CLIController {
 		int currentPage =1;
 		boolean ok=true;
 		sorting.setPage(currentPage);
-		sorting.setEntriesPerPage(LIMIT);
+		sorting.setLimit(LIMIT);
 		List<ComputerDTO> computersDTO = new ArrayList<>();
 		List<Computer> computers = this.computerService.findAll(sorting);
 		while(ok) {

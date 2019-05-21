@@ -24,15 +24,23 @@ import com.excilys.validator.Validator;
 public class EditComputerController  {
 
 
-	private ComputerService computerService;
-	private CompanyService companyService;
-	private ComputerMapper computerMapper;
-	private CompanyMapper companyMapper;
-	private Validator validator;
+	private final ComputerService computerService;
+	private final CompanyService companyService;
+	private final ComputerMapper computerMapper;
+	private final CompanyMapper companyMapper;
+	private final Validator validator;
 
 	private static final Logger LOGGER = LogManager.getLogger(EditComputerController.class);
 
 
+	public EditComputerController(ComputerService computerService,CompanyService companyService,
+			CompanyMapper companyMapper, ComputerMapper computerMapper, Validator validator) {
+		this.computerService = computerService;
+		this.companyService = companyService;
+		this.computerMapper = computerMapper;
+		this.companyMapper = companyMapper;
+		this.validator = validator;
+	}
 
 
 	@GetMapping("/edit-computer")
@@ -55,7 +63,7 @@ public class EditComputerController  {
 	}
 
 	@PostMapping("/edit-computer")
-	public void editComputer(Model model) {
+	public String editComputer(Model model) {
 
 		String idParam = model.getParameter("id");
 		String nameParam =model.getParameter("computerName");
@@ -78,7 +86,7 @@ public class EditComputerController  {
 			LOGGER.warn(e.getMessage(), e);
 		} 
 
-		model.sendRedirect("dashboard");
+		return "dashboard";
 
 	}
 

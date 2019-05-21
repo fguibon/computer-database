@@ -16,13 +16,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Computer;
-import com.excilys.model.Page;
 import com.excilys.model.Sorting;
 import com.excilys.service.ComputerService;
 
@@ -36,85 +34,67 @@ public class DashboardController {
 	private ComputerService computerService;
 	private ComputerMapper computerMapper;
 	private static final Logger LOGGER = LogManager.getLogger(DashboardController.class.getName());
-	
-	 ModelAndView dashboardPage = new ModelAndView("dashboard");
+
 
 	public DashboardController(ComputerService computerService,ComputerMapper computerMapper) {
 		this.computerService = computerService;
 		this.computerMapper = computerMapper;
 	}
-	 
-	 
-	@GetMapping("/dashboard")
-	public ModelAndView displayComputerList(Model model,
-			  @ModelAttribute("sorting") Sorting sorting) {
 
-		int limit =LIMIT;
-		int offset=CURRENT_PAGE;
-		int numberOfComputers=0;
-		
-		try {
-			numberOfComputers = computerService.count();
-		} catch (DatabaseException e) {
-			LOGGER.warn(e.getMessage(), e);
-		}
-		
-		int pageParam = sorting.getPage().getCurrentPage();
-		int noOfRecordsParam = sorting.getPage().getEntriesPerPage();
-		String stringToSearch = sorting.getFilter();
-		String fieldParam = sorting.getField();
-		String orderParam = sorting.getOrder();
-		 
-		if(noOfRecordsParam >0) limit = noOfRecordsParam;
-		if(pageParam>0) offset = pageParam;
+
+	@GetMapping({"/","/dashboard"})
+	public String displayComputerList(Model model,
+			@ModelAttribute("sorting") Sorting sorting,
+			@ModelAttribute("numberOfComputer") int numberOfComputers) {
+
+		int offset= (sorting.getPage() > 0)? sorting.getPage() : CURRENT_PAGE;
+		int limit = (sorting.getLimit() > 0)? sorting.getLimit() : LIMIT;
+		String filter = (sorting.getFilter()==null)? "":sorting.getFilter();
+		String field = (sorting.getField()==null)? "":sorting.getField();
+		String order = (sorting.getOrder()==null)? "":sorting.getOrder();
+
 		int maximumPage = (int) Math.ceil(numberOfComputers * 1.0 / limit);
-		if(offset<1) offset = CURRENT_PAGE;
-		if(offset>=maximumPage) offset = maximumPage;
-					
-		String filter = (stringToSearch==null)? "":stringToSearch;
-		String field = (fieldParam==null)? "":fieldParam;
-		String order = (orderParam==null)? "":orderParam;
-		Page page = new Page(offset,limit);
-		Sorting sortingRequested = new Sorting(field,order,filter,page);
-		List<Integer> pageList = page.getPageList(offset);
-		
+		if(offset>=maximumPage) offset =  maximumPage;
+
+		sorting.setPage(offset);
+		sorting.setLimit(limit);
+		sorting.setFilter(filter);
+		sorting.setField(field);
+		sorting.setOrder(order);
+
 		List<ComputerDTO> computersList = new ArrayList<>();
-		
 		try {
 			List<Computer> computers = computerService.findAll(sorting);
 			computersList = computers
-			.stream().map(s -> computerMapper.modelToDto(s))
-			.collect(Collectors.toList());
+					.stream().map(s -> computerMapper.modelToDto(s))
+					.collect(Collectors.toList());
 		} catch (DatabaseException e) {
 			LOGGER.warn(e.getMessage(), e);
 		}
-		
-		model.addAttribute("number", numberOfComputers);
-		model.addAttribute("computers", computersList);
-		model.addAttribute("pageList", pageList);
-		
-		model.addAttribute("sorting", sortingRequested);
-		
-		return dashboardPage;
 
+		model.addAttribute("computers", computersList);
+		model.addAttribute("pageList", sorting.getPageList(offset));
+		model.addAttribute("sorting", sorting);
+
+		return "dashboard";
 	}
 
-	@PostMapping(value="/dashboard")
-	public ModelAndView deleteComputers(@RequestParam String selection){
+	@PostMapping("/dashboard")
+	public String deleteComputers(@RequestParam String selection){
 
 		String[] computers = selection.split(",");
-		
+
 		List<Long> computersToDelete = new ArrayList<>();
 		try {
-			 if (Objects.isNull(computers)) {
-	                computersToDelete= Collections.emptyList();
-	            } else {
-	                computersToDelete = Arrays.stream(computers).map(Long::valueOf).collect(Collectors.toList());
-	            }
+			if (Objects.isNull(computers)) {
+				computersToDelete= Collections.emptyList();
+			} else {
+				computersToDelete = Arrays.stream(computers).map(Long::valueOf).collect(Collectors.toList());
+			}
 		} catch(NumberFormatException e) {
 			LOGGER.error("Could not format the ids");
 		}
-		
+
 		computersToDelete.stream().forEach(id -> {
 			try {
 				computerService.delete(id);
@@ -122,12 +102,25 @@ public class DashboardController {
 				LOGGER.warn("Invalid id");
 			}
 		});
-		return dashboardPage;
+		return "redirect:/dashboard";
 	}
-	
+
 	@ModelAttribute("sorting")
 	public Sorting getSorting() {
 		return new Sorting();
 	}
-	
+
+	@ModelAttribute("numberOfComputer")
+	public int getComputerCount(Model model) {
+		int numberOfComputers=0;
+
+		try {
+			numberOfComputers = computerService.count();
+		} catch (DatabaseException e) {
+			LOGGER.warn(e.getMessage(), e);
+		}
+		model.addAttribute("number", numberOfComputers);
+		return numberOfComputers;	
+	}
+
 }

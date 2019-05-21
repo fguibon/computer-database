@@ -105,11 +105,11 @@ public class CompanyDAO implements DataAccessObject<Company>{
 			throws DatabaseException {
 		
 		List<Company> companies = new ArrayList<>();
-		int offset = ((sorting.getPage()-1) * sorting.getEntriesPerPage());
+		int offset = ((sorting.getPage()-1) * sorting.getLimit());
 		try {
 			CompanyRowMapper rowMapper = new CompanyRowMapper();
 			companies = jdbcTemplate.query(SELECT_ALL_PAGED,
-					new Object[] {sorting.getEntriesPerPage(),offset},rowMapper);		
+					new Object[] {sorting.getLimit(),offset},rowMapper);		
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new DatabaseException("Cannot find companies with : "+sorting.toString());
