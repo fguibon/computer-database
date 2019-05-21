@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -44,7 +45,7 @@ public class EditComputerController  {
 
 
 	@GetMapping("/edit-computer")
-	public void displayForm(@RequestParam String id){
+	public String displayForm(Model model, @RequestParam String id){
 
 		ComputerDTO computer =new ComputerDTO();
 		Long idParam =(id == null || "0".equals(id) || id.isEmpty()) ? null : Long.valueOf(id);
@@ -57,23 +58,15 @@ public class EditComputerController  {
 		List<CompanyDTO> companyList = companyService.getCompanies()
 				.stream().map(s -> companyMapper.modelToDto(s)).collect(Collectors.toList());
 
-		request.setAttribute("computer", computer);
-		request.setAttribute("companies", companyList);
+		model.addAttribute("computer", computer);
+		model.addAttribute("companies", companyList);
 
+		return "editComputer";
 	}
 
 	@PostMapping("/edit-computer")
-	public String editComputer(Model model) {
+	public String editComputer(Model model, @ModelAttribute("computer") ComputerDTO computer) {
 
-		String idParam = model.getParameter("id");
-		String nameParam =model.getParameter("computerName");
-		String introducedParam = request.getParameter("introduced");
-		String discontinuedParam = request.getParameter("discontinued");
-		String companyIdParam = request.getParameter("companyId");
-
-		ComputerDTO computer =new ComputerDTO.Builder().setId(idParam).setName(nameParam)
-				.setIntroduced(introducedParam).setDiscontinued(discontinuedParam)
-				.setCompanyId(companyIdParam).build();
 		try {
 			validator.validateComputerToUpdate(computer);
 		} catch (Exception e) {
@@ -85,9 +78,12 @@ public class EditComputerController  {
 		} catch (Exception e) {
 			LOGGER.warn(e.getMessage(), e);
 		} 
-
-		return "dashboard";
-
+		return "redirect:/dashboard";
+	}
+	
+	@ModelAttribute("computer")
+	public ComputerDTO getComputer() {
+		return new ComputerDTO();
 	}
 
 }

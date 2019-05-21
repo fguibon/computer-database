@@ -67,7 +67,7 @@ public class AddComputerController {
 		} catch (Exception e) {
 			LOGGER.warn(e.getMessage(), e);
 		} 
-		return "dashboard";
+		return "redirect:/dashboard";
 
 	}
 	

@@ -113,7 +113,6 @@ public class DashboardController {
 	@ModelAttribute("numberOfComputer")
 	public int getComputerCount(Model model) {
 		int numberOfComputers=0;
-
 		try {
 			numberOfComputers = computerService.count();
 		} catch (DatabaseException e) {

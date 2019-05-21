@@ -21,33 +21,33 @@
             <div class="row">
                 <div class="col-xs-8 col-xs-offset-2 box">
                     <div class="label label-default pull-right">
-                        id: ${computer.getId()}
+                        id: ${computer.id}
                     </div>
                     <h1>Edit Computer</h1>
 
                     <form action="edit-computer" method="POST">
-                        <input type="hidden" value="${computer.getId()}" id="id" name="id"/>
+                        <input type="hidden" value="${computer.id}" id="id" name="id"/>
                         <fieldset>
                         	<legend>Computer Data</legend>
                             <div class="form-group">
                                 <label for="computerName">Computer Name</label>
-                                <input type="text" class="form-control" name="computerName" 
-                                id="computerName" placeholder="${computer.getName()}"
+                                <input type="text" class="form-control"  id="name" 
+                                name="name" placeholder="${computer.name}"
                                 pattern="^[\w'\-,.0-9][^_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~:[\]]{2,}$"
-								value="${computer.getName()}" required>
+								value="${computer.name}" required>
                             </div>
                             <div class="form-group">
                                 <label for="introduced">Introduced date</label>
-                                <input type="date" class="form-control" name="introduced" 
-                                id="introduced" placeholder="${computer.getIntroduced()}"
-                                min="1970-12-12" value="${computer.getIntroduced()}"
+                                <input type="date" class="form-control" id="introduced" 
+                                name="introduced"  placeholder="${computer.introduced}"
+                                min="1970-12-12" value="${computer.introduced}"
 								pattern="(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}">
                             </div>
                             <div class="form-group">
                                 <label for="discontinued">Discontinued date</label>
-                                <input type="date" class="form-control" name="discontinued" 
-                                id="discontinued" placeholder="${computer.getDiscontinued()}"
-                                min="1970-12-12" value="${computer.getDiscontinued()}"
+                                <input type="date" class="form-control" id="discontinued" 
+                                name="discontinued"  placeholder="${computer.discontinued}"
+                                min="1970-12-12" value="${computer.discontinued}"
 								pattern="(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}">
                             </div>
                             <div class="form-group">
@@ -55,8 +55,8 @@
                                 <select class="form-control" id="companyId" name="companyId">
 									<option value="">None</option>
 									<c:forEach items="${companies}" var="company">
-										<option value="${company.getId()}" 
-										${computer.getCompanyId()==company.getId()?"selected='selected'":""}>${company.getName()}</option>   
+										<option value="${company.id}" 
+										${computer.companyId==company.id?"selected='selected'":""}>${company.name}</option>   
 									</c:forEach>
 								</select>
                             </div>            
