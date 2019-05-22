@@ -7,38 +7,53 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
+import com.excilys.binding.mapper.CompanyMapper;
 import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Computer;
 import com.excilys.model.Sorting;
+import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
+import com.excilys.validator.Validator;
 
 @Controller	
 @SessionAttributes("sorting")
-public class DashboardController {
+public class ComputerController {
 
 	private static final int LIMIT=10;
 	private static final int CURRENT_PAGE=1;
+	private static final String REDIRECT_HOME="redirect:/dashboard";
 
 	private ComputerService computerService;
 	private ComputerMapper computerMapper;
-	private static final Logger LOGGER = LogManager.getLogger(DashboardController.class.getName());
+	private final CompanyService companyService;
+	private final CompanyMapper companyMapper;
+	private final Validator validator;
+	private static final Logger LOGGER = LogManager.getLogger(ComputerController.class.getName());
 
 
-	public DashboardController(ComputerService computerService,ComputerMapper computerMapper) {
+	public ComputerController(ComputerService computerService,CompanyService companyService,
+			ComputerMapper computerMapper, CompanyMapper companyMapper, Validator validator) {
 		this.computerService = computerService;
+		this.companyService = companyService;
 		this.computerMapper = computerMapper;
+		this.companyMapper = companyMapper;
+		this.validator = validator;
 	}
 
 
@@ -79,6 +94,7 @@ public class DashboardController {
 		return "dashboard";
 	}
 
+	
 	@PostMapping("/dashboard")
 	public String deleteComputers(@RequestParam String selection){
 
@@ -102,14 +118,93 @@ public class DashboardController {
 				LOGGER.warn("Invalid id");
 			}
 		});
-		return "redirect:/dashboard";
+		return REDIRECT_HOME;
 	}
+	
+	
+	@GetMapping("/add-computer")
+	public String displayForm(Model model) {
+
+		List<CompanyDTO> companyList = companyService.getCompanies()
+				.stream().map(s -> companyMapper.modelToDto(s))
+				.collect(Collectors.toList());
+		model.addAttribute("companies", companyList);
+		
+		return "addComputer";
+	}
+
+	@PostMapping("/add-computer")
+	public String addComputer(Model model,@Valid @ModelAttribute("computer") ComputerDTO computer, 
+			BindingResult result){
+
+		if (result.hasErrors()) {
+		        return "redirect:/errors";
+		}
+		try {
+			validator.validateComputerToCreate(computer);
+		} catch (Exception e) {
+			LOGGER.warn(e.getMessage(), e);
+		}
+
+		try {
+			computerService.createComputer(computerMapper.dtoToModel(computer));
+		} catch (Exception e) {
+			LOGGER.warn(e.getMessage(), e);
+		} 
+		return REDIRECT_HOME;
+	}
+	
+	@GetMapping("/edit-computer")
+	public String displayForm(Model model, @RequestParam String id){
+
+		ComputerDTO computer =new ComputerDTO();
+		Long idParam =(id == null || "0".equals(id) || id.isEmpty()) ? null : Long.valueOf(id);
+		try {
+			computer = computerMapper.modelToDto(computerService.findById(idParam));
+		} catch (DatabaseException e) {
+			LOGGER.warn(e.getMessage(), e);
+		}	
+
+		List<CompanyDTO> companyList = companyService.getCompanies()
+				.stream().map(s -> companyMapper.modelToDto(s)).collect(Collectors.toList());
+
+		model.addAttribute("computer", computer);
+		model.addAttribute("companies", companyList);
+
+		return "editComputer";
+	}
+
+	
+	@PostMapping("/edit-computer")
+	public String editComputer(Model model, @ModelAttribute("computer") ComputerDTO computer) {
+
+		try {
+			validator.validateComputerToUpdate(computer);
+		} catch (Exception e) {
+			LOGGER.warn(e.getMessage(), e);
+		}
+
+		try {
+			computerService.update(computerMapper.dtoToModel(computer));
+		} catch (Exception e) {
+			LOGGER.warn(e.getMessage(), e);
+		} 
+		return REDIRECT_HOME;
+	}
+	
+	
+	@ModelAttribute("computer")
+	public ComputerDTO getComputer() {
+		return new ComputerDTO();
+	}
+
 
 	@ModelAttribute("sorting")
 	public Sorting getSorting() {
 		return new Sorting();
 	}
 
+	
 	@ModelAttribute("numberOfComputer")
 	public int getComputerCount(Model model) {
 		int numberOfComputers=0;
