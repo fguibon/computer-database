@@ -47,16 +47,16 @@ public class DashboardController {
 			@ModelAttribute("sorting") Sorting sorting,
 			@ModelAttribute("numberOfComputer") int numberOfComputers) {
 
-		int offset= (sorting.getPage() > 0)? sorting.getPage() : CURRENT_PAGE;
+		int page = (sorting.getPage() > 0)? sorting.getPage() : CURRENT_PAGE;
 		int limit = (sorting.getLimit() > 0)? sorting.getLimit() : LIMIT;
 		String filter = (sorting.getFilter()==null)? "":sorting.getFilter();
 		String field = (sorting.getField()==null)? "":sorting.getField();
 		String order = (sorting.getOrder()==null)? "":sorting.getOrder();
 
 		int maximumPage = (int) Math.ceil(numberOfComputers * 1.0 / limit);
-		if(offset>=maximumPage) offset =  maximumPage;
+		if(page>=maximumPage) page =  maximumPage;
 
-		sorting.setPage(offset);
+		sorting.setPage(page);
 		sorting.setLimit(limit);
 		sorting.setFilter(filter);
 		sorting.setField(field);
@@ -73,7 +73,7 @@ public class DashboardController {
 		}
 
 		model.addAttribute("computers", computersList);
-		model.addAttribute("pageList", sorting.getPageList(offset));
+		model.addAttribute("pageList", sorting.getPageList(page));
 		model.addAttribute("sorting", sorting);
 
 		return "dashboard";

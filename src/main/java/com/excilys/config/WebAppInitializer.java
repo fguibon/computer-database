@@ -24,6 +24,8 @@ public class WebAppInitializer implements WebApplicationInitializer {
 				new AnnotationConfigWebApplicationContext();
 		webContext.register(AppConfig.class);
 		webContext.setServletContext(context);
+		webContext.refresh();
+		
 		context.addListener(new ContextLoaderListener(webContext));
 		
 		ServletRegistration.Dynamic servlet = context.addServlet("cdbapp", new DispatcherServlet(webContext));

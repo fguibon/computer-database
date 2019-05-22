@@ -1,7 +1,6 @@
 package com.excilys.test.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,9 +53,10 @@ public class ComputerServiceTest {
 		Mockito.when(daoMock.findById(1L)).thenReturn(computerTest);
 		Mockito.when(daoMock.findAllPaged(sorting)).thenReturn(computers);
 		Mockito.when(daoMock.update(computerTest)).thenReturn(1);
+		Mockito.when(daoMock.delete(1L)).thenReturn(1);
 		Mockito.when(daoMock.count()).thenReturn(10);
 		
-		Mockito.doThrow(DatabaseException.class).when(daoMock).delete(1L);
+		Mockito.doThrow(DatabaseException.class).when(daoMock).delete(0L);
 		Mockito.when(daoMock.count()).thenReturn(10);
 	}
 	
@@ -83,12 +83,17 @@ public class ComputerServiceTest {
 	
 	@Test(expected = DatabaseException.class)
 	public void deleteExpectExceptionTest() throws Exception {
-		computerService.delete(1L);
+		computerService.delete(0L);
+	}
+	
+	public void deleteTest() throws Exception {
+		int number = computerService.delete(1L);
+		assertEquals(1,number);
 	}
 	
 	@Test
 	public void countTest() throws DatabaseException {
-		assertSame(10,computerService.count());
+		assertEquals(10,computerService.count());
 	}
 
 }
