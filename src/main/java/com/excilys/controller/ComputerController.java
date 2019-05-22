@@ -8,12 +8,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +29,6 @@ import com.excilys.model.Computer;
 import com.excilys.model.Sorting;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
-import com.excilys.validator.Validator;
 
 @Controller	
 @SessionAttributes("sorting")
@@ -43,17 +42,15 @@ public class ComputerController {
 	private ComputerMapper computerMapper;
 	private final CompanyService companyService;
 	private final CompanyMapper companyMapper;
-	private final Validator validator;
 	private static final Logger LOGGER = LogManager.getLogger(ComputerController.class.getName());
 
 
 	public ComputerController(ComputerService computerService,CompanyService companyService,
-			ComputerMapper computerMapper, CompanyMapper companyMapper, Validator validator) {
+			ComputerMapper computerMapper, CompanyMapper companyMapper) {
 		this.computerService = computerService;
 		this.companyService = companyService;
 		this.computerMapper = computerMapper;
 		this.companyMapper = companyMapper;
-		this.validator = validator;
 	}
 
 
@@ -123,28 +120,13 @@ public class ComputerController {
 	
 	
 	@GetMapping("/add-computer")
-	public String displayForm(Model model) {
-
-		List<CompanyDTO> companyList = companyService.getCompanies()
-				.stream().map(s -> companyMapper.modelToDto(s))
-				.collect(Collectors.toList());
-		model.addAttribute("companies", companyList);
-		
+	public String displayForm() {	
 		return "addComputer";
 	}
 
+	
 	@PostMapping("/add-computer")
-	public String addComputer(Model model,@Valid @ModelAttribute("computer") ComputerDTO computer, 
-			BindingResult result){
-
-		if (result.hasErrors()) {
-		        return "redirect:/errors";
-		}
-		try {
-			validator.validateComputerToCreate(computer);
-		} catch (Exception e) {
-			LOGGER.warn(e.getMessage(), e);
-		}
+	public String addComputer(Model model,@Valid @ModelAttribute("computer") ComputerDTO computer){
 
 		try {
 			computerService.createComputer(computerMapper.dtoToModel(computer));
@@ -155,7 +137,7 @@ public class ComputerController {
 	}
 	
 	@GetMapping("/edit-computer")
-	public String displayForm(Model model, @RequestParam String id){
+	public String displayForm(Model model, @RequestParam @Positive String id){
 
 		ComputerDTO computer =new ComputerDTO();
 		Long idParam =(id == null || "0".equals(id) || id.isEmpty()) ? null : Long.valueOf(id);
@@ -164,25 +146,14 @@ public class ComputerController {
 		} catch (DatabaseException e) {
 			LOGGER.warn(e.getMessage(), e);
 		}	
-
-		List<CompanyDTO> companyList = companyService.getCompanies()
-				.stream().map(s -> companyMapper.modelToDto(s)).collect(Collectors.toList());
-
 		model.addAttribute("computer", computer);
-		model.addAttribute("companies", companyList);
-
+		
 		return "editComputer";
 	}
 
 	
 	@PostMapping("/edit-computer")
-	public String editComputer(Model model, @ModelAttribute("computer") ComputerDTO computer) {
-
-		try {
-			validator.validateComputerToUpdate(computer);
-		} catch (Exception e) {
-			LOGGER.warn(e.getMessage(), e);
-		}
+	public String editComputer(Model model, @Valid @ModelAttribute("computer") ComputerDTO computer) {
 
 		try {
 			computerService.update(computerMapper.dtoToModel(computer));
@@ -215,6 +186,14 @@ public class ComputerController {
 		}
 		model.addAttribute("number", numberOfComputers);
 		return numberOfComputers;	
+	}
+	
+	@ModelAttribute("companyList")
+	public List<CompanyDTO> getCompanyList(Model model){
+		List<CompanyDTO> companyList = companyService.getCompanies()
+				.stream().map(s -> companyMapper.modelToDto(s)).collect(Collectors.toList());
+		model.addAttribute("companies", companyList);
+		return companyList;
 	}
 
 }

@@ -31,7 +31,7 @@ public class ErrorController {
                 errorMsg = "Http Error Code: 500. Internal Server Error";
                 break;
             default : 
-            	errorMsg = "Unhandled Error";
+            	errorMsg = "Unknown Http Error Code";
             	break;
         }
         errorPage.addObject("errorMsg", errorMsg);
