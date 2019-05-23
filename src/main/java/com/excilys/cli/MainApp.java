@@ -1,13 +1,12 @@
 
-package com.excilys.app;
+package com.excilys.cli;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
-import com.excilys.config.AppConfig;
-import com.excilys.controller.CLIController;
+import com.excilys.config.RootConfig;
 
 public class MainApp {
 
@@ -17,7 +16,7 @@ public class MainApp {
 	public static void main(String[] args) {
 		
 		AbstractApplicationContext context = 
-				new AnnotationConfigApplicationContext(AppConfig.class);
+				new AnnotationConfigApplicationContext(RootConfig.class);
 		
 		try {
 			LOGGER.info("App started");

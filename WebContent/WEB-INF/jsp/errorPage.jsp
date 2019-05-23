@@ -1,12 +1,14 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html; charset=UTF-8" session="false"%>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Computer Database</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="../css/font-awesome.css" rel="stylesheet" media="screen">
-    <link href="../css/main.css" rel="stylesheet" media="screen">
+    <link href="static/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="static/css/font-awesome.css" rel="stylesheet" media="screen">
+    <link href="static/css/main.css" rel="stylesheet" media="screen">
 </head>
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
@@ -18,9 +20,8 @@
     <section id="main">
         <div class="container">
             <div class="alert alert-danger">
-                Error 404: Page not found. I want my elephants!
+                ${errorMsg} 
                 <br/>
-                <!-- stacktrace -->
             </div>
         </div>
     </section>

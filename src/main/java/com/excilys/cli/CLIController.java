@@ -1,4 +1,4 @@
-package com.excilys.controller;
+package com.excilys.cli;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +14,9 @@ import com.excilys.exceptions.DateParseException;
 import com.excilys.exceptions.MappingException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
-import com.excilys.model.Page;
 import com.excilys.model.Sorting;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
-import com.excilys.view.CLIView;
 
 @Component
 public class CLIController {
@@ -26,7 +24,6 @@ public class CLIController {
 	private static final int LIMIT=10;
 	private static final int CURRENT_PAGE=1;
 	
-	private Page page;
 	private Sorting sorting;
 	private CLIView view;
 	private CompanyService companyService;
@@ -39,8 +36,7 @@ public class CLIController {
 			ComputerService computerService,
 			ComputerMapper computerMapper,
 			CompanyMapper companyMapper){
-		page = new Page(LIMIT,CURRENT_PAGE);
-		sorting = new Sorting("id","asc");
+		sorting = new Sorting(LIMIT,CURRENT_PAGE,"id","asc","");
 		view = new CLIView(System.in);
 		this.companyService = companyService;
 		this.computerService = computerService;
@@ -82,6 +78,9 @@ public class CLIController {
 				case 6:
 					deleteComputer();
 					break;
+				case 7:
+					deleteCompany();
+					break;
 				default:
 					view.notifyInvalidNumber();
 					break;
@@ -98,17 +97,18 @@ public class CLIController {
 	public void listComputers() throws DatabaseException {
 		int currentPage =1;
 		boolean ok=true;
-		page.setCurrentPage(currentPage);
-		page.setEntriesPerPage(LIMIT);
-		List<ComputerDTO> computersDTO = new ArrayList<>();
-		List<Computer> computers = this.computerService.findAll(page,"",sorting);
+		sorting.setPage(currentPage);
+		sorting.setLimit(LIMIT);
 		while(ok) {
+			List<ComputerDTO> computersDTO = new ArrayList<>();
+			List<Computer> computers = this.computerService.findAll(sorting);
 			for(Computer c:computers) {
 				computersDTO.add(computerMapper.modelToDto(c));
 			}
 			if(computers.isEmpty())	ok=false;
-			page.setCurrentPage(currentPage++);
-			this.view.displayComputers(computersDTO,page);
+			this.view.displayComputers(computersDTO,sorting);
+			currentPage+=1;
+			sorting.setPage(currentPage);
 		}
 	}
 	
@@ -169,9 +169,17 @@ public class CLIController {
 	 */
 	public void deleteComputer() throws DatabaseException {
 		Long id = null;
-		id = this.queryComputerToDelete();
+		id = this.queryEntryToDelete();
 		if(id!=null) {
 			this.computerService.delete(id);	
+		}
+	}
+	
+	public void deleteCompany() {
+		Long id = null;
+		id = this.queryEntryToDelete();
+		if(id!=null) {
+			if(this.companyService.delete(id)==1) view.notifySuccess();
 		}
 	}
 	
@@ -214,7 +222,7 @@ public class CLIController {
 	 * Asks for an id
 	 * @return the id
 	 */
-	public Long queryComputerToDelete() {
+	public Long queryEntryToDelete() {
 		return view.queryId();
 	}
 

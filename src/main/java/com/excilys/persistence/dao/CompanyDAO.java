@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -14,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
-import com.excilys.model.Page;
+import com.excilys.model.Sorting;
 import com.excilys.persistence.rowmapper.CompanyRowMapper;
 
 /**
@@ -42,17 +41,14 @@ public class CompanyDAO implements DataAccessObject<Company>{
 			"UPDATE company SET name= ? WHERE id= ? ;";
 	
 	private static final String DELETE_COMPANY=
-			"DELETE FROM company WHERE id= ? ;";
-	
-	private static final String DELETE_COMPUTER_WHERE=
-			"DELETE FROM computer where company_id = ? ;";
+			"DELETE FROM company WHERE id=? ;";
 	
 	private static final String SELECT_ALL_PAGED =
 			"SELECT id,name FROM company "
 			+ " LIMIT ? OFFSET ? ;";
 	
-	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
 	
 	public CompanyDAO(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
@@ -67,8 +63,7 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	public int create(Company company) throws DatabaseException {
 		int number = 0;
 		try {
-			 number = jdbcTemplate.update(INSERT,company.getName());
-				
+			 number = jdbcTemplate.update(INSERT,company.getName());	
 		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new DatabaseException("Cannot insert company : "+ company.toString());
@@ -102,18 +97,18 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	 * @return
 	 * @throws DatabaseException 
 	 */
-	public List<Company> findAllPaged(Page page) 
+	public List<Company> findAllPaged(Sorting sorting) 
 			throws DatabaseException {
 		
 		List<Company> companies = new ArrayList<>();
-		int offset = ((page.getCurrentPage()-1) * page.getEntriesPerPage());
+		int offset = ((sorting.getPage()-1) * sorting.getLimit());
 		try {
 			CompanyRowMapper rowMapper = new CompanyRowMapper();
 			companies = jdbcTemplate.query(SELECT_ALL_PAGED,
-					new Object[] {page.getEntriesPerPage(),offset},rowMapper);		
+					new Object[] {sorting.getLimit(),offset},rowMapper);		
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage(),e);
-			throw new DatabaseException("Cannot find companies with : "+page.toString());
+			throw new DatabaseException("Cannot find companies with : "+sorting.toString());
 		} 
 		return companies;
 	}
@@ -156,7 +151,7 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	}
 
 	/**
-	 * Deletes a company record and all computers associated
+	 * Deletes a company record
 	 * @throws DatabaseException 
 	 * 
 	 */
@@ -164,41 +159,13 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	@Transactional
 	public int delete(Long id) throws DatabaseException {
 		int number = 0;
-		try {	
-			deleteComputerWhere(id);
-			deleteCompany(id);
+		try {			
+			number = jdbcTemplate.update(DELETE_COMPANY, id);
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not remove the company of id : ");
 		}		
 		return number; 
-	}
-	
-	@Transactional
-	public int deleteComputerWhere(Long id) throws DatabaseException {
-		int number = 0; 
-		try {
-		jdbcTemplate.update(DELETE_COMPUTER_WHERE, id);
-		} catch (DataAccessException e) {
-			LOGGER.error("Query error : "+ e.getMessage());
-			throw new DatabaseException("Could not remove the computer of id : "+id);
-		}
-		return number;
-	}
-	
-	@Transactional
-	public int deleteCompany(Long id) throws DatabaseException {
-		int number = 0; 
-		try {
-		jdbcTemplate.update(DELETE_COMPANY, id);
-		} catch (DataAccessException e) {
-			LOGGER.error("Query error : "+ e.getMessage());
-			throw new DatabaseException("Could not remove the company of id : "+id);
-		}
-		return number;
-	}
-	
-	
-	
+	}	
 
 }

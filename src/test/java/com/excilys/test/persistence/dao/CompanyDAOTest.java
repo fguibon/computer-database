@@ -1,8 +1,6 @@
 package com.excilys.test.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +16,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
-import com.excilys.model.Page;
+import com.excilys.model.Sorting;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.test.ScriptExecuter;
 import com.excilys.test.config.TestConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
@@ -29,25 +28,25 @@ import com.excilys.test.config.TestConfig;
 public class CompanyDAOTest {
 	
 	private CompanyDAO companyDAO;
-	
-	@Autowired
 	private ScriptExecuter executer;
 	
-	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	
+	private HikariDataSource dataSource;
+
 	private Company companyTest;
 	private List<Company> companies;
-	private Page page;
+	private Sorting sorting;
+	
 	
 	@Before
 	public void setUp() throws Exception {
+		executer = new ScriptExecuter(dataSource);
 		executer.reload();
 		
 		companyDAO = new CompanyDAO(jdbcTemplate);
 		
 		companies = new ArrayList<Company>();
-		page = new Page(1, 5);
+		sorting = new Sorting(1, 5,"","","");
 		
 		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
 		companies.add(companyTest);
@@ -72,7 +71,7 @@ public class CompanyDAOTest {
 	
 	@Test
 	public void findAllPagedTest() throws DatabaseException {	
-		assertEquals("Expected same company lists",companies, companyDAO.findAllPaged(page));
+		assertEquals("Expected same company lists",companies, companyDAO.findAllPaged(sorting));
 	}
 	
 	@Test
@@ -86,13 +85,14 @@ public class CompanyDAOTest {
 		assertEquals("Expected same companies",companyTest, companyDAO.findById(1L));
 	}
 	
-	@Test
-	public void deleteTest() throws DatabaseException {
-		Long id = 2L;
-		assertNotNull("Expected company not null",companyDAO.findById(id));
-		companyDAO.delete(id);
-		assertNull("Expected company null",companyDAO.findById(id).getId());
-		assertNull("Expected company null",companyDAO.findById(id).getName());
+	@Autowired
+	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
+	
+	@Autowired
+	public void setDataSource(HikariDataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 
 }

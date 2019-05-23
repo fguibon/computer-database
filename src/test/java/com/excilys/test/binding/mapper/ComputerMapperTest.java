@@ -35,7 +35,6 @@ public class ComputerMapperTest {
 	private String sDate = "2014-04-05";
 	private LocalDate lDate = LocalDate.of(2014, 4, 5);
 
-	@Autowired
 	private CompanyDAO daoMock;	
 
 	@Before
@@ -81,6 +80,11 @@ public class ComputerMapperTest {
 	@Test
 	public void castStringTest() {
 		assertEquals("Expected same dates",sDate, computerMapper.castString(lDate));
+	}
+
+	@Autowired
+	public void setDaoMock(CompanyDAO daoMock) {
+		this.daoMock = daoMock;
 	}
 
 

@@ -2,13 +2,14 @@ package com.excilys.test.config;
 
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 
 import com.excilys.binding.mapper.CompanyMapper;
 import com.excilys.binding.mapper.ComputerMapper;
-import com.excilys.config.AppConfig;
+import com.excilys.config.RootConfig;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.persistence.dao.ComputerDAO;
 import com.excilys.service.CompanyService;
@@ -18,7 +19,8 @@ import com.excilys.validator.Validator;
 
 @Profile("test")
 @Configuration
-@Import(AppConfig.class)
+@ComponentScan("com.excilys.test")
+@Import(RootConfig.class)
 public class TestConfig {
 	
 	@Bean

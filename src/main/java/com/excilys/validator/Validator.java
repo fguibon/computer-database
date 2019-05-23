@@ -24,6 +24,8 @@ public class Validator {
 		      + "|^(((19|2[0-9])[0-9]{2})-02-(0[1-9]|1[0-9]|2[0-8]))$"
 		      + "|^(((19|2[0-9])[0-9]{2})-(0[13578]|10|12)-(0[1-9]|[12][0-9]|3[01]))$"
 		      + "|^(((19|2[0-9])[0-9]{2})-(0[469]|11)-(0[1-9]|[12][0-9]|30))$");
+	private static final Pattern NAME_PATTERN = 
+			Pattern.compile("^[\\w-,.0-9][^_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~:]{2,}$");
 	
 	public Validator(ComputerMapper computerMapper) {
 		this.computerMapper = computerMapper;
@@ -63,9 +65,9 @@ public class Validator {
 	private void isValidName(String name) throws NameValidationException {
 		boolean valid = false;
 		if(name!=null && name.length()>2 
-				&& Pattern.matches("^[\\w-,.0-9][^_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~:]{2,}$",name)) valid =true;
+				&& NAME_PATTERN.matcher(name).matches()) valid =true;
 		if(!valid) {
-			throw new NameValidationException("Invalid name");
+			throw new NameValidationException("Invalid name : "+name);
 		}
 	}
 	

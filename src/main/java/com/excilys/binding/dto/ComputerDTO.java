@@ -2,13 +2,36 @@ package com.excilys.binding.dto;
 
 import java.util.Objects;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
+import com.excilys.validator.CompareDates;
+
+@CompareDates(firstDate = "introducedDate", secondDate = "discontinuedDate")
 public class ComputerDTO {
 
+	
+	private static final String DATE_PATTERN = "^((2000|2400|2800|(19|2[0-9](0[48]|[2468][048]|[13579][26])))-02-29)$"
+		      + "|^(((19|2[0-9])[0-9]{2})-02-(0[1-9]|1[0-9]|2[0-8]))$"
+		      + "|^(((19|2[0-9])[0-9]{2})-(0[13578]|10|12)-(0[1-9]|[12][0-9]|3[01]))$"
+		      + "|^(((19|2[0-9])[0-9]{2})-(0[469]|11)-(0[1-9]|[12][0-9]|30))$";
+	private static final String NAME_PATTERN = "^[\\w-,.0-9][^_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~:]{2,}$";
+	
+
 	private String id;
+	
+	@NotBlank( message = "Name must not null")
+	@Pattern(regexp= NAME_PATTERN)
 	private String name;
+	
+	@Pattern(regexp= DATE_PATTERN)
 	private String introducedDate;
+	
+	@Pattern(regexp= DATE_PATTERN)
 	private String discontinuedDate;
+	
 	private String companyId;
+	
 	private String companyName;
 
 
@@ -46,6 +69,9 @@ public class ComputerDTO {
 	 * @param introduced the introduced to set
 	 */
 	public void setIntroduced(String introduced) {
+		if (introduced!= null && introduced.isEmpty()) {
+			introduced = null;
+		}
 		this.introducedDate = introduced;
 	}
 	/**
@@ -58,6 +84,9 @@ public class ComputerDTO {
 	 * @param discontinued the discontinued to set
 	 */
 	public void setDiscontinued(String discontinued) {
+		if (discontinued!= null && discontinued.isEmpty()) {
+			discontinued = null;
+		}
 		this.discontinuedDate = discontinued;
 	}
 	/**

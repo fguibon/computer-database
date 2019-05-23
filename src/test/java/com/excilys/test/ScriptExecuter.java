@@ -8,16 +8,12 @@ import java.sql.Statement;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.excilys.exceptions.DatabaseException;
 import com.zaxxer.hikari.HikariDataSource;
 
-@Component
+
 public class ScriptExecuter {
 
-	@Autowired
 	private HikariDataSource dataSource;
 	
 	public ScriptExecuter(HikariDataSource dataSource) {

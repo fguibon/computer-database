@@ -1,50 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="http://java.sun.com/xml/ns/javaee"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	version="2.5">
-	
-	<welcome-file-list>
-		<welcome-file>dashboard</welcome-file>
-	</welcome-file-list>
-
-	<servlet>
-		<servlet-name>DashboardServlet</servlet-name>
-		<servlet-class>com.excilys.servlet.DashboardServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DashboardServlet</servlet-name>
-		<url-pattern>/dashboard</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>AddComputerServlet</servlet-name>
-		<servlet-class>com.excilys.servlet.AddComputerServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>AddComputerServlet</servlet-name>
-		<url-pattern>/add-computer</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
-		<servlet-name>EditComputerServlet</servlet-name>
-		<servlet-class>com.excilys.servlet.EditComputerServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>EditComputerServlet</servlet-name>
-		<url-pattern>/edit-computer</url-pattern>
-	</servlet-mapping>
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	version="3.0">
 
 	<error-page>
-		<error-code>404</error-code>
-		<location>/static/views/404.html</location>
-	</error-page>
-	<error-page>
-		<error-code>403</error-code>
-		<location>/static/views/403.html</location>
-	</error-page>
-	<error-page>
-		<error-code>500</error-code>
-		<location>/static/views/500.html</location>
+    	<location>/errors</location>
 	</error-page>
 </web-app>

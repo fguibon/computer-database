@@ -23,7 +23,9 @@
 		<servletApiVersion>4.0.1</servletApiVersion>
 		<hikariVersion>3.3.1</hikariVersion>
 		<springVersion>5.1.7.RELEASE</springVersion>
-
+		<javaValidationVersion>2.0.1.Final</javaValidationVersion>
+		<hibernateValidatorVersion>6.0.16.Final</hibernateValidatorVersion>
+		
 		<mavenCompilerVersion>3.7.0</mavenCompilerVersion>
 		<mavenWarVersion>3.2.1</mavenWarVersion>
 		<mavenCheckstyleVersion>3.0.0</mavenCheckstyleVersion>
@@ -96,15 +98,25 @@
 			<version>${springVersion}</version>
 		</dependency>
 		<dependency>
-    		<groupId>org.springframework</groupId>
-    		<artifactId>spring-test</artifactId>
-    		<version>${springVersion}</version>
-    		<scope>test</scope>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${springVersion}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-    		<groupId>org.springframework</groupId>
-    		<artifactId>spring-jdbc</artifactId>
-    		<version>${springVersion}</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${springVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>${javaValidationVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernateValidatorVersion}</version>
 		</dependency>
 
 	</dependencies>

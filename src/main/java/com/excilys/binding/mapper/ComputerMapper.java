@@ -31,13 +31,13 @@ public class ComputerMapper {
 		try {
 			computer.setIntroduced(castLocalDate(computerDTO.getIntroduced()));
 		} catch (DateParseException e1) {
-			LOGGER.error(e1.getMessage(), e1);
+			LOGGER.warn(e1.getMessage());
 			throw new DateParseException("Failed to parse date");
 		}
 		try {
 			computer.setDiscontinued(castLocalDate(computerDTO.getDiscontinued()));
 		} catch (DateParseException e1) {
-			LOGGER.error(e1.getMessage(), e1);
+			LOGGER.warn(e1.getMessage());
 			throw new DateParseException("Failed to parse date");
 		}
 

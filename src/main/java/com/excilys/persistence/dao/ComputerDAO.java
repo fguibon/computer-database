@@ -9,9 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Computer;
-import com.excilys.model.Page;
 import com.excilys.model.Sorting;
 import com.excilys.persistence.rowmapper.ComputerRowMapper;
 
@@ -57,6 +58,9 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 
 	private static final String DELETE=
 			"DELETE FROM computer WHERE id=?;";
+	
+	private static final String DELETE_COMPUTER_WHERE=
+			"DELETE FROM computer where company_id =? ;";
 
 
 	private static final String COUNT = 
@@ -116,14 +120,15 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 * @return
 	 * @throws Exception 
 	 */
-	public List<Computer> findAllPaged(Page page, String filter, Sorting sorting) throws DatabaseException {
+	public List<Computer> findAllPaged(Sorting sorting) throws DatabaseException {
 		List<Computer> computers = new ArrayList<>();	
-		int offset = ((page.getCurrentPage()-1) * page.getEntriesPerPage());
+		int offset = ((sorting.getPage()-1) * sorting.getLimit());
 		String sql = getSortingQuerySQL(sorting.getField(), sorting.getOrder());
 		try {
 			ComputerRowMapper rowMapper = new ComputerRowMapper();
 			computers = jdbcTemplate.query(sql,
-					new Object[] {"%"+filter +"%",page.getEntriesPerPage(),offset},rowMapper);
+					new Object[] {"%"+sorting.getFilter() +"%",
+							sorting.getLimit(),offset},rowMapper);
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the computers");
@@ -185,6 +190,25 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 		return number;	
 	}
 
+	/**
+	 * Delete all computers associated with the id given.
+	 * @param id
+	 * @return
+	 * @throws DatabaseException
+	 */
+	@Transactional
+	public int deleteComputerWhere(Long id) throws DatabaseException {
+		int number = 0; 
+		try {
+		jdbcTemplate.update(DELETE_COMPUTER_WHERE, id);
+		} catch (DataAccessException e) {
+			LOGGER.error("Query error : "+ e.getMessage());
+			throw new DatabaseException("Could not remove the computer of id : "+id);
+		}
+		return number;
+	}
+	
+	
 	/**
 	 * Get the computers total count
 	 * @return the total number 
