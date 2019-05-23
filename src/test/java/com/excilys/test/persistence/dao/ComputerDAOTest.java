@@ -1,8 +1,6 @@
 package com.excilys.test.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 import java.time.LocalDate;
@@ -25,6 +23,7 @@ import com.excilys.model.Sorting;
 import com.excilys.persistence.dao.ComputerDAO;
 import com.excilys.test.ScriptExecuter;
 import com.excilys.test.config.TestConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
@@ -33,20 +32,20 @@ public class ComputerDAOTest {
 
 	private ComputerDAO computerDAO;
 	
-	@Autowired
 	private ScriptExecuter executer;
-	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
 	
 	private List<Computer> computers;
 	private Company companyTest;
 	private Company companyTest2;
 	private Computer computerTest;
 	private Sorting sorting;
+
+	private HikariDataSource dataSource;
+	private JdbcTemplate jdbcTemplate;
 	
 	@Before
 	public void setUp() throws Exception {
+		executer = new ScriptExecuter(dataSource);
 		executer.reload();
 		
 		computerDAO = new ComputerDAO(jdbcTemplate);
@@ -111,17 +110,18 @@ public class ComputerDAOTest {
 	}
 	
 	@Test
-	public void deleteTest() throws DatabaseException {
-		Long id = 11L;
-		computerDAO.create(computerTest);
-		assertNotNull(computerDAO.findById(id));
-		computerDAO.delete(id);
-		assertNull("Object should be null",computerDAO.findById(id).getId());
-	}
-	
-	@Test
 	public void countTest() throws DatabaseException {
 		assertSame(10,computerDAO.count());
+	}
+
+	@Autowired
+	public void setDataSource(HikariDataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	@Autowired
+	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
 	}
 	
 }

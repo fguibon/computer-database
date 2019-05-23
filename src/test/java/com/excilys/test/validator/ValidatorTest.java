@@ -31,9 +31,7 @@ public class ValidatorTest {
 	private String introduced;
 	private String discontinued;
 	
-	@Autowired
-	private ComputerMapper computerMapperMock;
-		
+	private ComputerMapper computerMapperMock;	
 	
 	@Before
 	public void setUp() throws DateParseException {
@@ -114,5 +112,10 @@ public class ValidatorTest {
 		validator.validateCompany(companyDto);
 		companyDto.setId("");
 		validator.validateCompany(companyDto);
+	}
+
+	@Autowired
+	public void setComputerMapperMock(ComputerMapper computerMapperMock) {
+		this.computerMapperMock = computerMapperMock;
 	}
 }

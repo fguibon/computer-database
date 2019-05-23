@@ -11,6 +11,7 @@ import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.model.Sorting;
 import com.excilys.persistence.dao.CompanyDAO;
+import com.excilys.persistence.dao.ComputerDAO;
 
 @Service
 public class CompanyService {
@@ -18,9 +19,11 @@ public class CompanyService {
 	private static final Logger LOGGER = LogManager.getLogger(CompanyService.class);
 	
 	private CompanyDAO companyDAO;
+	private ComputerDAO computerDAO;
 	
-	public CompanyService(CompanyDAO companyDAO) {
+	public CompanyService(CompanyDAO companyDAO, ComputerDAO computerDAO) {
 		this.companyDAO = companyDAO;
+		this.computerDAO = computerDAO;
 	}	
 	
 	
@@ -53,6 +56,17 @@ public class CompanyService {
 			LOGGER.error("Query error : "+ e.getMessage());
 		}
 		return company;
+	}
+	
+	public int delete(Long id) {
+		int number=0;
+		try {
+			computerDAO.deleteComputerWhere(id);
+			number = companyDAO.delete(id);
+		} catch (DatabaseException e) {
+			LOGGER.error(e.getMessage());
+		}
+		return number;
 	}
 	 
 }

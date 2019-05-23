@@ -12,7 +12,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @ComponentScan({"com.excilys.binding.mapper","com.excilys.persistence.dao",
-	"com.excilys.service","com.excilys.validator"})
+	"com.excilys.service","com.excilys.validator","com.excilys.cli"})
 public class RootConfig {
 
 	static {TimeZone.setDefault(TimeZone.getTimeZone("UTC"));}

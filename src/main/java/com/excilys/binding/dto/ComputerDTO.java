@@ -69,6 +69,9 @@ public class ComputerDTO {
 	 * @param introduced the introduced to set
 	 */
 	public void setIntroduced(String introduced) {
+		if (introduced!= null && introduced.isEmpty()) {
+			introduced = null;
+		}
 		this.introducedDate = introduced;
 	}
 	/**

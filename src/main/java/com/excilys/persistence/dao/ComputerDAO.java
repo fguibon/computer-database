@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Computer;
@@ -57,6 +58,9 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 
 	private static final String DELETE=
 			"DELETE FROM computer WHERE id=?;";
+	
+	private static final String DELETE_COMPUTER_WHERE=
+			"DELETE FROM computer where company_id =? ;";
 
 
 	private static final String COUNT = 
@@ -186,6 +190,25 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 		return number;	
 	}
 
+	/**
+	 * Delete all computers associated with the id given.
+	 * @param id
+	 * @return
+	 * @throws DatabaseException
+	 */
+	@Transactional
+	public int deleteComputerWhere(Long id) throws DatabaseException {
+		int number = 0; 
+		try {
+		jdbcTemplate.update(DELETE_COMPUTER_WHERE, id);
+		} catch (DataAccessException e) {
+			LOGGER.error("Query error : "+ e.getMessage());
+			throw new DatabaseException("Could not remove the computer of id : "+id);
+		}
+		return number;
+	}
+	
+	
 	/**
 	 * Get the computers total count
 	 * @return the total number 

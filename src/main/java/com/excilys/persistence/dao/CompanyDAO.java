@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -42,17 +41,14 @@ public class CompanyDAO implements DataAccessObject<Company>{
 			"UPDATE company SET name= ? WHERE id= ? ;";
 	
 	private static final String DELETE_COMPANY=
-			"DELETE FROM company WHERE id= ? ;";
-	
-	private static final String DELETE_COMPUTER_WHERE=
-			"DELETE FROM computer where company_id = ? ;";
+			"DELETE FROM company WHERE id=? ;";
 	
 	private static final String SELECT_ALL_PAGED =
 			"SELECT id,name FROM company "
 			+ " LIMIT ? OFFSET ? ;";
 	
-	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
 	
 	public CompanyDAO(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
@@ -155,7 +151,7 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	}
 
 	/**
-	 * Deletes a company record and all computers associated
+	 * Deletes a company record
 	 * @throws DatabaseException 
 	 * 
 	 */
@@ -163,41 +159,13 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	@Transactional
 	public int delete(Long id) throws DatabaseException {
 		int number = 0;
-		try {	
-			deleteComputerWhere(id);
-			deleteCompany(id);
+		try {			
+			number = jdbcTemplate.update(DELETE_COMPANY, id);
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not remove the company of id : ");
 		}		
 		return number; 
-	}
-	
-	@Transactional
-	public int deleteComputerWhere(Long id) throws DatabaseException {
-		int number = 0; 
-		try {
-		jdbcTemplate.update(DELETE_COMPUTER_WHERE, id);
-		} catch (DataAccessException e) {
-			LOGGER.error("Query error : "+ e.getMessage());
-			throw new DatabaseException("Could not remove the computer of id : "+id);
-		}
-		return number;
-	}
-	
-	@Transactional
-	public int deleteCompany(Long id) throws DatabaseException {
-		int number = 0; 
-		try {
-		jdbcTemplate.update(DELETE_COMPANY, id);
-		} catch (DataAccessException e) {
-			LOGGER.error("Query error : "+ e.getMessage());
-			throw new DatabaseException("Could not remove the company of id : "+id);
-		}
-		return number;
-	}
-	
-	
-	
+	}	
 
 }

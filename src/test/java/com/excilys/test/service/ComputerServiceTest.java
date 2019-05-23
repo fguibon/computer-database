@@ -33,11 +33,8 @@ public class ComputerServiceTest {
 	private Company companyTest;
 	private Sorting sorting;
 	
-	
-	@Autowired
 	private ComputerDAO daoMock;
-	
-	
+
 	@Before
 	public void setUp() throws Exception {
 		
@@ -86,14 +83,19 @@ public class ComputerServiceTest {
 		computerService.delete(0L);
 	}
 	
+	@Test
 	public void deleteTest() throws Exception {
-		int number = computerService.delete(1L);
-		assertEquals(1,number);
+		assertEquals(1,computerService.delete(1L));
 	}
 	
 	@Test
 	public void countTest() throws DatabaseException {
 		assertEquals(10,computerService.count());
+	}
+	
+	@Autowired
+	public void setDaoMock(ComputerDAO daoMock) {
+		this.daoMock = daoMock;
 	}
 
 }

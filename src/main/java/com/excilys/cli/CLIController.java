@@ -1,4 +1,4 @@
-package com.excilys.app;
+package com.excilys.cli;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,6 @@ import com.excilys.model.Computer;
 import com.excilys.model.Sorting;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
-import com.excilys.view.CLIView;
 
 @Component
 public class CLIController {
@@ -79,6 +78,9 @@ public class CLIController {
 				case 6:
 					deleteComputer();
 					break;
+				case 7:
+					deleteCompany();
+					break;
 				default:
 					view.notifyInvalidNumber();
 					break;
@@ -97,15 +99,16 @@ public class CLIController {
 		boolean ok=true;
 		sorting.setPage(currentPage);
 		sorting.setLimit(LIMIT);
-		List<ComputerDTO> computersDTO = new ArrayList<>();
-		List<Computer> computers = this.computerService.findAll(sorting);
 		while(ok) {
+			List<ComputerDTO> computersDTO = new ArrayList<>();
+			List<Computer> computers = this.computerService.findAll(sorting);
 			for(Computer c:computers) {
 				computersDTO.add(computerMapper.modelToDto(c));
 			}
 			if(computers.isEmpty())	ok=false;
-			sorting.setPage(currentPage++);
 			this.view.displayComputers(computersDTO,sorting);
+			currentPage+=1;
+			sorting.setPage(currentPage);
 		}
 	}
 	
@@ -166,9 +169,17 @@ public class CLIController {
 	 */
 	public void deleteComputer() throws DatabaseException {
 		Long id = null;
-		id = this.queryComputerToDelete();
+		id = this.queryEntryToDelete();
 		if(id!=null) {
 			this.computerService.delete(id);	
+		}
+	}
+	
+	public void deleteCompany() {
+		Long id = null;
+		id = this.queryEntryToDelete();
+		if(id!=null) {
+			if(this.companyService.delete(id)==1) view.notifySuccess();
 		}
 	}
 	
@@ -211,7 +222,7 @@ public class CLIController {
 	 * Asks for an id
 	 * @return the id
 	 */
-	public Long queryComputerToDelete() {
+	public Long queryEntryToDelete() {
 		return view.queryId();
 	}
 

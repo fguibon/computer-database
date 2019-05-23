@@ -1,4 +1,4 @@
-package com.excilys.view;
+package com.excilys.cli;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,7 +36,8 @@ public class CLIView {
 				+ "3: Show computer detail \r\n"
 				+ "4: Create a computer \r\n"
 				+ "5: Update a computer \r\n"
-				+ "6: Delete a computer ");
+				+ "6: Delete a computer \r\n"
+				+ "7: Delete a company");
 		int number =0;
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -64,7 +65,7 @@ public class CLIView {
 	 * @param page 
 	 */
 	public void displayComputers(List<ComputerDTO> computers, Sorting sorting) {
-		LOGGER.info("Page number : "+sorting.getPage());
+		LOGGER.info("----Page number : "+sorting.getPage()+"----");
 		for(ComputerDTO c:computers) {
 			if(c!=null) LOGGER.info(c);
 		}
