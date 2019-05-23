@@ -19,19 +19,19 @@ public class ErrorController {
  
         switch (httpErrorCode) {
             case 400:
-                errorMsg = "Http Error Code: 400. Bad Request";
+                errorMsg = "error.400";
                 break;
             case 401:
-                errorMsg = "Http Error Code: 401. Unauthorized";
+                errorMsg = "error.401";
                 break;
             case 404:
-                errorMsg = "Http Error Code: 404. Resource not found";
+                errorMsg = "error.404";
                 break;
             case 500:
-                errorMsg = "Http Error Code: 500. Internal Server Error";
+                errorMsg = "error.500";
                 break;
             default : 
-            	errorMsg = "Unknown Http Error Code";
+            	errorMsg = "error.default";
             	break;
         }
         errorPage.addObject("errorMsg", errorMsg);

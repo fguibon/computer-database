@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -21,7 +20,7 @@ import com.excilys.persistence.dao.ComputerDAO;
 import com.excilys.service.CompanyService;
 import com.excilys.test.config.TestConfig;
 
-@ActiveProfiles("test")
+
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class CompanyServiceTest {
