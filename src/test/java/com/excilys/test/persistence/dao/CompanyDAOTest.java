@@ -1,9 +1,6 @@
 package com.excilys.test.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,36 +9,43 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.excilys.config.AppConfig;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
-import com.excilys.model.Page;
+import com.excilys.model.Sorting;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.test.ScriptExecuter;
+import com.excilys.test.config.TestConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = AppConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 public class CompanyDAOTest {
 	
-	@Autowired
 	private CompanyDAO companyDAO;
-	
-	@Autowired
 	private ScriptExecuter executer;
 	
+	private JdbcTemplate jdbcTemplate;
+	private HikariDataSource dataSource;
+
 	private Company companyTest;
 	private List<Company> companies;
-	private Page page;
+	private Sorting sorting;
+	
 	
 	@Before
 	public void setUp() throws Exception {
+		executer = new ScriptExecuter(dataSource);
 		executer.reload();
 		
+		companyDAO = new CompanyDAO(jdbcTemplate);
+		
 		companies = new ArrayList<Company>();
-		page = new Page(1, 5);
+		sorting = new Sorting(1, 5,"","","");
 		
 		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
 		companies.add(companyTest);
@@ -53,11 +57,12 @@ public class CompanyDAOTest {
 	
 	@Test
 	public void createCompanyTest() throws DatabaseException {
-		assertTrue(companyDAO.create(companyTest));
+		assertEquals(1,companyDAO.create(companyTest));
 		companyTest.setId(6L);
-		assertEquals("Expected same companies",companyTest,companyDAO.findById(6L));
-		
+		assertEquals("Expected same companies",companyTest,companyDAO.findById(6L));	
 	}
+	
+
 
 	@Test
 	public void findAllTest() throws DatabaseException {	
@@ -66,7 +71,7 @@ public class CompanyDAOTest {
 	
 	@Test
 	public void findAllPagedTest() throws DatabaseException {	
-		assertEquals("Expected same company lists",companies, companyDAO.findAllPaged(page));
+		assertEquals("Expected same company lists",companies, companyDAO.findAllPaged(sorting));
 	}
 	
 	@Test
@@ -80,13 +85,20 @@ public class CompanyDAOTest {
 		assertEquals("Expected same companies",companyTest, companyDAO.findById(1L));
 	}
 	
+	
 	@Test
 	public void deleteTest() throws DatabaseException {
-		Long id = 4L;
-		assertNotNull("Expected company not null",companyDAO.findById(id));
-		companyDAO.delete(id);
-		assertNull("Expected company null",companyDAO.findById(id).getId());
-		assertNull("Expected company null",companyDAO.findById(id).getName());
+		assertEquals(1,companyDAO.delete(5L));
+	}
+	
+	@Autowired
+	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
+	
+	@Autowired
+	public void setDataSource(HikariDataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 
 }

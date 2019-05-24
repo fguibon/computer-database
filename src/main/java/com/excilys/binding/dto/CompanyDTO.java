@@ -2,9 +2,18 @@ package com.excilys.binding.dto;
 
 import java.util.Objects;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 public class CompanyDTO {
 	
+	
+	private static final String NAME_PATTERN = "^[\\w-,.0-9][^_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~:]{2,}$";
+	
 	private String id;
+	
+	@NotBlank
+	@Pattern(regexp= NAME_PATTERN)
 	private String name;
 	
 

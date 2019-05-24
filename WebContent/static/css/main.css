@@ -25,6 +25,10 @@ footer .btn-group {
     margin:10px 10px;
 }
 
+footer .dropdown {
+    margin:10px 10px;
+}
+
 input[type='checkbox'] {
     margin: 0px;
     padding:0px;

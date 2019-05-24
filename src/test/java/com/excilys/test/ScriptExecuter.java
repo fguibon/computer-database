@@ -8,24 +8,20 @@ import java.sql.Statement;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.excilys.exceptions.DatabaseException;
-import com.excilys.persistence.jdbc.JDBCManager;
+import com.zaxxer.hikari.HikariDataSource;
 
-@Component
+
 public class ScriptExecuter {
 
-	@Autowired
-	private JDBCManager manager;
+	private HikariDataSource dataSource;
 	
-	public ScriptExecuter(JDBCManager manager) {
-		this.manager = manager;
+	public ScriptExecuter(HikariDataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 		
 	private void executeScript(String filename) throws SQLException, IOException, DatabaseException {
-		try (final Connection connection = manager.getConnection();
+		try (final Connection connection = dataSource.getConnection();
 				final Statement statement = connection.createStatement();
 				final InputStream resourceAsStream = ScriptExecuter.class.getClassLoader().getResourceAsStream(filename);
 				final Scanner scanner = new Scanner(resourceAsStream)) {

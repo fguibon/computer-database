@@ -1,8 +1,6 @@
 package com.excilys.test.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 import java.time.LocalDate;
@@ -13,42 +11,46 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.excilys.config.AppConfig;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
-import com.excilys.model.Page;
 import com.excilys.model.Sorting;
 import com.excilys.persistence.dao.ComputerDAO;
 import com.excilys.test.ScriptExecuter;
+import com.excilys.test.config.TestConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = AppConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 public class ComputerDAOTest {
 
-	@Autowired
 	private ComputerDAO computerDAO;
 	
-	@Autowired
 	private ScriptExecuter executer;
 	
 	private List<Computer> computers;
 	private Company companyTest;
 	private Company companyTest2;
 	private Computer computerTest;
-	private Page page;
 	private Sorting sorting;
+
+	private HikariDataSource dataSource;
+	private JdbcTemplate jdbcTemplate;
 	
 	@Before
 	public void setUp() throws Exception {
+		executer = new ScriptExecuter(dataSource);
 		executer.reload();
 		
+		computerDAO = new ComputerDAO(jdbcTemplate);
+		
 		computers = new ArrayList<Computer>();
-		page = new Page(1, 10);
-		sorting = new Sorting("","");
+		sorting = new Sorting(1, 10,"","","");
 		
 		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
 		companyTest2 = new Company.Builder().setId(2L).setName("Thinking Machines").build();
@@ -64,32 +66,35 @@ public class ComputerDAOTest {
 				.setCompany(companyTest2).build());
 		computers.add(new Computer.Builder().setId(6L).setName("MacBook Pro")
 				.setIntroduced(LocalDate.of(2006,1,10)).setCompany(companyTest).build());
-		computers.add(new Computer.Builder().setId(7L).setName("Apple IIe").setCompany(new Company()).build());
-		computers.add(new Computer.Builder().setId(8L).setName("Apple IIc").setCompany(new Company()).build());
-		computers.add(new Computer.Builder().setId(9L).setName("Apple IIGS").setCompany(new Company()).build());
-		computers.add(new Computer.Builder().setId(10L).setName("Apple IIc Plus").setCompany(new Company()).build());
+		computers.add(new Computer.Builder().setId(7L).setName("Apple IIe").build());
+		computers.add(new Computer.Builder().setId(8L).setName("Apple IIc").build());
+		computers.add(new Computer.Builder().setId(9L).setName("Apple IIGS").build());
+		computers.add(new Computer.Builder().setId(10L).setName("Apple IIc Plus").build());
+
 	}
+	
 	
 	@Test
 	public void createComputerTest() throws DatabaseException {
-		Computer computerExpected = computerTest;
-		computerDAO.create(computerExpected);
-		computerExpected.setId(11L);
+		computerDAO.create(computerTest);
+		computerTest.setId(11L);
 		
-		Computer computerActual = computerDAO.findById(11L);
-		
-		assertEquals("Expected same companies",computerExpected, computerActual);
+		assertEquals("Expected same companies",computerTest, computerDAO.findById(11L));
 		
 	}
 	
 	@Test
 	public void findAllTest() throws DatabaseException {
-		assertEquals("List different from  expected",computers, computerDAO.findAll());
+		List<Computer> findAll = computerDAO.findAll();
+		for(int i=0;i<computers.size();i++) {
+			assertEquals(computers.get(i), findAll.get(i));
+		}
+		assertEquals("List different from  expected",computers, findAll);
 	}
 	
 	@Test
 	public void findAllPagedTest() throws DatabaseException {
-		assertEquals("List different from expected",computers, computerDAO.findAllPaged(page,"",sorting));
+		assertEquals("List different from expected",computers, computerDAO.findAllPaged(sorting));
 	}
 	
 	@Test
@@ -104,16 +109,18 @@ public class ComputerDAOTest {
 	}
 	
 	@Test
-	public void deleteTest() throws DatabaseException {
-		Long id = 4L;
-		assertNotNull(computerDAO.findById(id));
-		computerDAO.delete(id);
-		assertNull("Object should be null",computerDAO.findById(id));
-	}
-	
-	@Test
 	public void countTest() throws DatabaseException {
 		assertSame(10,computerDAO.count());
+	}
+
+	@Autowired
+	public void setDataSource(HikariDataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	@Autowired
+	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
 	}
 	
 }

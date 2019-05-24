@@ -3,6 +3,7 @@ package com.excilys.binding.mapper;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,8 +21,7 @@ public class ComputerMapper {
 	private static final Logger LOGGER = 
 			LogManager.getLogger(ComputerMapper.class);
 
-	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-
+	private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
 	public Computer dtoToModel(ComputerDTO computerDTO) throws DateParseException{
 		Computer computer = new Computer();
@@ -31,13 +31,13 @@ public class ComputerMapper {
 		try {
 			computer.setIntroduced(castLocalDate(computerDTO.getIntroduced()));
 		} catch (DateParseException e1) {
-			LOGGER.error(e1.getMessage(), e1);
+			LOGGER.warn(e1.getMessage());
 			throw new DateParseException("Failed to parse date");
 		}
 		try {
 			computer.setDiscontinued(castLocalDate(computerDTO.getDiscontinued()));
 		} catch (DateParseException e1) {
-			LOGGER.error(e1.getMessage(), e1);
+			LOGGER.warn(e1.getMessage());
 			throw new DateParseException("Failed to parse date");
 		}
 
@@ -53,13 +53,15 @@ public class ComputerMapper {
 	public ComputerDTO modelToDto(Computer computer) {
 		ComputerDTO computerDTO = new ComputerDTO();
 		if(computer!=null) {
-			computerDTO.setId(Long.toString(computer.getId()));
+			computerDTO.setId(convertIdToString(computer.getId()));
 			computerDTO.setName(computer.getName());
 			computerDTO.setIntroduced(castString(computer.getIntroduced()));
 			computerDTO.setDiscontinued(castString(computer.getDiscontinued()));
-			computerDTO.setCompanyId(convertIdToString(computer.getCompany().getId()));
-			computerDTO.setCompanyName(computer.getCompany().getName());
-	
+			Company company = computer.getCompany();
+			if(company!=null) {
+				computerDTO.setCompanyId(convertIdToString(company.getId()));
+				computerDTO.setCompanyName(company.getName());
+			}
 		}
 		return computerDTO;
 	}
@@ -67,20 +69,20 @@ public class ComputerMapper {
 	public LocalDate castLocalDate(String date) throws DateParseException {
 		try {
 			return (date==null || date.isEmpty() )? null : LocalDate.parse(date);
-		} catch (Exception e){
+		} catch (DateTimeParseException e){
 			LOGGER.error("Failed cast to LocalDate :" +e.getMessage());
 			throw new DateParseException("Could not parse date : "+date);
 		}
 	}
 	
 	public String castString(LocalDate ldate)  {
-		return (ldate==null)? null :format.format(Date.from(ldate.atTime(12,00).atZone(ZoneId.systemDefault()).toInstant())) ;
-
+		return (ldate==null)? null :format.format(Date.from(ldate.atTime(12,00)
+				.atZone(ZoneId.systemDefault()).toInstant())) ;
 	}
 	
 	
 	private String convertIdToString(Long id) {
-		return (id == null || id == 0) ? null : String.valueOf(id);
+		return (id == null || id == 0L) ? null : String.valueOf(id);
 	}
 	
 	
