@@ -1,15 +1,13 @@
 package com.excilys.test.binding.mapper;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertNull;
 
 import java.time.LocalDate;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -18,10 +16,9 @@ import com.excilys.binding.mapper.ComputerMapper;
 import com.excilys.exceptions.DateParseException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
-import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.test.config.TestConfig;
 
-@ActiveProfiles("test")
+
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class ComputerMapperTest {
@@ -35,7 +32,6 @@ public class ComputerMapperTest {
 	private String sDate = "2014-04-05";
 	private LocalDate lDate = LocalDate.of(2014, 4, 5);
 
-	private CompanyDAO daoMock;	
 
 	@Before
 	public void setUp() throws Exception {
@@ -50,7 +46,6 @@ public class ComputerMapperTest {
 				.setIntroduced(sDate).setDiscontinued("2015-03-02")
 				.setCompanyId(companyId).setCompanyName("NASA").build();
 
-		when(daoMock.findById(4L)).thenReturn(company);
 	}
 
 
@@ -58,15 +53,42 @@ public class ComputerMapperTest {
 	public void modelToDtoTest() {
 		assertEquals("Expected same computer",computerDTO, computerMapper.modelToDto(computer));
 	}
+	
+	@Test
+	public void modelToDtoIdZeroTest() {
+		computerDTO.setId(null);
+		computer.setId(0L);
+		assertEquals("Expected same computer",computerDTO, computerMapper.modelToDto(computer));
+	}
+	
+	@Test
+	public void modelToDtoIdNullTest() {
+		computerDTO.setId(null);
+		computer.setId(null);
+		assertEquals("Expected same computer",computerDTO, computerMapper.modelToDto(computer));
+	}
+	
 
 	@Test
 	public void dtoToModelTest() throws DateParseException {
 		assertEquals("Expected same computer",computer, computerMapper.dtoToModel(computerDTO));
+		computerDTO.setId("0");
+		computer.setId(null);
+		assertEquals("Expected same computer",computer, computerMapper.dtoToModel(computerDTO));
+		computerDTO.setId("");
+		assertEquals("Expected same computer",computer, computerMapper.dtoToModel(computerDTO));
+		computerDTO.setId(null);
+		assertEquals("Expected same computer",computer, computerMapper.dtoToModel(computerDTO));
 	}
 	
 	@Test(expected = DateParseException.class)
-	public void dtoToModelInvalidDateTest() throws DateParseException {
+	public void dtoToModelInvalidIntroducedDateTest() throws DateParseException {
 		computerDTO.setIntroduced("blabla");
+		computerMapper.dtoToModel(computerDTO);
+	}
+	
+	@Test(expected = DateParseException.class)
+	public void dtoToModelInvalidDiscontinuedDateTest() throws DateParseException {
 		computerDTO.setDiscontinued("blabla");
 		computerMapper.dtoToModel(computerDTO);
 	}
@@ -74,17 +96,15 @@ public class ComputerMapperTest {
 	@Test
 	public void castLocalDateTest() throws DateParseException {
 		assertEquals("Expected same dates",lDate, computerMapper.castLocalDate(sDate));
+		assertNull( computerMapper.castLocalDate(null));
+		assertEquals( null,computerMapper.castLocalDate(""));
 	}
 
 
 	@Test
 	public void castStringTest() {
 		assertEquals("Expected same dates",sDate, computerMapper.castString(lDate));
-	}
-
-	@Autowired
-	public void setDaoMock(CompanyDAO daoMock) {
-		this.daoMock = daoMock;
+		assertEquals( null,computerMapper.castString(null));
 	}
 
 

@@ -36,7 +36,7 @@ public class CompanyMapper {
 	}
 	
 	private String convertIdToString(Long id) {
-		return (id == null || id == 0) ? null : String.valueOf(id);
+		return (id == null || id == 0L) ? null : String.valueOf(id);
 	}
 	
 	

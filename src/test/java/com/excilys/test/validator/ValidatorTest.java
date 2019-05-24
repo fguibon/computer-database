@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -20,7 +19,7 @@ import com.excilys.exceptions.ValidationException;
 import com.excilys.test.config.TestConfig;
 import com.excilys.validator.Validator;
 
-@ActiveProfiles("test")
+
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class ValidatorTest {

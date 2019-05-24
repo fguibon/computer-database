@@ -34,7 +34,35 @@ public class CompanyMapperTest {
 	}
 	
 	@Test
+	public void modelToDtoIdZeroTest() {
+		companyDTO.setId(null);
+		company.setId(0L);
+		assertEquals("Expected same company",companyDTO, companyMapper.modelToDto(company));
+	}
+	
+	@Test
+	public void modelToDtoIdNullTest() {
+		companyDTO.setId(null);
+		company.setId(null);
+		assertEquals("Expected same company",companyDTO, companyMapper.modelToDto(company));
+	}
+	
+	@Test
 	public void dtoToModelTest() throws MappingException {
+		assertEquals("Expected same company",company, companyMapper.dtoToModel(companyDTO));
+	}
+	
+	@Test
+	public void dtoToModelIdZeroTest() throws MappingException {
+		company.setId(null);
+		companyDTO.setId("0");
+		assertEquals("Expected same company",company, companyMapper.dtoToModel(companyDTO));
+	}
+	
+	@Test
+	public void dtoToModelIdNullTest() throws MappingException {
+		company.setId(null);
+		companyDTO.setId(null);
 		assertEquals("Expected same company",company, companyMapper.dtoToModel(companyDTO));
 	}
 	

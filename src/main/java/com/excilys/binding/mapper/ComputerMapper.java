@@ -53,7 +53,7 @@ public class ComputerMapper {
 	public ComputerDTO modelToDto(Computer computer) {
 		ComputerDTO computerDTO = new ComputerDTO();
 		if(computer!=null) {
-			computerDTO.setId(Long.toString(computer.getId()));
+			computerDTO.setId(convertIdToString(computer.getId()));
 			computerDTO.setName(computer.getName());
 			computerDTO.setIntroduced(castString(computer.getIntroduced()));
 			computerDTO.setDiscontinued(castString(computer.getDiscontinued()));
@@ -82,7 +82,7 @@ public class ComputerMapper {
 	
 	
 	private String convertIdToString(Long id) {
-		return (id == null || id == 0) ? null : String.valueOf(id);
+		return (id == null || id == 0L) ? null : String.valueOf(id);
 	}
 	
 	
