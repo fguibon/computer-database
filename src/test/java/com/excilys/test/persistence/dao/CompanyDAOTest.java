@@ -59,9 +59,10 @@ public class CompanyDAOTest {
 	public void createCompanyTest() throws DatabaseException {
 		assertEquals(1,companyDAO.create(companyTest));
 		companyTest.setId(6L);
-		assertEquals("Expected same companies",companyTest,companyDAO.findById(6L));
-		
+		assertEquals("Expected same companies",companyTest,companyDAO.findById(6L));	
 	}
+	
+
 
 	@Test
 	public void findAllTest() throws DatabaseException {	
@@ -82,6 +83,12 @@ public class CompanyDAOTest {
 	public void updateTest() throws DatabaseException {
 		companyDAO.update(new Company.Builder().setId(1L).setName("Apple Inc.").build());
 		assertEquals("Expected same companies",companyTest, companyDAO.findById(1L));
+	}
+	
+	
+	@Test
+	public void deleteTest() throws DatabaseException {
+		assertEquals(1,companyDAO.delete(5L));
 	}
 	
 	@Autowired
