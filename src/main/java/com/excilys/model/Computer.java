@@ -4,12 +4,25 @@ package com.excilys.model;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name="COMPUTER")
 public class Computer {
 
+	@Id @GeneratedValue
 	private Long id;
+	
+	@Column
 	private String name;
+	
+	@Column(name = "introduced")
 	private LocalDate introducedDate;
+	
+	@Column(name = "discontinued")
 	private LocalDate discontinuedDate;
+	
+	@ManyToOne
 	private Company company;
 	
 
