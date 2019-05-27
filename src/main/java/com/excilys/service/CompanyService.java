@@ -3,6 +3,8 @@ package com.excilys.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -58,6 +60,7 @@ public class CompanyService {
 		return company;
 	}
 	
+	@Transactional
 	public int delete(Long id) {
 		int number=0;
 		try {

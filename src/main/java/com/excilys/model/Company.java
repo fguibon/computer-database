@@ -1,19 +1,33 @@
 package com.excilys.model;
 
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
+@Entity
+@Table(name = "COMPANY")
 public class Company  {
 
 	@Id @GeneratedValue
+	@Column(name = "id")
 	private Long id;
 	
-	@Column
+	@Column(name = "name")
 	private String name;
 
+	@Cascade(CascadeType.DELETE)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "company")
+	private Set<Computer> computers;
 	
 	/**
 	 * @return the id

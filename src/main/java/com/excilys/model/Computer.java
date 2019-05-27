@@ -11,9 +11,10 @@ import javax.persistence.*;
 public class Computer {
 
 	@Id @GeneratedValue
+	@Column(name = "id")
 	private Long id;
 	
-	@Column
+	@Column(name = "name")
 	private String name;
 	
 	@Column(name = "introduced")
@@ -22,7 +23,8 @@ public class Computer {
 	@Column(name = "discontinued")
 	private LocalDate discontinuedDate;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "company_id")
 	private Company company;
 	
 

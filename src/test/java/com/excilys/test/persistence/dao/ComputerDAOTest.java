@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -40,14 +39,14 @@ public class ComputerDAOTest {
 	private Sorting sorting;
 
 	private HikariDataSource dataSource;
-	private JdbcTemplate jdbcTemplate;
+	private org.hibernate.SessionFactory sessionFactory;
 	
 	@Before
 	public void setUp() throws Exception {
 		executer = new ScriptExecuter(dataSource);
 		executer.reload();
 		
-		computerDAO = new ComputerDAO(jdbcTemplate);
+		computerDAO = new ComputerDAO(sessionFactory);
 		
 		computers = new ArrayList<Computer>();
 		sorting = new Sorting(1, 10,"","","");
@@ -119,8 +118,8 @@ public class ComputerDAOTest {
 	}
 
 	@Autowired
-	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-		this.jdbcTemplate = jdbcTemplate;
-	}
+	public void setSessionFactory(org.hibernate.SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}	
 	
 }

@@ -3,13 +3,16 @@ package com.excilys.persistence.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
@@ -29,7 +32,7 @@ public class CompanyDAO implements DataAccessObject<Company>{
 			LogManager.getLogger(CompanyDAO.class);
 	
 	private static final String INSERT =
-			"INSERT INTO company (name) VALUES(?);";
+			"INSERT INTO Company (name) VALUES(?);";
 
 	private static final String SELECT_ONE = 
 			"SELECT id,name FROM company WHERE id=?;";
@@ -49,9 +52,12 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	
 	private JdbcTemplate jdbcTemplate;
 	
+	private SessionFactory sessionFactory;
 	
-	public CompanyDAO(JdbcTemplate jdbcTemplate) {
+	public CompanyDAO(JdbcTemplate jdbcTemplate, SessionFactory sessionFactory) {
+		Objects.requireNonNull(sessionFactory);
 		this.jdbcTemplate = jdbcTemplate;
+		this.sessionFactory = sessionFactory;
 	}
 
 	/**
@@ -62,8 +68,9 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	@Override
 	public int create(Company company) throws DatabaseException {
 		int number = 0;
-		try {
-			 number = jdbcTemplate.update(INSERT,company.getName());	
+		try (Session session = sessionFactory.openSession()){
+			Query<?> query = session.createQuery(INSERT);
+			number = query.executeUpdate();
 		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new DatabaseException("Cannot insert company : "+ company.toString());
@@ -156,7 +163,6 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	 * 
 	 */
 	@Override
-	@Transactional
 	public int delete(Long id) throws DatabaseException {
 		int number = 0;
 		try {			

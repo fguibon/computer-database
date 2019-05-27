@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,10 +32,11 @@ public class CompanyDAOTest {
 	
 	private JdbcTemplate jdbcTemplate;
 	private HikariDataSource dataSource;
+	private SessionFactory sessionFactory;
 
 	private Company companyTest;
 	private List<Company> companies;
-	private Sorting sorting;
+	private Sorting sorting; 
 	
 	
 	@Before
@@ -42,7 +44,7 @@ public class CompanyDAOTest {
 		executer = new ScriptExecuter(dataSource);
 		executer.reload();
 		
-		companyDAO = new CompanyDAO(jdbcTemplate);
+		companyDAO = new CompanyDAO(jdbcTemplate, sessionFactory);
 		
 		companies = new ArrayList<Company>();
 		sorting = new Sorting(1, 5,"","","");

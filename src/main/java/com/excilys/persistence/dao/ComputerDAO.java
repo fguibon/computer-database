@@ -5,16 +5,16 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Computer;
 import com.excilys.model.Sorting;
-import com.excilys.persistence.rowmapper.ComputerRowMapper;
 
 /**
  * ComputerDAO class : makes requests to the computer table
@@ -34,7 +34,7 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 
 
 	private static final String CREATE =
-			"INSERT INTO computer (name,introduced,discontinued,company_id)"
+			"INSERT INTO Computer (name,introduced,discontinued,company_id)"
 					+ " VALUES (?, ?, ?, ?) ;";
 
 	private static final String SELECT = 
@@ -53,25 +53,25 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	private static final String PAGED=" LIMIT ? OFFSET ? ; ";
 
 	private static final String UPDATE= 
-			"UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=?"
+			"UPDATE Computer SET name=?, introduced=?, discontinued=?, company_id=?"
 					+ " WHERE id=?;";
 
 	private static final String DELETE=
-			"DELETE FROM computer WHERE id=?;";
+			"DELETE FROM Computer WHERE id=?;";
 	
 	private static final String DELETE_COMPUTER_WHERE=
-			"DELETE FROM computer where company_id =? ;";
+			"DELETE FROM Computer where company_id =? ;";
 
 
 	private static final String COUNT = 
-			"SELECT COUNT(id) FROM computer; ";
+			"SELECT COUNT(c) FROM Computer c; ";
 	
 	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	private SessionFactory sessionFactory;
 	
 	
-	public ComputerDAO(JdbcTemplate jdbcTemplate) {	
-		this.jdbcTemplate = jdbcTemplate;
+	public ComputerDAO(SessionFactory sessionFactory) {	
+		this.sessionFactory = sessionFactory;
 	}
 
 
@@ -83,10 +83,8 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	@Override
 	public int create(Computer computer) throws DatabaseException {
 		int number = 0;
-		try {
-			number = jdbcTemplate.update(CREATE,computer.getName(),
-					computer.getIntroduced(),computer.getDiscontinued(), 
-					computer.getCompany().getId());
+		try(Session session = sessionFactory.openSession()) {
+			number = (int) session.save(computer);
 		} catch (DataAccessException e) {
 			LOGGER.warn(e.getMessage());
 			throw new DatabaseException("Cannot insert computer : "+computer.toString());
@@ -103,9 +101,9 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	public List<Computer> findAll() throws DatabaseException {
 		
 		List<Computer> computers = new ArrayList<>();
-		try{
-			ComputerRowMapper rowMapper = new ComputerRowMapper();
-			computers = jdbcTemplate.query(SELECT_ALL,rowMapper);
+		try (Session session = sessionFactory.openSession()){
+			Query<Computer> query = session.createQuery(SELECT_ALL,Computer.class);
+			computers = query.list();
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the list of computers");
@@ -124,11 +122,12 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 		List<Computer> computers = new ArrayList<>();	
 		int offset = ((sorting.getPage()-1) * sorting.getLimit());
 		String sql = getSortingQuerySQL(sorting.getField(), sorting.getOrder());
-		try {
-			ComputerRowMapper rowMapper = new ComputerRowMapper();
-			computers = jdbcTemplate.query(sql,
-					new Object[] {"%"+sorting.getFilter() +"%",
-							sorting.getLimit(),offset},rowMapper);
+		try (Session session = sessionFactory.openSession()){
+			Query<Computer> query = session.createQuery(sql, Computer.class);
+			query.setParameter(1, "%"+sorting.getFilter() +"%");
+			query.setParameter(2, sorting.getLimit());
+			query.setParameter(3, offset);
+			computers = query.list();
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the computers");
@@ -145,10 +144,10 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	@Override
 	public Computer findById(Long id) throws DatabaseException {
 		Computer computer = new Computer();
-		try {
-			ComputerRowMapper rowMapper = new ComputerRowMapper();
-			List<Computer> computers = jdbcTemplate.query(SELECT_ONE,new Object[] {id}, rowMapper);
-			if(!computers.isEmpty()) computer = computers.get(0);
+		try (Session session = sessionFactory.openSession()){
+			Query<Computer> query = session.createQuery(SELECT_ONE,Computer.class);
+			query.setParameter(1, id);
+			computer = query.getSingleResult();
 		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the computer of id: "+id);
@@ -164,9 +163,9 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	@Override
 	public int update(Computer computer) throws DatabaseException {
 		int number = 0;
-		try {
-			number = jdbcTemplate.update(UPDATE,computer.getName(),computer.getIntroduced(),
-					computer.getDiscontinued(),computer.getCompany().getId(), computer.getId());
+		try (Session session = sessionFactory.openSession()){
+			Query<Computer> query = session.createQuery(UPDATE, Computer.class);
+			number = query.executeUpdate();
 		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not update the computer: "+computer.toString());
@@ -181,8 +180,10 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	@Override
 	public int delete(Long id) throws DatabaseException {
 		int number = 0;
-		try {
-			number = jdbcTemplate.update(DELETE,id);
+		try (Session session = sessionFactory.openSession()){
+			Query<Computer> query = session.createQuery(DELETE,Computer.class);
+			query.setParameter(1, id);
+			number = query.executeUpdate();
 		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not delete the computer of id: "+id);
@@ -196,11 +197,12 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 * @return
 	 * @throws DatabaseException
 	 */
-	@Transactional
 	public int deleteComputerWhere(Long id) throws DatabaseException {
 		int number = 0; 
-		try {
-		jdbcTemplate.update(DELETE_COMPUTER_WHERE, id);
+		try (Session session = sessionFactory.openSession()){
+			Query<Computer> query = session.createQuery(DELETE_COMPUTER_WHERE,Computer.class);
+			query.setParameter(1, id);
+			number = query.executeUpdate();
 		} catch (DataAccessException e) {
 			LOGGER.error("Query error : "+ e.getMessage());
 			throw new DatabaseException("Could not remove the computer of id : "+id);
@@ -216,8 +218,9 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 */
 	public int count() throws DatabaseException  {
 		int number = 0;
-		try {
-			number = jdbcTemplate.queryForObject(COUNT, Integer.class);
+		try(Session session = sessionFactory.openSession()) {
+			Query<Computer> query = session.createQuery(COUNT, Computer.class);
+			number = query.getFetchSize();
 		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the total number of computers");
