@@ -5,19 +5,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 import com.excilys.model.Sorting;
-import com.excilys.persistence.rowmapper.CompanyRowMapper;
 
 /**
  * CompanyDAO class : makes requests to the company table
@@ -25,39 +25,37 @@ import com.excilys.persistence.rowmapper.CompanyRowMapper;
  *
  */
 
-@Component
+@Repository
 public class CompanyDAO implements DataAccessObject<Company>{
 
 	private static final Logger LOGGER = 
 			LogManager.getLogger(CompanyDAO.class);
 	
-	private static final String INSERT =
-			"INSERT INTO Company (name) VALUES(?);";
+	
 
 	private static final String SELECT_ONE = 
-			"SELECT id,name FROM company WHERE id=?;";
+			"from Company WHERE id= :id";
 
 	private static final String SELECT_ALL = 
-			"SELECT * FROM company;";
+			"from Company ";
 
 	private static final String UPDATE= 
-			"UPDATE company SET name= ? WHERE id= ? ;";
+			"update Company set name= :name WHERE id= :id";
 	
 	private static final String DELETE_COMPANY=
-			"DELETE FROM company WHERE id=? ;";
+			"delete Company WHERE id= :id";
 	
 	private static final String SELECT_ALL_PAGED =
-			"SELECT id,name FROM company "
-			+ " LIMIT ? OFFSET ? ;";
+			"from Company "
+			+ " LIMIT :limit OFFSET :offset";
 	
-	private JdbcTemplate jdbcTemplate;
+	@PersistenceContext
+	private EntityManager entityManager;
 	
-	private SessionFactory sessionFactory;
 	
-	public CompanyDAO(JdbcTemplate jdbcTemplate, SessionFactory sessionFactory) {
-		Objects.requireNonNull(sessionFactory);
-		this.jdbcTemplate = jdbcTemplate;
-		this.sessionFactory = sessionFactory;
+	public CompanyDAO(EntityManager entityManager) {
+		Objects.requireNonNull(entityManager);
+		this.entityManager = entityManager;
 	}
 
 	/**
@@ -68,10 +66,9 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	@Override
 	public int create(Company company) throws DatabaseException {
 		int number = 0;
-		try (Session session = sessionFactory.openSession()){
-			Query<?> query = session.createQuery(INSERT);
-			number = query.executeUpdate();
-		} catch (DataAccessException e) {
+		try {
+			entityManager.persist(company);
+		} catch (PersistenceException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new DatabaseException("Cannot insert company : "+ company.toString());
 		}
@@ -88,8 +85,8 @@ public class CompanyDAO implements DataAccessObject<Company>{
 		
 		List<Company> companies = new ArrayList<>();
 		try {
-			CompanyRowMapper rowMapper = new CompanyRowMapper();
-			companies = jdbcTemplate.query(SELECT_ALL,rowMapper);
+			TypedQuery<Company> query = entityManager.createQuery(SELECT_ALL, Company.class);
+			companies = query.getResultList();
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new DatabaseException("Cannot find companies") ;
@@ -110,9 +107,10 @@ public class CompanyDAO implements DataAccessObject<Company>{
 		List<Company> companies = new ArrayList<>();
 		int offset = ((sorting.getPage()-1) * sorting.getLimit());
 		try {
-			CompanyRowMapper rowMapper = new CompanyRowMapper();
-			companies = jdbcTemplate.query(SELECT_ALL_PAGED,
-					new Object[] {sorting.getLimit(),offset},rowMapper);		
+			TypedQuery<Company> query = entityManager.createQuery(SELECT_ALL_PAGED,Company.class);
+			query.setParameter("limit", sorting.getLimit());
+			query.setParameter("offset", offset);
+			companies=query.getResultList();
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new DatabaseException("Cannot find companies with : "+sorting.toString());
@@ -130,9 +128,9 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	public Company findById(Long id) throws DatabaseException {
 		Company company = new Company();
 		try {
-			CompanyRowMapper rowMapper = new CompanyRowMapper();
-			List<Company> companies = jdbcTemplate.query(SELECT_ONE,new Object[] {id}, rowMapper);
-			if(!companies.isEmpty()) company = companies.get(0);	
+			TypedQuery<Company> query = entityManager.createQuery(SELECT_ONE,Company.class);
+			query.setParameter("id", id);
+			company = query.getSingleResult();
 		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new DatabaseException("Cannot find the id provided : "+ id);
@@ -148,12 +146,15 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	@Override
 	public int update(Company company) throws DatabaseException {
 		int number = 0;
-		try{
-			number = jdbcTemplate.update(UPDATE, company.getName(),company.getId());
+		try {
+			TypedQuery<Company> query = entityManager.createQuery(UPDATE, Company.class);
+			query.setParameter("id", company.getId());
+			query.setParameter("name", company.getName());
+			number = query.executeUpdate();
 		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage());
-			throw new DatabaseException("Could not update the company of id : "+company.toString());
-		} 
+			throw new DatabaseException("Could not update the company: "+company.toString());
+		}
 		return number;
 	}
 
@@ -165,13 +166,15 @@ public class CompanyDAO implements DataAccessObject<Company>{
 	@Override
 	public int delete(Long id) throws DatabaseException {
 		int number = 0;
-		try {			
-			number = jdbcTemplate.update(DELETE_COMPANY, id);
+		try {	
+			TypedQuery<Company> query = entityManager.createQuery(DELETE_COMPANY, Company.class);
+			query.setParameter("id", id);
+			number = query.executeUpdate();
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not remove the company of id : ");
 		}		
 		return number; 
-	}	
+	}
 
 }

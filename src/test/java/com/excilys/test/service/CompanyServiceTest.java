@@ -42,7 +42,7 @@ public class CompanyServiceTest {
 		companies = new ArrayList<Company>();
 		sorting = new Sorting(1, 1,"","","");
 		
-		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
+		companyTest = new Company.CompanyBuilder().id(1L).name("Apple Inc.").build();
 		companies.add(companyTest);	
 	
 		when(companyDaoMock.findAll()).thenReturn(companies);

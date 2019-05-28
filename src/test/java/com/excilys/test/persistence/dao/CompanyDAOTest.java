@@ -5,12 +5,12 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.SessionFactory;
+import javax.persistence.EntityManager;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -30,9 +30,8 @@ public class CompanyDAOTest {
 	private CompanyDAO companyDAO;
 	private ScriptExecuter executer;
 	
-	private JdbcTemplate jdbcTemplate;
 	private HikariDataSource dataSource;
-	private SessionFactory sessionFactory;
+	private EntityManager entityManager;
 
 	private Company companyTest;
 	private List<Company> companies;
@@ -44,17 +43,17 @@ public class CompanyDAOTest {
 		executer = new ScriptExecuter(dataSource);
 		executer.reload();
 		
-		companyDAO = new CompanyDAO(jdbcTemplate, sessionFactory);
+		companyDAO = new CompanyDAO(entityManager);
 		
 		companies = new ArrayList<Company>();
 		sorting = new Sorting(1, 5,"","","");
 		
-		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
+		companyTest = new Company.CompanyBuilder().id(1L).name("Apple Inc.").build();
 		companies.add(companyTest);
-		companies.add(new Company.Builder().setId(2L).setName("Thinking Machines").build());
-		companies.add(new Company.Builder().setId(3L).setName("RCA").build());
-		companies.add(new Company.Builder().setId(4L).setName("Netronics").build());
-		companies.add(new Company.Builder().setId(5L).setName("Tandy Corporation").build());
+		companies.add(new Company.CompanyBuilder().id(2L).name("Thinking Machines").build());
+		companies.add(new Company.CompanyBuilder().id(3L).name("RCA").build());
+		companies.add(new Company.CompanyBuilder().id(4L).name("Netronics").build());
+		companies.add(new Company.CompanyBuilder().id(5L).name("Tandy Corporation").build());
 	}
 	
 	@Test
@@ -83,7 +82,7 @@ public class CompanyDAOTest {
 	
 	@Test
 	public void updateTest() throws DatabaseException {
-		companyDAO.update(new Company.Builder().setId(1L).setName("Apple Inc.").build());
+		companyDAO.update(new Company.CompanyBuilder().id(1L).name("Apple Inc.").build());
 		assertEquals("Expected same companies",companyTest, companyDAO.findById(1L));
 	}
 	
@@ -93,14 +92,15 @@ public class CompanyDAOTest {
 		assertEquals(1,companyDAO.delete(5L));
 	}
 	
-	@Autowired
-	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-		this.jdbcTemplate = jdbcTemplate;
-	}
 	
 	@Autowired
 	public void setDataSource(HikariDataSource dataSource) {
 		this.dataSource = dataSource;
+	}
+
+	@Autowired
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
 
 }

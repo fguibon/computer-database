@@ -38,10 +38,10 @@ public class ComputerMapperTest {
 
 		computerMapper = new ComputerMapper();
 
-		company = new Company.Builder().setId(4L).setName("NASA").build();
-		computer = new Computer.Builder().setId(9L).setName("Coucou")
-				.setIntroduced(lDate).setDiscontinued(LocalDate.of(2015, 3, 2))
-				.setCompany(company).build();
+		company = new Company.CompanyBuilder().id(4L).name("NASA").build();
+		computer = new Computer.ComputerBuilder().id(9L).name("Coucou")
+				.introduced(lDate).discontinued(LocalDate.of(2015, 3, 2))
+				.company(company).build();
 		computerDTO = new ComputerDTO.Builder().setId("9").setName("Coucou")
 				.setIntroduced(sDate).setDiscontinued("2015-03-02")
 				.setCompanyId(companyId).setCompanyName("NASA").build();

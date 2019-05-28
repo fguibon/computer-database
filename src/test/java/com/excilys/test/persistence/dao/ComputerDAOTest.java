@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,36 +41,34 @@ public class ComputerDAOTest {
 	private Sorting sorting;
 
 	private HikariDataSource dataSource;
-	private org.hibernate.SessionFactory sessionFactory;
+	private EntityManager entityManager;
 	
 	@Before
 	public void setUp() throws Exception {
 		executer = new ScriptExecuter(dataSource);
 		executer.reload();
 		
-		computerDAO = new ComputerDAO(sessionFactory);
-		
 		computers = new ArrayList<Computer>();
 		sorting = new Sorting(1, 10,"","","");
 		
-		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
-		companyTest2 = new Company.Builder().setId(2L).setName("Thinking Machines").build();
-		computerTest = new Computer.Builder().setId(1L).setName("MacBook Pro 15.4 inch")
-				.setCompany(companyTest).build();
+		companyTest = new Company.CompanyBuilder().id(1L).name("Apple Inc.").build();
+		companyTest2 = new Company.CompanyBuilder().id(2L).name("Thinking Machines").build();
+		computerTest = new Computer.ComputerBuilder().id(1L).name("MacBook Pro 15.4 inch")
+				.company(companyTest).build();
 		
 		computers.add(computerTest);
-		computers.add(new Computer.Builder().setId(2L).setName("CM-2a").setCompany(companyTest2).build());
-		computers.add(new Computer.Builder().setId(3L).setName("CM-200").setCompany(companyTest2).build());
-		computers.add(new Computer.Builder().setId(4L).setName("CM-5e").setCompany(companyTest2).build());
-		computers.add(new Computer.Builder().setId(5L).setName("CM-5")
-				.setIntroduced(LocalDate.of(1991,1,1)).setDiscontinued(LocalDate.of(1991,1,2))
-				.setCompany(companyTest2).build());
-		computers.add(new Computer.Builder().setId(6L).setName("MacBook Pro")
-				.setIntroduced(LocalDate.of(2006,1,10)).setCompany(companyTest).build());
-		computers.add(new Computer.Builder().setId(7L).setName("Apple IIe").build());
-		computers.add(new Computer.Builder().setId(8L).setName("Apple IIc").build());
-		computers.add(new Computer.Builder().setId(9L).setName("Apple IIGS").build());
-		computers.add(new Computer.Builder().setId(10L).setName("Apple IIc Plus").build());
+		computers.add(new Computer.ComputerBuilder().id(2L).name("CM-2a").company(companyTest2).build());
+		computers.add(new Computer.ComputerBuilder().id(3L).name("CM-200").company(companyTest2).build());
+		computers.add(new Computer.ComputerBuilder().id(4L).name("CM-5e").company(companyTest2).build());
+		computers.add(new Computer.ComputerBuilder().id(5L).name("CM-5")
+				.introduced(LocalDate.of(1991,1,1)).discontinued(LocalDate.of(1991,1,2))
+				.company(companyTest2).build());
+		computers.add(new Computer.ComputerBuilder().id(6L).name("MacBook Pro")
+				.introduced(LocalDate.of(2006,1,10)).company(companyTest).build());
+		computers.add(new Computer.ComputerBuilder().id(7L).name("Apple IIe").build());
+		computers.add(new Computer.ComputerBuilder().id(8L).name("Apple IIc").build());
+		computers.add(new Computer.ComputerBuilder().id(9L).name("Apple IIGS").build());
+		computers.add(new Computer.ComputerBuilder().id(10L).name("Apple IIc Plus").build());
 
 	}
 	
@@ -118,8 +118,8 @@ public class ComputerDAOTest {
 	}
 
 	@Autowired
-	public void setSessionFactory(org.hibernate.SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
+	public void setSessionFactory(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}	
 	
 }

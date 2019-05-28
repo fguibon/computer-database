@@ -40,9 +40,9 @@ public class ComputerServiceTest {
 		computerService = new ComputerService(daoMock);
 		sorting = new Sorting(1, 1,"","","");
 		computers = new ArrayList<Computer>();
-		companyTest = new Company.Builder().setId(1L).setName("Apple Inc.").build();
-		computerTest = new Computer.Builder().setId(1L)
-				.setName("MacBook Pro 15.4 inch").setCompany(companyTest).build();
+		companyTest = new Company.CompanyBuilder().id(1L).name("Apple Inc.").build();
+		computerTest = new Computer.ComputerBuilder().id(1L)
+				.name("MacBook Pro 15.4 inch").company(companyTest).build();
 		computers.add(computerTest);
 		
 		Mockito.when(daoMock.create(computerTest)).thenReturn(1);

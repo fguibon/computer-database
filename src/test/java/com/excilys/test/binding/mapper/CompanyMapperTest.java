@@ -20,7 +20,7 @@ public class CompanyMapperTest {
 
 	private CompanyMapper companyMapper;
 	
-	private Company company = new Company.Builder().setId(20L).setName("Franck").build();
+	private Company company = new Company.CompanyBuilder().id(20L).name("Franck").build();
 	private CompanyDTO companyDTO = new CompanyDTO.Builder().setId("20").setName("Franck").build();
 	
 	@Before

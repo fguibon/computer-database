@@ -1,33 +1,33 @@
 package com.excilys.model;
 
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 @Entity
-@Table(name = "COMPANY")
+//@Table(name = "COMPANY")
 public class Company  {
 
-	@Id @GeneratedValue
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
 	
 	@Column(name = "name")
 	private String name;
 
-	@Cascade(CascadeType.DELETE)
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "company")
-	private Set<Computer> computers;
+	public Company() {
+		
+	}
+	
+	Company(Long id, String name) {
+		this.id=id;
+		this.name=name;
+	}
 	
 	/**
 	 * @return the id
@@ -57,30 +57,27 @@ public class Company  {
 		this.name = name;
 	}
 	
-	
-	public static class Builder {
-		private Long id;
-		private String name;
+	public static class CompanyBuilder {
+        private Long id;
+        private String name;
 
 
-		public Builder setId(Long id) {
-			this.id = id;
-			return this;
-		}
+        public CompanyBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
 
-		public Builder setName(String name) {
-			this.name = name;
-			return this;
-		}
+        public CompanyBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
 
-		public Company build() {
-			Company company = new Company();
-			company.setId(this.id);
-			company.setName(this.name);
-			return company;
-		}	
+        public Company build() {
+            return new Company(id, name);
+        }
 	}
-
+	
+	
 	@Override
 	public String toString() {
 		return "Company [id=" + id + ", name=" + name + "]";

@@ -3,14 +3,14 @@ package com.excilys.persistence.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Computer;
@@ -22,7 +22,7 @@ import com.excilys.model.Sorting;
  *
  */
 
-@Component
+@Repository
 public class ComputerDAO implements DataAccessObject<Computer>{
 
 	public enum Field { ID,NAME,INTRODUCED,DISCONTINUED}
@@ -66,13 +66,13 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	private static final String COUNT = 
 			"SELECT COUNT(c) FROM Computer c; ";
 	
-	@Autowired
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager entityManager;
 	
 	
-	public ComputerDAO(SessionFactory sessionFactory) {	
-		this.sessionFactory = sessionFactory;
-	}
+//	public ComputerDAO(EntityManager entityManager) {	
+//		this.entityManager = entityManager;
+//	}
 
 
 	/**
@@ -82,9 +82,10 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 */
 	@Override
 	public int create(Computer computer) throws DatabaseException {
-		int number = 0;
-		try(Session session = sessionFactory.openSession()) {
-			number = (int) session.save(computer);
+		int number=0;
+		try {
+			TypedQuery<Computer> query = entityManager.createQuery(CREATE,Computer.class);
+			number = query.executeUpdate();
 		} catch (DataAccessException e) {
 			LOGGER.warn(e.getMessage());
 			throw new DatabaseException("Cannot insert computer : "+computer.toString());
@@ -101,9 +102,9 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	public List<Computer> findAll() throws DatabaseException {
 		
 		List<Computer> computers = new ArrayList<>();
-		try (Session session = sessionFactory.openSession()){
-			Query<Computer> query = session.createQuery(SELECT_ALL,Computer.class);
-			computers = query.list();
+		try {
+			TypedQuery<Computer> query = entityManager.createQuery(SELECT_ALL,Computer.class);
+			computers = query.getResultList();
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the list of computers");
@@ -122,12 +123,12 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 		List<Computer> computers = new ArrayList<>();	
 		int offset = ((sorting.getPage()-1) * sorting.getLimit());
 		String sql = getSortingQuerySQL(sorting.getField(), sorting.getOrder());
-		try (Session session = sessionFactory.openSession()){
-			Query<Computer> query = session.createQuery(sql, Computer.class);
+		try {
+			TypedQuery<Computer> query = entityManager.createQuery(sql, Computer.class);
 			query.setParameter(1, "%"+sorting.getFilter() +"%");
 			query.setParameter(2, sorting.getLimit());
 			query.setParameter(3, offset);
-			computers = query.list();
+			computers = query.getResultList();
 		} catch(DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the computers");
@@ -144,8 +145,8 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	@Override
 	public Computer findById(Long id) throws DatabaseException {
 		Computer computer = new Computer();
-		try (Session session = sessionFactory.openSession()){
-			Query<Computer> query = session.createQuery(SELECT_ONE,Computer.class);
+		try {
+			TypedQuery<Computer> query = entityManager.createQuery(SELECT_ONE,Computer.class);
 			query.setParameter(1, id);
 			computer = query.getSingleResult();
 		} catch (DataAccessException e) {
@@ -163,8 +164,8 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	@Override
 	public int update(Computer computer) throws DatabaseException {
 		int number = 0;
-		try (Session session = sessionFactory.openSession()){
-			Query<Computer> query = session.createQuery(UPDATE, Computer.class);
+		try {
+			TypedQuery<Computer> query = entityManager.createQuery(UPDATE, Computer.class);
 			number = query.executeUpdate();
 		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage());
@@ -180,8 +181,8 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	@Override
 	public int delete(Long id) throws DatabaseException {
 		int number = 0;
-		try (Session session = sessionFactory.openSession()){
-			Query<Computer> query = session.createQuery(DELETE,Computer.class);
+		try {
+			TypedQuery<Computer> query = entityManager.createQuery(DELETE,Computer.class);
 			query.setParameter(1, id);
 			number = query.executeUpdate();
 		} catch (DataAccessException e) {
@@ -199,8 +200,8 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 */
 	public int deleteComputerWhere(Long id) throws DatabaseException {
 		int number = 0; 
-		try (Session session = sessionFactory.openSession()){
-			Query<Computer> query = session.createQuery(DELETE_COMPUTER_WHERE,Computer.class);
+		try {
+			TypedQuery<Computer> query = entityManager.createQuery(DELETE_COMPUTER_WHERE,Computer.class);
 			query.setParameter(1, id);
 			number = query.executeUpdate();
 		} catch (DataAccessException e) {
@@ -218,9 +219,9 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 */
 	public int count() throws DatabaseException  {
 		int number = 0;
-		try(Session session = sessionFactory.openSession()) {
-			Query<Computer> query = session.createQuery(COUNT, Computer.class);
-			number = query.getFetchSize();
+		try{
+			TypedQuery<Long> query = entityManager.createQuery(COUNT, Long.class);
+			query.getSingleResult();
 		} catch (DataAccessException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the total number of computers");
@@ -261,5 +262,6 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 		LOGGER.debug(sql);
 		return sql;
 	}
+	
 
 }
