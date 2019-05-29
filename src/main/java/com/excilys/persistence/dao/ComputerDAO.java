@@ -3,13 +3,14 @@ package com.excilys.persistence.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.PersistenceException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.exceptions.DatabaseException;
@@ -23,9 +24,9 @@ import com.excilys.model.Sorting;
  */
 
 @Repository
-public class ComputerDAO implements DataAccessObject<Computer>{
+public class ComputerDAO {
 
-	public enum Field { ID,NAME,INTRODUCED,DISCONTINUED}
+	public enum Field { ID,NAME,INTRODUCED,DISCONTINUED,COMPANY_ID}
 
 	private enum Order {ASC, DESC}
 
@@ -33,46 +34,28 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 			LogManager.getLogger(ComputerDAO.class);
 
 
-	private static final String CREATE =
-			"INSERT INTO Computer (name,introduced,discontinued,company_id)"
-					+ " VALUES (?, ?, ?, ?) ;";
-
 	private static final String SELECT = 
-			"SELECT cpt.id AS computer_id,cpt.name AS computer_name,introduced,discontinued,company_id,cpn.name AS company_name "
-			+ "FROM computer AS cpt LEFT JOIN company AS cpn ON company_id=cpn.id ";
+			" FROM Computer c ";
 	
 	private static final String SELECT_ONE = 
-			SELECT + "WHERE cpt.id=?;";
+			SELECT + "WHERE c.id= :id";
 
-	private static final String SELECT_ALL = 
-			SELECT + ";";
 
 	private static final String SELECT_ORDER_BY =
-			SELECT + "WHERE UPPER(cpt.name) LIKE UPPER(?) ORDER BY ";
+			SELECT + "WHERE UPPER(c.name) LIKE UPPER(:filter) ORDER BY ";
 
-	private static final String PAGED=" LIMIT ? OFFSET ? ; ";
 
-	private static final String UPDATE= 
-			"UPDATE Computer SET name=?, introduced=?, discontinued=?, company_id=?"
-					+ " WHERE id=?;";
-
-	private static final String DELETE=
-			"DELETE FROM Computer WHERE id=?;";
-	
 	private static final String DELETE_COMPUTER_WHERE=
-			"DELETE FROM Computer where company_id =? ;";
-
+			"DELETE FROM Computer where company_id =:company_id ";
 
 	private static final String COUNT = 
-			"SELECT COUNT(c) FROM Computer c; ";
+			"SELECT COUNT(c) FROM Computer c";
 	
-	@PersistenceContext
-	private EntityManager entityManager;
+	private SessionFactory sessionFactory;	
 	
-	
-//	public ComputerDAO(EntityManager entityManager) {	
-//		this.entityManager = entityManager;
-//	}
+	public ComputerDAO(SessionFactory sessionFactory) {	
+		this.sessionFactory = sessionFactory;
+	}
 
 
 	/**
@@ -80,17 +63,16 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 * @return a boolean value to know if it is created
 	 * @throws Exception 
 	 */
-	@Override
 	public int create(Computer computer) throws DatabaseException {
-		int number=0;
-		try {
-			TypedQuery<Computer> query = entityManager.createQuery(CREATE,Computer.class);
-			number = query.executeUpdate();
-		} catch (DataAccessException e) {
+		try (Session session = sessionFactory.openSession()){
+			Transaction tx = session.beginTransaction();
+			session.save(computer);
+			tx.commit();
+		} catch (PersistenceException e) {
 			LOGGER.warn(e.getMessage());
 			throw new DatabaseException("Cannot insert computer : "+computer.toString());
 		}
-		return number;
+		return 1;
 				
 	}
 
@@ -102,10 +84,9 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	public List<Computer> findAll() throws DatabaseException {
 		
 		List<Computer> computers = new ArrayList<>();
-		try {
-			TypedQuery<Computer> query = entityManager.createQuery(SELECT_ALL,Computer.class);
-			computers = query.getResultList();
-		} catch(DataAccessException e) {
+		try (Session session = sessionFactory.openSession()){
+			computers = session.createQuery(SELECT,Computer.class).getResultList();
+		} catch(PersistenceException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the list of computers");
 		}
@@ -123,13 +104,13 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 		List<Computer> computers = new ArrayList<>();	
 		int offset = ((sorting.getPage()-1) * sorting.getLimit());
 		String sql = getSortingQuerySQL(sorting.getField(), sorting.getOrder());
-		try {
-			TypedQuery<Computer> query = entityManager.createQuery(sql, Computer.class);
-			query.setParameter(1, "%"+sorting.getFilter() +"%");
-			query.setParameter(2, sorting.getLimit());
-			query.setParameter(3, offset);
+		try(Session session = sessionFactory.openSession()) {
+			Query<Computer> query = session.createQuery(sql, Computer.class);
+			query.setParameter("filter", "%"+sorting.getFilter() +"%");
+			query.setFirstResult(offset);
+			query.setMaxResults(sorting.getLimit());
 			computers = query.getResultList();
-		} catch(DataAccessException e) {
+		} catch(PersistenceException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the computers");
 		}
@@ -142,14 +123,13 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 * @return a Computer object
 	 * @throws Exception 
 	 */
-	@Override
-	public Computer findById(Long id) throws DatabaseException {
+	
+	public Computer read(Long id) throws DatabaseException {
 		Computer computer = new Computer();
-		try {
-			TypedQuery<Computer> query = entityManager.createQuery(SELECT_ONE,Computer.class);
-			query.setParameter(1, id);
-			computer = query.getSingleResult();
-		} catch (DataAccessException e) {
+		try (Session session = sessionFactory.openSession()){
+			computer = session.createQuery(SELECT_ONE,Computer.class)
+					.setParameter("id", id).getSingleResult();
+		} catch (PersistenceException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the computer of id: "+id);
 		}
@@ -161,13 +141,20 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 * Updates a Computer information
 	 * @return the number of rows affected 
 	 */
-	@Override
+
 	public int update(Computer computer) throws DatabaseException {
 		int number = 0;
-		try {
-			TypedQuery<Computer> query = entityManager.createQuery(UPDATE, Computer.class);
-			number = query.executeUpdate();
-		} catch (DataAccessException e) {
+		try (Session session = sessionFactory.openSession()){
+			Transaction tx = session.beginTransaction();
+			Computer tochange = read(computer.getId());
+			
+			tochange.setName(computer.getName());
+			tochange.setIntroduced(computer.getIntroduced());
+			tochange.setDiscontinued(computer.getDiscontinued());
+			tochange.setCompany(computer.getCompany());
+			session.update(tochange);
+			tx.commit();
+		} catch (PersistenceException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not update the computer: "+computer.toString());
 		}
@@ -178,18 +165,18 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 * Deletes a computer from the database
 	 * @return the number of rows affected
 	 */
-	@Override
+
 	public int delete(Long id) throws DatabaseException {
-		int number = 0;
-		try {
-			TypedQuery<Computer> query = entityManager.createQuery(DELETE,Computer.class);
-			query.setParameter(1, id);
-			number = query.executeUpdate();
-		} catch (DataAccessException e) {
+		try (Session session = sessionFactory.openSession()){
+			Transaction tx = session.beginTransaction();
+			Computer toDelete = session.get(Computer.class, id);
+			session.delete(toDelete);
+			tx.commit();
+		} catch (PersistenceException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not delete the computer of id: "+id);
 		}
-		return number;	
+		return 1;	
 	}
 
 	/**
@@ -200,11 +187,11 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 */
 	public int deleteComputerWhere(Long id) throws DatabaseException {
 		int number = 0; 
-		try {
-			TypedQuery<Computer> query = entityManager.createQuery(DELETE_COMPUTER_WHERE,Computer.class);
+		try(Session session = sessionFactory.openSession()) {
+			Query<Computer> query = session.createQuery(DELETE_COMPUTER_WHERE,Computer.class);
 			query.setParameter(1, id);
 			number = query.executeUpdate();
-		} catch (DataAccessException e) {
+		} catch (PersistenceException e) {
 			LOGGER.error("Query error : "+ e.getMessage());
 			throw new DatabaseException("Could not remove the computer of id : "+id);
 		}
@@ -219,10 +206,10 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	 */
 	public int count() throws DatabaseException  {
 		int number = 0;
-		try{
-			TypedQuery<Long> query = entityManager.createQuery(COUNT, Long.class);
-			query.getSingleResult();
-		} catch (DataAccessException e) {
+		try(Session session = sessionFactory.openSession()){
+			Query<Long> query = session.createQuery(COUNT, Long.class);
+			number = query.getSingleResult().intValue();
+		} catch (PersistenceException e) {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the total number of computers");
 		}
@@ -233,15 +220,15 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 	public String getField(String choice) {
 		switch(choice) {
 		case "name":
-			return "cpt."+Field.NAME.toString().toLowerCase();
+			return "c."+Field.NAME.toString().toLowerCase();
 		case "intro":
-			return ""+Field.INTRODUCED.toString().toLowerCase();
+			return "c."+Field.INTRODUCED.toString().toLowerCase();
 		case "disco":
-			return ""+Field.DISCONTINUED.toString().toLowerCase();
+			return "c."+Field.DISCONTINUED.toString().toLowerCase();
 		case "company":
-			return "cpn."+Field.NAME.toString().toLowerCase();
+			return "c."+Field.COMPANY_ID.toString().toLowerCase();
 		default:
-			return "cpt."+Field.ID.toString().toLowerCase();
+			return "c."+Field.ID.toString().toLowerCase();
 		}
 	}
 
@@ -258,10 +245,9 @@ public class ComputerDAO implements DataAccessObject<Computer>{
 
 	public String getSortingQuerySQL( String fieldParam, String orderParam ){
 		String sql = SELECT_ORDER_BY + getField(fieldParam)+ 
-				" " +getOrder(orderParam) + PAGED;
+				" " +getOrder(orderParam);
 		LOGGER.debug(sql);
 		return sql;
 	}
-	
 
 }

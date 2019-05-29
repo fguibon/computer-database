@@ -26,7 +26,6 @@
 		<javaValidationVersion>2.0.1.Final</javaValidationVersion>
 		<hibernateValidatorVersion>6.0.16.Final</hibernateValidatorVersion>
 		<hibernateVersion>5.4.2.Final</hibernateVersion>
-		<hibernateJpaVersion>1.0.1.Final</hibernateJpaVersion>
 
 		<mavenCompilerVersion>3.7.0</mavenCompilerVersion>
 		<mavenWarVersion>3.2.1</mavenWarVersion>
@@ -118,7 +117,7 @@
 		<dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>5.4.2.Final</version>
+            <version>${hibernateVersion}</version>
         </dependency>
 
 	</dependencies>

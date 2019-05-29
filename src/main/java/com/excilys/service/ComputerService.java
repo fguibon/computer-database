@@ -27,7 +27,7 @@ public class ComputerService {
 	}
 	
 	public Computer findById(Long id) throws DatabaseException  {
-		return computerDAO.findById(id);
+		return computerDAO.read(id);
 	}
 	
 	public int update(Computer computer) throws DatabaseException {

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
-import com.excilys.model.Sorting;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.persistence.dao.ComputerDAO;
 
@@ -39,21 +38,10 @@ public class CompanyService {
 		return companies;
 	}
 	
-
-	public List<Company> getCompanies(Sorting sorting) {
-		List<Company> companies = new ArrayList<>();
-		try {
-			companies = companyDAO.findAllPaged(sorting);
-		} catch (DatabaseException e) {
-			LOGGER.error("Query error : "+ e.getMessage());
-		}
-		return companies;
-	}
-	
 	public Company findById(Long id)  {
 		Company company = new Company();
 		try {
-			company = companyDAO.findById(id);
+			company = companyDAO.read(id);
 		} catch (DatabaseException e) {
 			LOGGER.error("Query error : "+ e.getMessage());
 		}

@@ -46,7 +46,7 @@ public class ComputerServiceTest {
 		computers.add(computerTest);
 		
 		Mockito.when(daoMock.create(computerTest)).thenReturn(1);
-		Mockito.when(daoMock.findById(1L)).thenReturn(computerTest);
+		Mockito.when(daoMock.read(1L)).thenReturn(computerTest);
 		Mockito.when(daoMock.findAllPaged(sorting)).thenReturn(computers);
 		Mockito.when(daoMock.update(computerTest)).thenReturn(1);
 		Mockito.when(daoMock.delete(1L)).thenReturn(1);

@@ -7,8 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-
+import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +30,6 @@ import com.zaxxer.hikari.HikariDataSource;
 public class ComputerDAOTest {
 
 	private ComputerDAO computerDAO;
-	
 	private ScriptExecuter executer;
 	
 	private List<Computer> computers;
@@ -41,12 +39,14 @@ public class ComputerDAOTest {
 	private Sorting sorting;
 
 	private HikariDataSource dataSource;
-	private EntityManager entityManager;
+	private SessionFactory sessionFactory;
 	
 	@Before
 	public void setUp() throws Exception {
 		executer = new ScriptExecuter(dataSource);
 		executer.reload();
+		
+		computerDAO = new ComputerDAO(sessionFactory);
 		
 		computers = new ArrayList<Computer>();
 		sorting = new Sorting(1, 10,"","","");
@@ -78,7 +78,7 @@ public class ComputerDAOTest {
 		computerDAO.create(computerTest);
 		computerTest.setId(11L);
 		
-		assertEquals("Expected same companies",computerTest, computerDAO.findById(11L));
+		assertEquals("Expected same companies",computerTest, computerDAO.read(11L));
 		
 	}
 	
@@ -98,13 +98,13 @@ public class ComputerDAOTest {
 	
 	@Test
 	public void findByIdTest() throws DatabaseException {	
-		assertEquals("Can't find computer",computerTest, computerDAO.findById(1L));
+		assertEquals("Can't find computer",computerTest, computerDAO.read(1L));
 	}
 	
 	@Test
 	public void updateTest() throws DatabaseException {
 		computerDAO.update(computerTest);
-		assertEquals("Objects should be equals",computerTest, computerDAO.findById(1L));
+		assertEquals("Objects should be equals",computerTest, computerDAO.read(1L));
 	}
 	
 	@Test
@@ -118,8 +118,8 @@ public class ComputerDAOTest {
 	}
 
 	@Autowired
-	public void setSessionFactory(EntityManager entityManager) {
-		this.entityManager = entityManager;
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}	
 	
 }

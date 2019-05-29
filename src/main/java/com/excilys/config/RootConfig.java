@@ -9,10 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -34,24 +32,20 @@ public class RootConfig {
 
 
 	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-	      LocalContainerEntityManagerFactoryBean em 
-	        = new LocalContainerEntityManagerFactoryBean();
-	      em.setDataSource(mySqlDataSource());
-	      em.setPackagesToScan("com.excilys.model");
-	 
-	      JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-	      em.setJpaVendorAdapter(vendorAdapter);
-	      em.setJpaProperties(additionalProperties());
-	 
-	      return em;
-	   }
+	public LocalSessionFactoryBean sessionFactory() {
+		LocalSessionFactoryBean fact = new LocalSessionFactoryBean();
+		fact.setDataSource(mySqlDataSource());
+		fact.setPackagesToScan("com.excilys.model");
+		fact.setHibernateProperties(hibernateProperties());
 
-	static Properties additionalProperties() {
+		return fact;
+	}
+
+	static Properties hibernateProperties() {
 		Properties hibernateProperties = new Properties();
-		hibernateProperties.setProperty("hibernate.hbm2ddl.auto", "update");
-		hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+		hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
 		hibernateProperties.setProperty("hibernate.show_sql", "true");
+		hibernateProperties.setProperty("hibernate.format_sql", "true");
 		return hibernateProperties;
 	}
 

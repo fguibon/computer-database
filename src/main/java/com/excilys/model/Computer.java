@@ -12,10 +12,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 
 @Entity
-//@Table(name="COMPUTER")
+@Table(name="computer")
 public class Computer {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,10 +27,10 @@ public class Computer {
 	private String name;
 	
 	@Column(name = "introduced")
-	private LocalDate introducedDate;
+	private LocalDate introduced;
 	
 	@Column(name = "discontinued")
-	private LocalDate discontinuedDate;
+	private LocalDate discontinued;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "company_id")
@@ -40,9 +41,9 @@ public class Computer {
 	}
 	
 	public Computer(Long id, String name, LocalDate discontinued, LocalDate introduced, Company company ) {
-        this.discontinuedDate = discontinued;
+        this.discontinued = discontinued;
         this.id = id;
-        this.introducedDate = introduced;
+        this.introduced = introduced;
         this.company = company;
         this.name = name;
     }
@@ -75,25 +76,25 @@ public class Computer {
 	 * @return the introduced
 	 */
 	public LocalDate getIntroduced() {
-		return introducedDate;
+		return introduced;
 	}
 	/**
 	 * @param introducedDate the introduced to set
 	 */
 	public void setIntroduced(LocalDate introducedDate) {
-		this.introducedDate = introducedDate;
+		this.introduced = introducedDate;
 	}
 	/**
 	 * @return the discontinued
 	 */
 	public LocalDate getDiscontinued() {
-		return discontinuedDate;
+		return discontinued;
 	}
 	/**
 	 * @param discontinuedDate the discontinued to set
 	 */
 	public void setDiscontinued(LocalDate discontinuedDate) {
-		this.discontinuedDate = discontinuedDate;
+		this.discontinued = discontinuedDate;
 	}
 	/**
 	 * @return the company_id
@@ -149,13 +150,13 @@ public class Computer {
 
 	@Override
 	public String toString() {
-		return "Computer [id=" + id + ", name=" + name + ", introducedDate=" + introducedDate + ", discontinuedDate="
-				+ discontinuedDate + ", company=" + company + "]";
+		return "Computer [id=" + id + ", name=" + name + ", introducedDate=" + introduced + ", discontinuedDate="
+				+ discontinued + ", company=" + company + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(company, discontinuedDate, id, introducedDate, name);
+		return Objects.hash(company, discontinued, id, introduced, name);
 	}
 
 	@Override
@@ -167,8 +168,8 @@ public class Computer {
 		if (getClass() != obj.getClass())
 			return false;
 		Computer other = (Computer) obj;
-		return Objects.equals(company, other.company) && Objects.equals(discontinuedDate, other.discontinuedDate)
-				&& Objects.equals(id, other.id) && Objects.equals(introducedDate, other.introducedDate)
+		return Objects.equals(company, other.company) && Objects.equals(discontinued, other.discontinued)
+				&& Objects.equals(id, other.id) && Objects.equals(introduced, other.introduced)
 				&& Objects.equals(name, other.name);
 	}	
 	
