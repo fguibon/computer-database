@@ -10,8 +10,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.mapper.CompanyMapper;
-import com.excilys.exceptions.MappingException;
-import com.excilys.model.Company;
+import com.excilys.binding.exceptions.MappingException;
+import com.excilys.core.Company;
 import com.excilys.test.config.TestConfig;
 
 @RunWith(SpringRunner.class)

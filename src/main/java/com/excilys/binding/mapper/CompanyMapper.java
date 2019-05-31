@@ -5,8 +5,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.excilys.binding.dto.CompanyDTO;
-import com.excilys.exceptions.MappingException;
-import com.excilys.model.Company;
+import com.excilys.binding.exceptions.MappingException;
+import com.excilys.core.Company;
 
 @Component
 public class CompanyMapper {

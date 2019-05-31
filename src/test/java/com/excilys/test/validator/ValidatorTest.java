@@ -14,10 +14,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
 import com.excilys.binding.mapper.ComputerMapper;
-import com.excilys.exceptions.DateParseException;
-import com.excilys.exceptions.ValidationException;
+import com.excilys.binding.exceptions.DateParseException;
+import com.excilys.binding.exceptions.ValidationException;
 import com.excilys.test.config.TestConfig;
-import com.excilys.validator.Validator;
+import com.excilys.binding.validator.Validator;
 
 
 @RunWith(SpringRunner.class)

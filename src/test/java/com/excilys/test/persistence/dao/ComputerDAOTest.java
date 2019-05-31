@@ -15,10 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.excilys.exceptions.DatabaseException;
-import com.excilys.model.Company;
-import com.excilys.model.Computer;
-import com.excilys.model.Sorting;
+import com.excilys.binding.exceptions.DatabaseException;
+import com.excilys.core.Company;
+import com.excilys.core.Computer;
+import com.excilys.core.Sorting;
 import com.excilys.persistence.dao.ComputerDAO;
 import com.excilys.test.ScriptExecuter;
 import com.excilys.test.config.TestConfig;

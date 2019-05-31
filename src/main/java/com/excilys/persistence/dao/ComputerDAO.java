@@ -13,9 +13,9 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
-import com.excilys.exceptions.DatabaseException;
-import com.excilys.model.Computer;
-import com.excilys.model.Sorting;
+import com.excilys.binding.exceptions.DatabaseException;
+import com.excilys.core.Computer;
+import com.excilys.core.Sorting;
 
 
 @Repository

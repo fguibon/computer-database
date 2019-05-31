@@ -9,8 +9,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import com.excilys.exceptions.DatabaseException;
-import com.excilys.model.Company;
+import com.excilys.binding.exceptions.DatabaseException;
+import com.excilys.core.Company;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.persistence.dao.ComputerDAO;
 

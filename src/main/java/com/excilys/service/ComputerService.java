@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.excilys.exceptions.DatabaseException;
-import com.excilys.model.Computer;
-import com.excilys.model.Sorting;
+import com.excilys.binding.exceptions.DatabaseException;
+import com.excilys.core.Computer;
+import com.excilys.core.Sorting;
 import com.excilys.persistence.dao.ComputerDAO;
 
 @Service

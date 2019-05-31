@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-import com.excilys.exceptions.DatabaseException;
+import com.excilys.binding.exceptions.DatabaseException;
 import com.zaxxer.hikari.HikariDataSource;
 
 

@@ -5,7 +5,7 @@ import java.util.Objects;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-import com.excilys.validator.CompareDates;
+import com.excilys.binding.validator.CompareDates;
 
 @CompareDates(firstDate = "introducedDate", secondDate = "discontinuedDate")
 public class ComputerDTO {

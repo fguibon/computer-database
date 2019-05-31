@@ -11,9 +11,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.excilys.binding.dto.ComputerDTO;
-import com.excilys.exceptions.DateParseException;
-import com.excilys.model.Company;
-import com.excilys.model.Computer;
+import com.excilys.binding.exceptions.DateParseException;
+import com.excilys.core.Company;
+import com.excilys.core.Computer;
 
 @Component
 public class ComputerMapper {

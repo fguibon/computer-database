@@ -13,8 +13,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
-import com.excilys.exceptions.DatabaseException;
-import com.excilys.model.Company;
+import com.excilys.binding.exceptions.DatabaseException;
+import com.excilys.core.Company;
 
 @Repository
 public class CompanyDAO {
