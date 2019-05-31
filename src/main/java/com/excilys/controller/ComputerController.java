@@ -55,7 +55,7 @@ public class ComputerController {
 
 
 	@GetMapping({"/","/dashboard"})
-	public String displayComputerList(Model model,
+	public String getComputers(Model model,
 			@ModelAttribute("sorting") Sorting sorting,
 			@ModelAttribute("numberOfComputer") int numberOfComputers) {
 
