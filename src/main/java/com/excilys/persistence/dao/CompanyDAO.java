@@ -16,12 +16,6 @@ import org.springframework.stereotype.Repository;
 import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Company;
 
-/**
- * CompanyDAO class : makes requests to the company table
- * @author excilys
- *
- */
-
 @Repository
 public class CompanyDAO {
 
@@ -41,13 +35,7 @@ public class CompanyDAO {
 		this.sessionFactory = sessionFactory;
 	}
 
-
-	/**
-	 * Finds and returns all companies in the table
-	 * @return a List of companies
-	 * @throws DatabaseException 
-	 */
-
+	
 	public List<Company> findAll() throws DatabaseException {
 		
 		List<Company> companies = new ArrayList<>();
@@ -61,11 +49,6 @@ public class CompanyDAO {
 	}
 	
 
-	/**
-	 * Find a Company by its id
-	 * @return a Company object
-	 * @throws DatabaseException 
-	 */
 	public Company read(Long id) throws DatabaseException {
 		Company company = new Company();
 		try(Session session = sessionFactory.openSession()) {
@@ -79,11 +62,7 @@ public class CompanyDAO {
 		return company;
 	}
 
-	/**
-	 * Deletes a company record
-	 * @throws DatabaseException 
-	 * 
-	 */
+	
 	public int delete(Long id) throws DatabaseException {
 		try(Session session = sessionFactory.openSession()) {	
 			Transaction tx = session.beginTransaction();

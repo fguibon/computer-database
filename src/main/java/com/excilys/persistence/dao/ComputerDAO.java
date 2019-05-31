@@ -17,52 +17,39 @@ import com.excilys.exceptions.DatabaseException;
 import com.excilys.model.Computer;
 import com.excilys.model.Sorting;
 
-/**
- * ComputerDAO class : makes requests to the computer table
- * @author excilys
- *
- */
 
 @Repository
 public class ComputerDAO {
 
-	public enum Field { ID,NAME,INTRODUCED,DISCONTINUED,COMPANY_ID}
+	public enum Field { ID,NAME,INTRODUCED,DISCONTINUED}
 
 	private enum Order {ASC, DESC}
 
 	private static final Logger LOGGER = 
 			LogManager.getLogger(ComputerDAO.class);
 
-
 	private static final String SELECT = 
 			" FROM Computer c ";
-	
+
 	private static final String SELECT_ONE = 
 			SELECT + "WHERE c.id= :id";
 
-
 	private static final String SELECT_ORDER_BY =
 			SELECT + "WHERE UPPER(c.name) LIKE UPPER(:filter) ORDER BY ";
-
 
 	private static final String DELETE_COMPUTER_WHERE=
 			"DELETE FROM Computer where company_id =:company_id ";
 
 	private static final String COUNT = 
 			"SELECT COUNT(c) FROM Computer c";
-	
+
 	private SessionFactory sessionFactory;	
-	
+
 	public ComputerDAO(SessionFactory sessionFactory) {	
 		this.sessionFactory = sessionFactory;
 	}
 
 
-	/**
-	 * Creates a computer
-	 * @return a boolean value to know if it is created
-	 * @throws Exception 
-	 */
 	public int create(Computer computer) throws DatabaseException {
 		try (Session session = sessionFactory.openSession()){
 			Transaction tx = session.beginTransaction();
@@ -73,16 +60,11 @@ public class ComputerDAO {
 			throw new DatabaseException("Cannot insert computer : "+computer.toString());
 		}
 		return 1;
-				
+
 	}
 
-	/**
-	 * Finds and return all computers in the table
-	 * @return a List of computers
-	 * @throws Exception 
-	 */
+
 	public List<Computer> findAll() throws DatabaseException {
-		
 		List<Computer> computers = new ArrayList<>();
 		try (Session session = sessionFactory.openSession()){
 			computers = session.createQuery(SELECT,Computer.class).getResultList();
@@ -93,13 +75,7 @@ public class ComputerDAO {
 		return computers;
 	}
 
-	/**
-	 * Finds all computers and limits the results
-	 * @param limit
-	 * @param currentPage
-	 * @return
-	 * @throws Exception 
-	 */
+
 	public List<Computer> findAllPaged(Sorting sorting) throws DatabaseException {
 		List<Computer> computers = new ArrayList<>();	
 		int offset = ((sorting.getPage()-1) * sorting.getLimit());
@@ -118,12 +94,7 @@ public class ComputerDAO {
 	}
 
 
-	/**
-	 * Find a Computer by its id
-	 * @return a Computer object
-	 * @throws Exception 
-	 */
-	
+
 	public Computer read(Long id) throws DatabaseException {
 		Computer computer = new Computer();
 		try (Session session = sessionFactory.openSession()){
@@ -137,17 +108,13 @@ public class ComputerDAO {
 	}
 
 
-	/**
-	 * Updates a Computer information
-	 * @return the number of rows affected 
-	 */
 
 	public int update(Computer computer) throws DatabaseException {
 		int number = 0;
 		try (Session session = sessionFactory.openSession()){
 			Transaction tx = session.beginTransaction();
 			Computer tochange = read(computer.getId());
-			
+
 			tochange.setName(computer.getName());
 			tochange.setIntroduced(computer.getIntroduced());
 			tochange.setDiscontinued(computer.getDiscontinued());
@@ -161,10 +128,6 @@ public class ComputerDAO {
 		return number;	
 	}
 
-	/**
-	 * Deletes a computer from the database
-	 * @return the number of rows affected
-	 */
 
 	public int delete(Long id) throws DatabaseException {
 		try (Session session = sessionFactory.openSession()){
@@ -179,12 +142,7 @@ public class ComputerDAO {
 		return 1;	
 	}
 
-	/**
-	 * Delete all computers associated with the id given.
-	 * @param id
-	 * @return
-	 * @throws DatabaseException
-	 */
+
 	public int deleteComputerWhere(Long id) throws DatabaseException {
 		int number = 0; 
 		try(Session session = sessionFactory.openSession()) {
@@ -197,13 +155,8 @@ public class ComputerDAO {
 		}
 		return number;
 	}
-	
-	
-	/**
-	 * Get the computers total count
-	 * @return the total number 
-	 * @throws DatabaseException 
-	 */
+
+
 	public int count() throws DatabaseException  {
 		int number = 0;
 		try(Session session = sessionFactory.openSession()){
@@ -213,10 +166,16 @@ public class ComputerDAO {
 			LOGGER.error(e.getMessage());
 			throw new DatabaseException("Could not retrieve the total number of computers");
 		}
-		 return number;	
+		return number;	
 	}
 
-
+	
+	public String getSortingQuerySQL( String fieldParam, String orderParam ){
+		return SELECT_ORDER_BY + getField(fieldParam)+ 
+				" " +getOrder(orderParam);
+	}
+	
+	
 	public String getField(String choice) {
 		switch(choice) {
 		case "name":
@@ -226,12 +185,13 @@ public class ComputerDAO {
 		case "disco":
 			return "c."+Field.DISCONTINUED.toString().toLowerCase();
 		case "company":
-			return "c."+Field.COMPANY_ID.toString().toLowerCase();
+			return "company."+Field.NAME.toString().toLowerCase();
 		default:
 			return "c."+Field.ID.toString().toLowerCase();
 		}
 	}
 
+	
 	public String getOrder(String choice) {
 		switch(choice) {
 		case "asc":
@@ -241,13 +201,6 @@ public class ComputerDAO {
 		default:
 			return Order.ASC.toString();
 		}
-	}
-
-	public String getSortingQuerySQL( String fieldParam, String orderParam ){
-		String sql = SELECT_ORDER_BY + getField(fieldParam)+ 
-				" " +getOrder(orderParam);
-		LOGGER.debug(sql);
-		return sql;
 	}
 
 }

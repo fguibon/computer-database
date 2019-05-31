@@ -4,7 +4,6 @@ package com.excilys.model;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,7 +31,7 @@ public class Computer {
 	@Column(name = "discontinued")
 	private LocalDate discontinued;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "company_id")
 	private Company company;
 	
