@@ -17,7 +17,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
-@ComponentScan({"com.excilys.persistence.dao","com.excilys.persistence.utils"})
+@ComponentScan({"com.excilys.persistence.dao","com.excilys.persistence"})
 public class PersistenceConfig {
 
 	static {TimeZone.setDefault(TimeZone.getTimeZone("UTC"));}

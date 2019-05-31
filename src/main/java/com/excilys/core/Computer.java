@@ -14,7 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.excilys.persistence.utils.LocalDateAttributeConverter;
+import com.excilys.persistence.LocalDateAttributeConverter;
 
 
 @Entity

@@ -22,13 +22,15 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
+import com.excilys.binding.exceptions.DatabaseException;
 import com.excilys.binding.mapper.CompanyMapper;
 import com.excilys.binding.mapper.ComputerMapper;
-import com.excilys.binding.exceptions.DatabaseException;
 import com.excilys.core.Computer;
 import com.excilys.core.Sorting;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
+
+
 
 @Controller	
 @SessionAttributes("sorting")
@@ -136,6 +138,7 @@ public class ComputerController {
 		return REDIRECT_HOME;
 	}
 	
+	
 	@GetMapping("/edit-computer")
 	public String displayForm(Model model, @RequestParam @Positive String id){
 
@@ -187,6 +190,7 @@ public class ComputerController {
 		model.addAttribute("number", numberOfComputers);
 		return numberOfComputers;	
 	}
+	
 	
 	@ModelAttribute("companyList")
 	public List<CompanyDTO> getCompanyList(Model model){
