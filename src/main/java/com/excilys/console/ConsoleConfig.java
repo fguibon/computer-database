@@ -9,7 +9,7 @@ import com.excilys.persistence.PersistenceConfig;
 import com.excilys.service.ServiceConfig;
 
 @Configuration
-@ComponentScan("com.excilys.cli")
+@ComponentScan("com.excilys.console")
 @Import({PersistenceConfig.class,BindingConfig.class,ServiceConfig.class})
 public class ConsoleConfig {
 

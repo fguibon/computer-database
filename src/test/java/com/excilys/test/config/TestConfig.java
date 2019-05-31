@@ -9,27 +9,29 @@ import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.excilys.binding.BindingConfig;
 import com.excilys.binding.mapper.CompanyMapper;
 import com.excilys.binding.mapper.ComputerMapper;
+import com.excilys.persistence.PersistenceConfig;
 import com.excilys.persistence.dao.CompanyDAO;
 import com.excilys.persistence.dao.ComputerDAO;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
+import com.excilys.service.ServiceConfig;
 import com.excilys.binding.validator.Validator;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 
 @Configuration
-@ComponentScan({"com.excilys.binding.mapper",
-	"com.excilys.service","com.excilys.persistence.dao",
-	"com.excilys.validator","com.excilys.cli",
-	"com.excilys.test","com.excilys.model"})
+@ComponentScan({"com.excilys.test"})
+@Import({BindingConfig.class,PersistenceConfig.class,ServiceConfig.class})
 public class TestConfig {
 	
 	@Bean
@@ -81,7 +83,7 @@ public class TestConfig {
 	public LocalSessionFactoryBean sessionFactory() {
 		LocalSessionFactoryBean fact = new LocalSessionFactoryBean();
 		fact.setDataSource(mySqlDataSource());
-		fact.setPackagesToScan("com.excilys.model");
+		fact.setPackagesToScan("com.excilys.core");
 		fact.setHibernateProperties(hibernateProperties());
 
 		return fact;
@@ -107,6 +109,5 @@ public class TestConfig {
 	public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
 	    return new PersistenceExceptionTranslationPostProcessor();
 	}
-
 
 }

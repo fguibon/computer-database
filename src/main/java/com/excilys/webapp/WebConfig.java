@@ -24,7 +24,7 @@ import com.excilys.persistence.PersistenceConfig;
 import com.excilys.service.ServiceConfig;
 
 @Configuration
-@ComponentScan("com.excilys.controller")
+@ComponentScan({"com.excilys.webapp","com.excilys.core"})
 @Import({PersistenceConfig.class,BindingConfig.class,ServiceConfig.class})
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {

@@ -17,7 +17,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
-@ComponentScan("com.excilys.persistence.dao")
+@ComponentScan({"com.excilys.persistence.dao","com.excilys.persistence.utils"})
 public class PersistenceConfig {
 
 	static {TimeZone.setDefault(TimeZone.getTimeZone("UTC"));}
@@ -34,7 +34,7 @@ public class PersistenceConfig {
 	public LocalSessionFactoryBean sessionFactory() {
 		LocalSessionFactoryBean fact = new LocalSessionFactoryBean();
 		fact.setDataSource(mySqlDataSource());
-		fact.setPackagesToScan("com.excilys.model");
+		fact.setPackagesToScan("com.excilys.core");
 		fact.setHibernateProperties(hibernateProperties());
 
 		return fact;
