@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 public class CompanyDTO {
 	
@@ -12,7 +13,8 @@ public class CompanyDTO {
 	
 	private String id;
 	
-	@NotBlank
+	@NotBlank( message = "Name must not be null")
+	@Size(min=3)
 	@Pattern(regexp= NAME_PATTERN)
 	private String name;
 	

@@ -4,6 +4,9 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.springframework.lang.Nullable;
 
 import com.excilys.binding.validator.CompareDates;
 
@@ -20,7 +23,8 @@ public class ComputerDTO {
 
 	private String id;
 	
-	@NotBlank( message = "Name must not null")
+	@NotBlank( message = "Name must not be null")
+	@Size(min=3)
 	@Pattern(regexp= NAME_PATTERN)
 	private String name;
 	
@@ -30,6 +34,7 @@ public class ComputerDTO {
 	@Pattern(regexp= DATE_PATTERN)
 	private String discontinuedDate;
 	
+	@Nullable
 	private String companyId;
 	
 	private String companyName;
