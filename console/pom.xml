@@ -3,18 +3,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.excilys</groupId>
 	<artifactId>console</artifactId>
-	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>cdb</name>
 	<url>http://maven.apache.org</url>
 	
 	<parent>
-    		<groupId>com.excilys</groupId>
-    		<artifactId>computer-database</artifactId>
-    		<version>1.0</version>
+    	<groupId>com.excilys</groupId>
+    	<artifactId>computer-database</artifactId>
+    	<version>1.0</version>
 	</parent>
 
 	<properties>
@@ -42,11 +40,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysqlVersion}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 			<version>${log4jVersion}</version>
@@ -55,56 +48,16 @@
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
 			<version>${log4jVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junitVersion}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>${mockitoVersion}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>${h2Version}</version>
-			<scope>test</scope>
-		</dependency>
+		</dependency>	
 		<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
 			<version>${jstlVersion}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-chrome-driver</artifactId>
-			<version>${seleniumVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>${servletApiVersion}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
 			<version>${hikariVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${springVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${springVersion}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -122,20 +75,20 @@
 		    <version>${springDataVersion}</version>
 		</dependency>
 		<dependency>
-            		<groupId>org.hibernate</groupId>
-            		<artifactId>hibernate-entitymanager</artifactId>
-            		<version>${hibernateVersion}</version>
-        	</dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernateVersion}</version>
+        </dependency>
 		<dependency>
-            		<groupId>com.excilys</groupId>
-            		<artifactId>persistence</artifactId>
-            		<version>1.0</version>
-        	</dependency>
+            <groupId>com.excilys</groupId>
+            <artifactId>persistence</artifactId>
+            <version>1.0</version>
+        </dependency>
 		<dependency>
-            		<groupId>com.excilys</groupId>
-            		<artifactId>service</artifactId>
-            		<version>1.0</version>
-        	</dependency>
+            <groupId>com.excilys</groupId>
+            <artifactId>service</artifactId>
+            <version>1.0</version>
+        </dependency>
 
 	</dependencies>
 
