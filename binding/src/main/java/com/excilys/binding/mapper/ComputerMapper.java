@@ -41,10 +41,13 @@ public class ComputerMapper {
 			throw new DateParseException("Failed to parse date");
 		}
 
-		Company company = new Company();
-		company.setId(convertStringToId(computerDTO.getCompanyId()));
-		company.setName(computerDTO.getCompanyName());
-		computer.setCompany(company);
+		String id = computerDTO.getCompanyId();
+		if(id!=null && !id.isEmpty()) {
+			Company company = new Company();
+			company.setId(convertStringToId(id));
+			company.setName(computerDTO.getCompanyName());
+			computer.setCompany(company);
+		}	
 
 		return computer;
 	}

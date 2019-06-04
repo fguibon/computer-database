@@ -8,14 +8,14 @@
 	<title><spring:message code="app.title" /></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- Bootstrap -->
-	<link href="static/css/bootstrap.min.css" rel="stylesheet" media="screen">
-	<link href="static/css/font-awesome.css" rel="stylesheet" media="screen">
-	<link href="static/css/main.css" rel="stylesheet" media="screen">
+	<link href="<%=request.getContextPath()%>/static/css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<link href="<%=request.getContextPath()%>/static/css/font-awesome.css" rel="stylesheet" media="screen">
+	<link href="<%=request.getContextPath()%>/static/css/main.css" rel="stylesheet" media="screen">
 </head>
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboard"> <spring:message code="app.nav" /></a>
+			<a class="navbar-brand" href="/ComputerDatabase/computers"> <spring:message code="app.nav" /></a>
 		</div>
 	</header>
 
@@ -24,7 +24,7 @@
 			<div class="row">
 				<div class="col-xs-8 col-xs-offset-2 box">
 					<h1><spring:message code="form.add.title" /></h1>
-					<form:form action="add-computer" method="POST" modelAttribute="computer">
+					<form:form action="add" method="POST" modelAttribute="computer">
 						<fieldset>
 							<legend><spring:message code="form.subtitle" /></legend>
 							<div class="form-group">
@@ -63,15 +63,15 @@
 						</fieldset>
 						<div class="actions pull-right">
 							<input type="submit" value="<spring:message code="form.button.add" />" class="btn btn-primary">
-							or <a href="dashboard" class="btn btn-default"><spring:message code="form.button.cancel" /></a>
+							or <a href="/ComputerDatabase/computers" class="btn btn-default"><spring:message code="form.button.cancel" /></a>
 						</div>
 					</form:form>
 				</div>
 			</div>
 		</div>
 	</section>
-	<script src="static/js/jquery.min.js"></script>
-	<script src="static/js/bootstrap.min.js"></script>
-	<script src="static/js/addComputer.js"></script>
+	<script src="<%=request.getContextPath()%>/static/js/jquery.min.js"></script>
+	<script src="<%=request.getContextPath()%>/static/js/bootstrap.min.js"></script>
+	<script src="<%=request.getContextPath()%>/static/js/addComputer.js"></script>
 </body>
 </html>

@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +39,7 @@ public class ComputerController {
 
 	private static final int LIMIT=10;
 	private static final int CURRENT_PAGE=1;
-	private static final String REDIRECT_HOME="redirect:/dashboard";
+	private static final String REDIRECT_HOME="redirect:/computers";
 
 	private ComputerService computerService;
 	private ComputerMapper computerMapper;
@@ -56,7 +57,7 @@ public class ComputerController {
 	}
 
 
-	@GetMapping({"/","/dashboard"})
+	@GetMapping({"/","/computers"})
 	public String getComputers(Model model,
 			@ModelAttribute("sorting") Sorting sorting,
 			@ModelAttribute("numberOfComputer") int numberOfComputers) {
@@ -94,7 +95,7 @@ public class ComputerController {
 	}
 
 	
-	@PostMapping("/dashboard")
+	@PostMapping("/computers/delete")
 	public String deleteComputers(@RequestParam String selection){
 
 		String[] computers = selection.split(",");
@@ -121,15 +122,20 @@ public class ComputerController {
 	}
 	
 	
-	@GetMapping("/add-computer")
+	@GetMapping("/computers/add")
 	public String displayForm() {	
 		return "addComputer";
 	}
 
 	
-	@PostMapping("/add-computer")
-	public String addComputer(Model model,@Valid @ModelAttribute("computer") ComputerDTO computer){
+	@PostMapping("/computers/add")
+	public String addComputer(Model model,@Valid @ModelAttribute("computer") ComputerDTO computer,
+			BindingResult result){
 
+		if(result.hasErrors()) {
+	        return "addComputer";
+	    }
+		
 		try {
 			computerService.createComputer(computerMapper.dtoToModel(computer));
 		} catch (Exception e) {
@@ -139,7 +145,7 @@ public class ComputerController {
 	}
 	
 	
-	@GetMapping("/edit-computer")
+	@GetMapping("/computers/edit")
 	public String displayForm(Model model, @RequestParam @Positive String id){
 
 		ComputerDTO computer =new ComputerDTO();
@@ -155,9 +161,14 @@ public class ComputerController {
 	}
 
 	
-	@PostMapping("/edit-computer")
-	public String editComputer(Model model, @Valid @ModelAttribute("computer") ComputerDTO computer) {
+	@PostMapping("/computers/edit")
+	public String editComputer(Model model, @Valid @ModelAttribute("computer") ComputerDTO computer,
+			BindingResult result) {
 
+		if(result.hasErrors()) {
+	        return "editComputer";
+	    }
+		
 		try {
 			computerService.update(computerMapper.dtoToModel(computer));
 		} catch (Exception e) {
