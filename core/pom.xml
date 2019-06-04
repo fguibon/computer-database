@@ -4,21 +4,19 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.excilys</groupId>
-	<artifactId>computer-database</artifactId>
+	<artifactId>core</artifactId>
 	<version>1.0</version>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 
 	<name>cdb</name>
 	<url>http://maven.apache.org</url>
 
-	<modules>
-		<module>core</module>
-		<module>binding</module>
-		<module>persistence</module>
-    		<module>service</module>
-		<module>console</module>
-    		<module>webapp</module>
-	</modules>	
+	<parent>
+    		<groupId>com.excilys</groupId>
+    		<artifactId>computer-database</artifactId>
+    		<version>1.0</version>
+	</parent>
+
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -81,6 +79,11 @@
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
 			<version>${jstlVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-chrome-driver</artifactId>
+			<version>${seleniumVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

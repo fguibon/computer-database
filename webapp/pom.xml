@@ -4,21 +4,18 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.excilys</groupId>
-	<artifactId>computer-database</artifactId>
+	<artifactId>webapp</artifactId>
 	<version>1.0</version>
-	<packaging>pom</packaging>
+	<packaging>war</packaging>
 
 	<name>cdb</name>
 	<url>http://maven.apache.org</url>
 
-	<modules>
-		<module>core</module>
-		<module>binding</module>
-		<module>persistence</module>
-    		<module>service</module>
-		<module>console</module>
-    		<module>webapp</module>
-	</modules>	
+	<parent>
+    		<groupId>com.excilys</groupId>
+    		<artifactId>computer-database</artifactId>
+    		<version>1.0</version>
+	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -83,6 +80,11 @@
 			<version>${jstlVersion}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-chrome-driver</artifactId>
+			<version>${seleniumVersion}</version>
+		</dependency>
+		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>${servletApiVersion}</version>
@@ -120,10 +122,15 @@
 		    <version>${springDataVersion}</version>
 		</dependency>
 		<dependency>
-            		<groupId>org.hibernate</groupId>
-            		<artifactId>hibernate-entitymanager</artifactId>
-            		<version>${hibernateVersion}</version>
-        	</dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernateVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.excilys</groupId>
+            <artifactId>service</artifactId>
+            <version>1.0</version>
+        </dependency>
 
 	</dependencies>
 
