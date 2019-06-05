@@ -1,4 +1,4 @@
-package com.excilys.persistence;
+package com.excilys.persistence.config;
 
 import java.util.Properties;
 import java.util.TimeZone;

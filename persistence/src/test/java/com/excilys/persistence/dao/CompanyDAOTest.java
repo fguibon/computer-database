@@ -16,8 +16,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.excilys.binding.exceptions.DatabaseException;
 import com.excilys.core.Company;
 import com.excilys.persistence.dao.CompanyDAO;
-import com.excilys.persistence.config.ScriptExecuter;
 import com.excilys.persistence.config.PersistenceTestConfig;
+import com.excilys.persistence.config.ScriptExecuter;
+
 import com.zaxxer.hikari.HikariDataSource;
 
 

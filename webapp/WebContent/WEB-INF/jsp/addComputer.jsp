@@ -63,7 +63,7 @@
 						</fieldset>
 						<div class="actions pull-right">
 							<input type="submit" value="<spring:message code="form.button.add" />" class="btn btn-primary">
-							or <a href="/ComputerDatabase/computers" class="btn btn-default"><spring:message code="form.button.cancel" /></a>
+							<a href="/ComputerDatabase/computers" class="btn btn-default"><spring:message code="form.button.cancel" /></a>
 						</div>
 					</form:form>
 				</div>
