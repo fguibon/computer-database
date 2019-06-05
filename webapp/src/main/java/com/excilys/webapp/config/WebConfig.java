@@ -1,4 +1,4 @@
-package com.excilys.webapp;
+package com.excilys.webapp.config;
 
 
 
@@ -20,7 +20,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 import com.excilys.binding.BindingConfig;
-import com.excilys.persistence.PersistenceConfig;
+import com.excilys.persistence.config.PersistenceConfig;
 import com.excilys.service.ServiceConfig;
 
 @Configuration

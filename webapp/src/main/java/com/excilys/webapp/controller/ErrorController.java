@@ -1,4 +1,4 @@
-package com.excilys.webapp;
+package com.excilys.webapp.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
