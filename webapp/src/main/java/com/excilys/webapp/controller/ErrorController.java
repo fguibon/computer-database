@@ -1,4 +1,4 @@
-package com.excilys.webapp;
+package com.excilys.webapp.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,6 +23,9 @@ public class ErrorController {
                 break;
             case 401:
                 errorMsg = "error.401";
+                break;
+            case 403:
+                errorMsg = "error.403";
                 break;
             case 404:
                 errorMsg = "error.404";

@@ -11,6 +11,8 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import com.excilys.webapp.config.WebConfig;
+
 
 public class WebAppInitializer implements WebApplicationInitializer {
 

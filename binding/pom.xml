@@ -3,135 +3,57 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.excilys</groupId>
 	<artifactId>binding</artifactId>
-	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>cdb</name>
 	<url>http://maven.apache.org</url>
-  
-	
+
+
 	<parent>
-    		<groupId>com.excilys</groupId>
-    		<artifactId>computer-database</artifactId>
-    		<version>1.0</version>
+		<groupId>com.excilys</groupId>
+		<artifactId>computer-database</artifactId>
+		<version>1.0</version>
 	</parent>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<mysqlVersion>8.0.15</mysqlVersion>
-		<log4jVersion>2.7</log4jVersion>
-		<junitVersion>4.12</junitVersion>
-		<mockitoVersion>1.9.5</mockitoVersion>
-		<h2Version>1.4.197</h2Version>
-		<jstlVersion>1.2</jstlVersion>
-		<seleniumVersion>3.141.59</seleniumVersion>
-		<servletApiVersion>4.0.1</servletApiVersion>
-		<hikariVersion>3.3.1</hikariVersion>
-		<springVersion>5.1.7.RELEASE</springVersion>
-		<javaValidationVersion>2.0.1.Final</javaValidationVersion>
-		<hibernateValidatorVersion>6.0.16.Final</hibernateValidatorVersion>
-		<hibernateVersion>5.4.2.Final</hibernateVersion>
-		<springDataVersion>2.1.8.RELEASE</springDataVersion>
-
-		<mavenCompilerVersion>3.7.0</mavenCompilerVersion>
-		<mavenWarVersion>3.2.1</mavenWarVersion>
-		<mavenCheckstyleVersion>3.0.0</mavenCheckstyleVersion>
-	</properties>
 
 
 	<dependencies>
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysqlVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>${log4jVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-slf4j-impl</artifactId>
-			<version>${log4jVersion}</version>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>${junitVersion}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>${mockitoVersion}</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>${h2Version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>jstl</groupId>
-			<artifactId>jstl</artifactId>
-			<version>${jstlVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-chrome-driver</artifactId>
-			<version>${seleniumVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>${servletApiVersion}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.zaxxer</groupId>
-			<artifactId>HikariCP</artifactId>
-			<version>${hikariVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${springVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>${springVersion}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-			<version>${springVersion}</version>
+			<artifactId>spring-webmvc</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate.validator</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>${hibernateValidatorVersion}</version>
+			<groupId>com.excilys</groupId>
+			<artifactId>core</artifactId>
+			<version>1.0</version>
 		</dependency>
-		<dependency>
-		    <groupId>org.springframework.data</groupId>
-		    <artifactId>spring-data-jpa</artifactId>
-		    <version>${springDataVersion}</version>
-		</dependency>
-		<dependency>
-            		<groupId>org.hibernate</groupId>
-            		<artifactId>hibernate-entitymanager</artifactId>
-            		<version>${hibernateVersion}</version>
-        	</dependency>
-		<dependency>
-            		<groupId>com.excilys</groupId>
-            		<artifactId>core</artifactId>
-            		<version>1.0</version>
-        	</dependency>
 
 	</dependencies>
 
@@ -140,7 +62,6 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${mavenCompilerVersion}</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -148,7 +69,6 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>${mavenWarVersion}</version>
 				<configuration>
 					<warSourceDirectory>WebContent</warSourceDirectory>
 				</configuration>
@@ -156,7 +76,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>${mavenCheckstyleVersion}</version>
 				<configuration>
 					<configLocation>checkstyle/checkstyle.xml</configLocation>
 					<suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>

@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import com.excilys.binding.BindingConfig;
-import com.excilys.persistence.PersistenceConfig;
+import com.excilys.persistence.config.PersistenceConfig;
 import com.excilys.service.ServiceConfig;
 
 @Configuration

@@ -4,18 +4,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title><spring:message code="app.title" /></title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
-	<!-- Bootstrap -->
-	<link href="<%=request.getContextPath()%>/static/css/bootstrap.min.css" rel="stylesheet" media="screen">
-	<link href="<%=request.getContextPath()%>/static/css/font-awesome.css" rel="stylesheet" media="screen">
-	<link href="<%=request.getContextPath()%>/static/css/main.css" rel="stylesheet" media="screen">
+<title><spring:message code="app.title" /></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<!-- Bootstrap -->
+<link href="<%=request.getContextPath()%>/static/css/bootstrap.min.css"
+	rel="stylesheet" media="screen">
+<link href="<%=request.getContextPath()%>/static/css/font-awesome.css"
+	rel="stylesheet" media="screen">
+<link href="<%=request.getContextPath()%>/static/css/main.css"
+	rel="stylesheet" media="screen">
 </head>
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="computers"> <spring:message code="app.nav" /> </a>
+			<a class="navbar-brand" href="computers"> <spring:message
+					code="app.nav" /> ${userName}
+			</a>
 			<!-- Dropdown for selecting language -->
 			<div class="dropdown pull-right btn-group btn-group-sm">
 				<button class="btn btn-danger dropdown-toggle" type="button"
@@ -25,33 +30,43 @@
 				</button>
 				<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 					<a class="dropdown-item btn btn-default" href="?lang=en"><spring:message
-							code="app.lang.english" /></a> <a class="dropdown-item btn btn-default"
-						href="?lang=fr"><spring:message code="app.lang.french" /></a>
+							code="app.lang.english" /></a> <a
+						class="dropdown-item btn btn-default" href="?lang=fr"><spring:message
+							code="app.lang.french" /></a>
 				</div>
 			</div>
+			<div class="pull-right">
+				<a class="btn btn-secondary" id="logout" href="logout">
+						<spring:message code="app.button.logout" />
+					</a>
+			</div>
 		</div>
-		
+
 	</header>
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${number} <spring:message code="app.homeTitle" /></h1>
-			
+			<h1 id="homeTitle">${number}
+				<spring:message code="app.homeTitle" />
+			</h1>
+
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="computers" method="GET"
 						class="form-inline">
 						<input type="search" id="searchbox" name="filter"
-							class="form-control" placeholder="<spring:message code="filter.placeholder" />"
+							class="form-control"
+							placeholder="<spring:message code="filter.placeholder" />"
 							value="${sorting.filter}" /> <input type="submit"
-							id="searchsubmit" value="<spring:message code="filter.button" />" 
+							id="searchsubmit" value="<spring:message code="filter.button" />"
 							class="btn btn-primary" />
 					</form>
 				</div>
 				<div class="pull-right">
 					<a class="btn btn-success" id="addComputer" href="computers/add">
-					<spring:message code="dashboard.button.add" /> 
+						<spring:message code="dashboard.button.add" />
 					</a> <a class="btn btn-default" id="editComputer" href="#"
-						onclick="$.fn.toggleEditMode();"><spring:message code="dashboard.button.edit" /></a>
+						onclick="$.fn.toggleEditMode();"><spring:message
+							code="dashboard.button.edit" /></a>
 				</div>
 			</div>
 		</div>
@@ -86,8 +101,7 @@
  								<c:param name="field" value="name"/>
  								<c:param name="order" value="desc"/>
 							</c:url>
-							href="${url}"> <em class="fa fa-arrow-up"></em></a>
-						</th>
+							href="${url}"> <em class="fa fa-arrow-up"></em></a></th>
 
 						<th class="th-sm"><spring:message code="field.intro" /> <a
 							title="<spring:message code="field.orderby" /> <spring:message code="field.intro" /> <spring:message code="field.asc" />"
@@ -101,8 +115,7 @@
  								<c:param name="field" value="intro"/>
  								<c:param name="order" value="desc"/>
 							</c:url>
-							href="${url}"> <em class="fa fa-arrow-up"></em></a>
-						</th>
+							href="${url}"> <em class="fa fa-arrow-up"></em></a></th>
 
 						<th class="th-sm"><spring:message code="field.disco" /><a
 							title="<spring:message code="field.orderby" /> <spring:message code="field.disco" /> <spring:message code="field.asc" />"
@@ -116,8 +129,7 @@
  								<c:param name="field" value="disco"/>
  								<c:param name="order" value="desc"/>
 							</c:url>
-							href="${url}"> <em class="fa fa-arrow-up"></em></a>
-						</th>
+							href="${url}"> <em class="fa fa-arrow-up"></em></a></th>
 
 						<th class="th-sm"><spring:message code="field.company" /><a
 							title="<spring:message code="field.orderby" /> <spring:message code="field.company" /> <spring:message code="field.asc" />"
@@ -132,8 +144,7 @@
  								<c:param name="order" value="desc"/>
 							</c:url>
 							href="${url}"> <em class="fa fa-arrow-up"></em>
-						</a>
-						</th>
+						</a></th>
 					</tr>
 				</thead>
 				<!-- Browse attribute computers -->
@@ -157,7 +168,7 @@
 
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
-			
+
 
 			<ul class="pagination">
 				<li><a

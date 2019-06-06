@@ -1,4 +1,4 @@
-package com.excilys.webapp;
+package com.excilys.webapp.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +12,7 @@ import javax.validation.constraints.Positive;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -57,7 +58,8 @@ public class ComputerController {
 	}
 
 
-	@GetMapping({"/","/computers"})
+	@GetMapping({"/computers"})
+	@PreAuthorize("permitAll")
 	public String getComputers(Model model,
 			@ModelAttribute("sorting") Sorting sorting,
 			@ModelAttribute("numberOfComputer") int numberOfComputers) {
@@ -96,6 +98,7 @@ public class ComputerController {
 
 	
 	@PostMapping("/computers/delete")
+	@PreAuthorize("hasRole('ADMIN')")
 	public String deleteComputers(@RequestParam String selection){
 
 		String[] computers = selection.split(",");
@@ -123,12 +126,14 @@ public class ComputerController {
 	
 	
 	@GetMapping("/computers/add")
+	@PreAuthorize("hasRole('ADMIN')")
 	public String displayForm() {	
 		return "addComputer";
 	}
 
 	
 	@PostMapping("/computers/add")
+	@PreAuthorize("hasRole('ADMIN')")
 	public String addComputer(Model model,@Valid @ModelAttribute("computer") ComputerDTO computer,
 			BindingResult result){
 
@@ -146,6 +151,7 @@ public class ComputerController {
 	
 	
 	@GetMapping("/computers/edit")
+	@PreAuthorize("hasRole('ADMIN')")
 	public String displayForm(Model model, @RequestParam @Positive String id){
 
 		ComputerDTO computer =new ComputerDTO();
@@ -162,6 +168,7 @@ public class ComputerController {
 
 	
 	@PostMapping("/computers/edit")
+	@PreAuthorize("hasRole('ADMIN')")
 	public String editComputer(Model model, @Valid @ModelAttribute("computer") ComputerDTO computer,
 			BindingResult result) {
 
