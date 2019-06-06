@@ -1,4 +1,4 @@
-package com.excilys.webapp.controller;
+package com.excilys.webapp.rest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,14 +13,14 @@ import javax.validation.constraints.Positive;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.excilys.binding.dto.CompanyDTO;
 import com.excilys.binding.dto.ComputerDTO;
@@ -32,35 +32,31 @@ import com.excilys.core.Sorting;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 
-
-
-@Controller	
-@SessionAttributes("sorting")
-public class ComputerController {
+@RestController
+@RequestMapping("/api/computers")
+public class RestComputerController {
 
 	private static final int LIMIT=10;
 	private static final int CURRENT_PAGE=1;
-	private static final String REDIRECT_HOME="redirect:/computers";
-
+	
 	private ComputerService computerService;
 	private ComputerMapper computerMapper;
 	private final CompanyService companyService;
 	private final CompanyMapper companyMapper;
-	private static final Logger LOGGER = LogManager.getLogger(ComputerController.class.getName());
-
-
-	public ComputerController(ComputerService computerService,CompanyService companyService,
+	
+	private static final Logger LOGGER = LogManager.getLogger(RestComputerController.class.getName());
+	
+	public RestComputerController(ComputerService computerService,CompanyService companyService,
 			ComputerMapper computerMapper, CompanyMapper companyMapper) {
 		this.computerService = computerService;
 		this.companyService = companyService;
 		this.computerMapper = computerMapper;
 		this.companyMapper = companyMapper;
 	}
-
-
+	
 	@GetMapping({"/computers"})
 	@PreAuthorize("permitAll")
-	public String getComputers(Model model,
+	public List<ComputerDTO> getComputers(Model model,
 			@ModelAttribute("sorting") Sorting sorting,
 			@ModelAttribute("numberOfComputer") int numberOfComputers) {
 
@@ -89,11 +85,7 @@ public class ComputerController {
 			LOGGER.warn(e.getMessage(), e);
 		}
 
-		model.addAttribute("computers", computersList);
-		model.addAttribute("pageList", sorting.getPageList(page));
-		model.addAttribute("sorting", sorting);
-
-		return "dashboard";
+		return computersList;
 	}
 
 	
@@ -121,7 +113,7 @@ public class ComputerController {
 				LOGGER.warn("Invalid id");
 			}
 		});
-		return REDIRECT_HOME;
+		return "";
 	}
 	
 	
@@ -146,7 +138,7 @@ public class ComputerController {
 		} catch (Exception e) {
 			LOGGER.warn(e.getMessage(), e);
 		} 
-		return REDIRECT_HOME;
+		return "";
 	}
 	
 	
@@ -181,7 +173,7 @@ public class ComputerController {
 		} catch (Exception e) {
 			LOGGER.warn(e.getMessage(), e);
 		} 
-		return REDIRECT_HOME;
+		return "";
 	}
 	
 	
@@ -217,5 +209,5 @@ public class ComputerController {
 		model.addAttribute("companies", companyList);
 		return companyList;
 	}
-
+	
 }

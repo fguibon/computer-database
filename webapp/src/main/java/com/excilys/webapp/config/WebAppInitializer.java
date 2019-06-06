@@ -1,4 +1,4 @@
-package com.excilys.webapp;
+package com.excilys.webapp.config;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
