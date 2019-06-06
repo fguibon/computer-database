@@ -15,7 +15,7 @@ import com.excilys.core.Computer;
 public class UserDAO {
 
 	private static final String SELECT_ONE = 
-			" FROM Computer c WHERE c.id= :id";
+			" FROM User u WHERE u.userName= :userName";
 	
 	private static final Logger LOGGER = 
 			LogManager.getLogger(UserDAO.class);
@@ -26,15 +26,17 @@ public class UserDAO {
 		this.sessionFactory = sessionFactory;
 	}
 	
-	public Computer read(Long id) throws DatabaseException {
-		Computer computer = new Computer();
+	public boolean findUser(String userName) throws DatabaseException {
+		boolean found = false;
 		try (Session session = sessionFactory.openSession()){
-			computer = session.createQuery(SELECT_ONE,Computer.class)
-					.setParameter("id", id).getSingleResult();
+			if(session.createQuery(SELECT_ONE,Computer.class)
+					.setParameter("userName", userName).uniqueResult()!=null) {
+				found = true;
+			}
 		} catch (PersistenceException e) {
 			LOGGER.error(e.getMessage());
-			throw new DatabaseException("Could not retrieve the computer of id: "+id);
+			throw new DatabaseException("Could not find the user of username: "+userName);
 		}
-		return computer;
+		return found;
 	}
 }

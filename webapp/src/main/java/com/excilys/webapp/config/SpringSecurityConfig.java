@@ -25,10 +25,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	    protected void configure(final HttpSecurity http) throws Exception {
 	        http.csrf().disable()
 	          .authorizeRequests()
-	          .mvcMatchers("/computers/**").hasRole("ADMIN")
-	          .mvcMatchers("/computers").permitAll()
+	          .mvcMatchers("/computers**").permitAll()
 	          .anyRequest().authenticated().and()
-	          .formLogin().permitAll();
+	          .formLogin()
+	          .defaultSuccessUrl("/computers")
+	          .permitAll()
+	          .and()
+	          .logout()
+	          .permitAll();
 	    }
 	     
 	    @Bean

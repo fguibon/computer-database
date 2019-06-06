@@ -29,9 +29,10 @@ public class CompanyMapper {
 	
 	public CompanyDTO modelToDto(Company company) {
 		CompanyDTO companyDTO  = new CompanyDTO();
-		companyDTO.setId(this.convertIdToString(company.getId()));
-		companyDTO.setName(company.getName());
-
+		if(company!=null) {
+			companyDTO.setId(this.convertIdToString(company.getId()));
+			companyDTO.setName(company.getName());
+		}
 		return companyDTO;
 	}
 	

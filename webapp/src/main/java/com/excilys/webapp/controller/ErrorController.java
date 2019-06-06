@@ -24,6 +24,9 @@ public class ErrorController {
             case 401:
                 errorMsg = "error.401";
                 break;
+            case 403:
+                errorMsg = "error.403";
+                break;
             case 404:
                 errorMsg = "error.404";
                 break;
