@@ -1,6 +1,6 @@
 package com.excilys.binding.exceptions;
 
-public class DateParseException extends Exception {
+public class DateParseException extends RuntimeException {
 
 	/**
 	 * 

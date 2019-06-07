@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.excilys.binding.exceptions.DatabaseException;
 import com.excilys.core.Computer;
 import com.excilys.core.Sorting;
 import com.excilys.persistence.dao.ComputerDAO;
@@ -18,27 +17,31 @@ public class ComputerService {
 		this.computerDAO = computerDAO;
 	}
 		
-	public int createComputer(Computer computer) throws DatabaseException  {
+	public Long createComputer(Computer computer) {
 		return computerDAO.create(computer);
 	}
 	
-	public List<Computer> findAll(Sorting sorting) throws DatabaseException {
+	public List<Computer> findAll() {
+		return computerDAO.findAll();
+	}
+	
+	public List<Computer> findAll(Sorting sorting) {
 		return computerDAO.findAllPaged(sorting);
 	}
 	
-	public Computer findById(Long id) throws DatabaseException  {
+	public Computer findById(Long id)  {
 		return computerDAO.read(id);
 	}
 	
-	public int update(Computer computer) throws DatabaseException {
+	public int update(Computer computer) {
 		return computerDAO.update(computer);
 	}
 	
-	public int delete(Long id) throws DatabaseException  {
+	public int delete(Long id) {
 		return computerDAO.delete(id);
 	}
 	
-	public int count() throws DatabaseException {
+	public int count() {
 		return computerDAO.count();
 	}
 }

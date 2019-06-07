@@ -1,6 +1,6 @@
 package com.excilys.binding.exceptions;
 
-public class DatabaseException extends Exception {
+public class DatabaseException extends RuntimeException {
 
 	/**
 	 * 

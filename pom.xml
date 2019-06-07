@@ -27,6 +27,7 @@
 		<hibernateValidatorVersion>6.0.16.Final</hibernateValidatorVersion>
 		<hibernateVersion>5.4.2.Final</hibernateVersion>
 		<hikariVersion>3.3.1</hikariVersion>
+		<jacksonVersion>2.9.9</jacksonVersion>
 		<javaValidationVersion>2.0.1.Final</javaValidationVersion>
 		<jstlVersion>1.2</jstlVersion>
 		<junitVersion>4.12</junitVersion>
@@ -66,6 +67,11 @@
 				<groupId>com.zaxxer</groupId>
 				<artifactId>HikariCP</artifactId>
 				<version>${hikariVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jacksonVersion}</version>
 			</dependency>
 			<dependency>
 				<groupId>jstl</groupId>

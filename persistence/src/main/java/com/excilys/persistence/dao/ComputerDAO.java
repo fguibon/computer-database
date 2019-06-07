@@ -50,21 +50,22 @@ public class ComputerDAO {
 	}
 
 
-	public int create(Computer computer) throws DatabaseException {
+	public Long create(Computer computer) {
+		Long id =0L;
 		try (Session session = sessionFactory.openSession()){
 			Transaction tx = session.beginTransaction();
-			session.save(computer);
+			id = (Long) session.save(computer);
 			tx.commit();
 		} catch (PersistenceException e) {
 			LOGGER.warn(e.getMessage());
 			throw new DatabaseException("Cannot insert computer : "+computer.toString());
 		}
-		return 1;
+		return id;
 
 	}
 
 
-	public List<Computer> findAll() throws DatabaseException {
+	public List<Computer> findAll() {
 		List<Computer> computers = new ArrayList<>();
 		try (Session session = sessionFactory.openSession()){
 			computers = session.createQuery(SELECT,Computer.class).getResultList();
@@ -76,7 +77,7 @@ public class ComputerDAO {
 	}
 
 
-	public List<Computer> findAllPaged(Sorting sorting) throws DatabaseException {
+	public List<Computer> findAllPaged(Sorting sorting) {
 		List<Computer> computers = new ArrayList<>();	
 		int offset = ((sorting.getPage()-1) * sorting.getLimit());
 		String sql = getSortingQuerySQL(sorting.getField(), sorting.getOrder());
@@ -95,7 +96,7 @@ public class ComputerDAO {
 
 
 
-	public Computer read(Long id) throws DatabaseException {
+	public Computer read(Long id) {
 		Computer computer = new Computer();
 		try (Session session = sessionFactory.openSession()){
 			computer = session.createQuery(SELECT_ONE,Computer.class)
@@ -109,7 +110,7 @@ public class ComputerDAO {
 
 
 
-	public int update(Computer computer) throws DatabaseException {
+	public int update(Computer computer) {
 		int number = 0;
 		try (Session session = sessionFactory.openSession()){
 			Transaction tx = session.beginTransaction();
@@ -129,7 +130,7 @@ public class ComputerDAO {
 	}
 
 
-	public int delete(Long id) throws DatabaseException {
+	public int delete(Long id) {
 		try (Session session = sessionFactory.openSession()){
 			Transaction tx = session.beginTransaction();
 			Computer toDelete = session.get(Computer.class, id);
@@ -143,7 +144,7 @@ public class ComputerDAO {
 	}
 
 
-	public int deleteComputerWhere(Long id) throws DatabaseException {
+	public int deleteComputerWhere(Long id) {
 		int number = 0; 
 		try(Session session = sessionFactory.openSession()) {
 			Query<Computer> query = session.createQuery(DELETE_COMPUTER_WHERE,Computer.class);
@@ -157,7 +158,7 @@ public class ComputerDAO {
 	}
 
 
-	public int count() throws DatabaseException  {
+	public int count() {
 		int number = 0;
 		try(Session session = sessionFactory.openSession()){
 			Query<Long> query = session.createQuery(COUNT, Long.class);
