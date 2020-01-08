@@ -24,7 +24,7 @@
 		<hikariVersion>3.3.1</hikariVersion>
 		<springVersion>5.1.7.RELEASE</springVersion>
 		<javaValidationVersion>2.0.1.Final</javaValidationVersion>
-		<hibernateValidatorVersion>6.0.16.Final</hibernateValidatorVersion>
+		<hibernateValidatorVersion>6.1.0.Final</hibernateValidatorVersion>
 		
 		<mavenCompilerVersion>3.7.0</mavenCompilerVersion>
 		<mavenWarVersion>3.2.1</mavenWarVersion>
