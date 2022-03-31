@@ -22,7 +22,7 @@
 		<seleniumVersion>3.141.59</seleniumVersion>
 		<servletApiVersion>4.0.1</servletApiVersion>
 		<hikariVersion>3.3.1</hikariVersion>
-		<springVersion>5.1.7.RELEASE</springVersion>
+		<springVersion>5.3.18</springVersion>
 		<javaValidationVersion>2.0.1.Final</javaValidationVersion>
 		<hibernateValidatorVersion>6.0.16.Final</hibernateValidatorVersion>
 		
