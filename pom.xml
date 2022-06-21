@@ -13,7 +13,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<mysqlVersion>8.0.15</mysqlVersion>
+		<mysqlVersion>8.0.28</mysqlVersion>
 		<log4jVersion>2.7</log4jVersion>
 		<junitVersion>4.12</junitVersion>
 		<mockitoVersion>1.9.5</mockitoVersion>
